@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 2 — Methods &amp; Functions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg-alt: #FDF2F2;
+    --text: #1C1314;
+    --text-muted: #6B4A4B;
+    --blue: #CC0F11;
+    --blue-light: #FEE2E2;
+    --amber: #D97706;
+    --amber-light: #FEF3C7;
+    --green: #059669;
+    --green-light: #D1FAE5;
+    --red: #9B0C0E;
+    --border: #F0CECE;
+    --code-bg: #1C1314;
+    --code-text: #F1E8E8;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
+  }
+
+  @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) {
+    --bg: #160A0A;
+    --bg-alt: #241010;
+    --text: #F9ECEC;
+    --text-muted: #C49A9B;
+    --blue: #F25254;
+    --blue-light: #3D1010;
+    --amber: #FCD34D;
+    --amber-light: #3D2E0A;
+    --green: #34D399;
+    --green-light: #064E3B;
+    --red: #F87171;
+    --border: #3D1818;
+    --code-bg: #0D0606;
+    --code-text: #F1E8E8;
+  }}
+  :root[data-theme="dark"] {
+    --bg: #160A0A;
+    --bg-alt: #241010;
+    --text: #F9ECEC;
+    --text-muted: #C49A9B;
+    --blue: #F25254;
+    --blue-light: #3D1010;
+    --amber: #FCD34D;
+    --amber-light: #3D2E0A;
+    --green: #34D399;
+    --green-light: #064E3B;
+    --red: #F87171;
+    --border: #3D1818;
+    --code-bg: #0D0606;
+    --code-text: #F1E8E8;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .page {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 28px 24px;
+  }
+
+  /* ── Header ── */
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .page-header h1 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 1.9rem;
+    color: var(--blue);
+    line-height: 1.15;
+  }
+  .header-sub {
+    font-size: .85rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+  .header-badge {
+    font-size: 2.2rem;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-left: 12px;
+  }
+
+  /* ── Name / Date ── */
+  .name-line {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .name-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 180px;
+  }
+  .name-field label {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: .82rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .name-field input {
+    flex: 1;
+    border: none;
+    border-bottom: 2px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: .95rem;
+    padding: 2px 4px;
+    outline: none;
+  }
+
+  /* ── Team Banner ── */
+  .team-banner {
+    background: #CC0F11;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: .78rem;
+    letter-spacing: .04em;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  /* ── Progress Bar ── */
+  .progress-bar-wrap { margin-bottom: 14px; }
+  .progress-label {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: .78rem;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+  }
+  .progress-track {
+    height: 10px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #CC0F11, #059669);
+    border-radius: 99px;
+    transition: width .4s ease;
+  }
+
+  /* ── Focus Bar ── */
+  .focus-bar {
+    background: var(--amber-light);
+    border: 1.5px solid var(--amber);
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .focus-label {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: .8rem;
+    color: var(--amber);
+    white-space: nowrap;
+  }
+  .focus-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+  .focus-pill {
+    padding: 4px 12px;
+    border-radius: 99px;
+    border: 1.5px solid var(--amber);
+    background: transparent;
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: .8rem;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+    user-select: none;
+  }
+  .focus-pill.active { background: var(--amber); color: white; }
+
+  /* ── Big Question ── */
+  .big-question {
+    border-left: 4px solid var(--blue);
+    background: var(--blue-light);
+    border-radius: 0 10px 10px 0;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+  .bq-tag {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: .72rem;
+    color: var(--blue);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .big-question p {
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  /* ── Parking Lot ── */
+  .parking {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    background: var(--bg-alt);
+  }
+  .parking-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: .85rem;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .parking-sub {
+    font-size: .78rem;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+  .park-line {
+    width: 100%;
+    border: none;
+    border-bottom: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: .9rem;
+    padding: 6px 4px;
+    margin-bottom: 4px;
+    outline: none;
+    display: block;
+  }
+
+  /* ── Section ── */
+  .section {
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 18px;
+    overflow: hidden;
+    background: var(--bg);
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--bg-alt);
+    border-bottom: 1.5px solid var(--border);
+  }
+  .step-num {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: .9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .section-header h2 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text);
+    flex: 1;
+  }
+  .section-check { font-size: 1.1rem; margin-left: auto; }
+  .section-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* ── Vocab Grid ── */
+  .vocab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+  }
+  /* Transparent wrapper — display:contents lets grid layout ignore it on screen */
+  .vocab-row { display: contents; }
+  /* Hidden on screen; becomes a hard page break in print */
+  .print-break { display: none; }
+  .vocab-card {
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+    user-select: none;
+  }
+  .vocab-card:hover { border-color: var(--blue); }
+  .vocab-card.checked { background: var(--green-light); border-color: var(--green); }
+  .vocab-term {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: .9rem;
+    color: var(--blue);
+    margin-bottom: 3px;
+  }
+  .vocab-card.checked .vocab-term { color: var(--green); }
+  .vocab-def { font-size: .82rem; color: var(--text-muted); line-height: 1.45; }
+
+  /* ── Check Items ── */
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background .12s;
+    user-select: none;
+    border: 1.5px solid transparent;
+  }
+  .check-item:hover { background: var(--bg-alt); }
+  .check-item.done { background: var(--green-light); border-color: var(--green); }
+  .cb-box {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .75rem;
+    color: transparent;
+    flex-shrink: 0;
+    transition: all .12s;
+    margin-top: 1px;
+  }
+  .check-item.done .cb-box { background: var(--green); border-color: var(--green); color: white; }
+  .check-label { font-size: .9rem; color: var(--text); line-height: 1.45; }
+
+  /* ── Code Block ── */
+  .code-wrap { border-radius: 8px; overflow: hidden; border: 1.5px solid var(--border); }
+  .code-label {
+    background: var(--blue);
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: .72rem;
+    letter-spacing: .05em;
+    padding: 5px 12px;
+  }
+  .code-wrap code {
+    display: block;
+    background: var(--code-bg);
+    color: var(--code-text);
+    font-family: 'DM Mono', monospace;
+    font-size: .82rem;
+    line-height: 1.75;
+    padding: 14px 16px;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  code .kw  { color: #C792EA; }
+  code .fn  { color: #82AAFF; }
+  code .num { color: #F78C6C; }
+  code .str { color: #C3E88D; }
+  code .cmt { color: #637777; font-style: italic; }
+  code .tp  { color: #FFCB6B; }
+
+  /* ── Plain English Callout ── */
+  .plain-eng {
+    background: var(--amber-light);
+    border-left: 4px solid var(--amber);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    font-size: .88rem;
+    color: var(--text);
+    line-height: 1.55;
+  }
+
+  /* ── Info Box ── */
+  .info-box {
+    background: var(--blue-light);
+    border-left: 4px solid var(--blue);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    font-size: .88rem;
+    color: var(--text);
+    line-height: 1.55;
+  }
+
+  /* ── Write-In ── */
+  .write-in { border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .wi-label {
+    background: var(--bg-alt);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: .8rem;
+    color: var(--text-muted);
+    padding: 7px 12px;
+    border-bottom: 1.5px solid var(--border);
+  }
+  .wi-lines { padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+  .wi-line {
+    border: none;
+    border-bottom: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: .88rem;
+    padding: 4px 4px;
+    width: 100%;
+    outline: none;
+  }
+  .wi-line:focus { border-bottom-color: var(--blue); }
+
+  /* ── Anatomy Box ── */
+  .anatomy {
+    background: var(--bg-alt);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .anatomy-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: .78rem;
+    color: var(--text-muted);
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .anatomy code {
+    display: block;
+    background: var(--code-bg);
+    color: var(--code-text);
+    font-family: 'DM Mono', monospace;
+    font-size: .85rem;
+    line-height: 1.8;
+    padding: 12px 14px;
+    border-radius: 6px;
+    white-space: pre;
+    overflow-x: auto;
+    border: none;
+  }
+  .anatomy-labels {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .anat-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: .8rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+  .anat-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  /* ── Scenario Section ── */
+  .section.sc-section { border-color: var(--blue); }
+  .section.sc-section .section-header {
+    background: var(--blue-light);
+    border-bottom-color: var(--blue);
+  }
+  .sc-badge {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: white;
+    font-size: .95rem;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .scenario {
+    background: var(--blue-light);
+    border: 1.5px solid var(--blue);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .sc-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: .85rem;
+    color: var(--blue);
+    margin-bottom: 8px;
+    letter-spacing: .03em;
+  }
+  .scenario p, .scenario li { font-size: .9rem; color: var(--text); line-height: 1.55; }
+  .scenario ul { margin-top: 8px; padding-left: 18px; }
+  .scenario li { margin-bottom: 4px; }
+
+  /* ── End Checklist ── */
+  .end-section {
+    background: var(--green-light);
+    border: 1.5px solid var(--green);
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 8px;
+  }
+  .end-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--green);
+    margin-bottom: 12px;
+  }
+  .end-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background .12s;
+    user-select: none;
+    margin-bottom: 4px;
+    border: 1.5px solid transparent;
+  }
+  .end-item:hover { background: rgba(0,0,0,.04); }
+  .end-item.done { background: var(--green); border-color: var(--green); }
+  .end-item.done .cb-box { background: white; border-color: white; color: var(--green); }
+  .end-item.done .check-label { text-decoration: line-through; color: white; }
+
+  .step-note { font-size: .82rem; color: var(--text-muted); font-style: italic; }
+
+  /* ── Print ── */
+  @page { size: letter portrait; margin: 0.55in; }
+  @media print {
+    .progress-bar-wrap { display: none !important; }
+    /* Do NOT put break-inside:avoid on large containers (.section, .end-section,
+       .parking, .focus-bar) — they are too tall to fit on one page and Chrome
+       just creates blank gaps trying to honor it, inflating the page count.
+       Individual content elements (below) carry the avoid rules instead. */
+    .section, .focus-bar, .end-section, .parking { box-shadow: none !important; }
+    /* Page break between parking lot and Key Words (single .print-break div) */
+    .print-break {
+      display: block !important;
+      height: 0;
+      break-after: page !important;
+      page-break-after: always !important;
+    }
+    /* End of Lesson gets its own page */
+    .end-section {
+      break-before: page !important;
+      page-break-before: always !important;
+    }
+    * { box-shadow: none !important; }
+    .check-item { background: #f8f8f8 !important; border-color: #ddd !important; }
+    body { background: white !important; }
+    /* Code blocks: white bg + black text — no dark theme on paper */
+    .code-wrap code,
+    .anatomy code {
+      background: #ffffff !important;
+      color: #000000 !important;
+      border: 1px solid #ccc !important;
+    }
+    .code-wrap code .kw,  .code-wrap code .fn,  .code-wrap code .num,
+    .code-wrap code .str, .code-wrap code .cmt, .code-wrap code .tp,
+    .anatomy code .kw,    .anatomy code .fn,    .anatomy code .num,
+    .anatomy code .str,   .anatomy code .cmt,   .anatomy code .tp {
+      color: #000000 !important;
+      font-style: normal;
+    }
+    /* Keep the team red label bar in print */
+    .code-label { background: #CC0F11 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    /* Hide placeholder hint text — blank lines only on paper */
+    ::placeholder { color: transparent !important; }
+    ::-webkit-input-placeholder { color: transparent !important; }
+    /* Prevent individual elements from splitting across page breaks */
+    .check-item, .vocab-card, .write-in, .plain-eng,
+    .info-box, .scenario, .anatomy, .code-wrap,
+    .end-item { break-inside: avoid; page-break-inside: avoid; }
+    p, li { orphans: 3; widows: 3; }
+    /* Vocab grid: row wrappers become flex rows in print — Chrome respects
+       break-inside:avoid on flex containers far more reliably than on grid items */
+    .vocab-grid { display: block !important; }
+    .vocab-row {
+      display: flex !important;
+      gap: 16px;
+      break-inside: avoid;
+      page-break-inside: avoid;
+      margin-bottom: 10px;
+    }
+    .vocab-card {
+      flex: 1;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div>
+      <h1>Lesson 2 — Methods &amp; Functions</h1>
+      <div class="header-sub">🏎️🔥 RamRodz Robotics · Team 6366 · Programming Worksheet</div>
+    </div>
+    <div class="header-badge">🏎️🔥</div>
+  </div>
+
+  <!-- NAME / DATE -->
+  <div class="name-line">
+    <div class="name-field">
+      <label>NAME:</label>
+      <input type="text" placeholder="Your name here">
+    </div>
+    <div class="name-field">
+      <label>DATE:</label>
+      <input type="text" placeholder="Today's date">
+    </div>
+  </div>
+
+  <!-- TEAM BANNER -->
+  <div class="team-banner">
+    🏎️🔥 RAM RODZ ROBOTICS | TEAM #6366 | HILLCREST &amp; WOODMONT HIGH SCHOOLS · SIMPSONVILLE, SC
+  </div>
+
+  <!-- PROGRESS BAR -->
+  <div class="progress-bar-wrap">
+    <div class="progress-label" id="progress-label">⬤ Your Progress — 0 of 6 sections complete</div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <!-- FOCUS CHECK-IN -->
+  <div class="focus-bar">
+    <div class="focus-label">🎯 Focus Check-In:</div>
+    <div class="focus-pills">
+      <div class="focus-pill" onclick="selectFocus(this)">😵 Struggling</div>
+      <div class="focus-pill" onclick="selectFocus(this)">😐 Okay</div>
+      <div class="focus-pill" onclick="selectFocus(this)">😤 Ready</div>
+    </div>
+  </div>
+
+  <!-- BIG QUESTION -->
+  <div class="big-question">
+    <div class="bq-tag">🤔 Today's Big Question</div>
+    <p>The robot has to aim, spin up the shooter, fire, and stop — all in the right order, every match. How do you write that sequence once and reuse it anywhere without copying the same 10 lines of code everywhere?</p>
+  </div>
+
+  <!-- PARKING LOT -->
+  <div class="parking">
+    <div class="parking-title">🅿️ Parking Lot — Random Thoughts</div>
+    <div class="parking-sub">Had a random thought? Question pop into your head? Park it here — we'll come back to it.</div>
+    <input type="text" class="park-line" placeholder="1.">
+    <input type="text" class="park-line" placeholder="2.">
+    <input type="text" class="park-line" placeholder="3.">
+    <input type="text" class="park-line" placeholder="4.">
+    <input type="text" class="park-line" placeholder="5.">
+    <input type="text" class="park-line" placeholder="6.">
+    <input type="text" class="park-line" placeholder="7.">
+  </div>
+
+  <!-- Print-only page break before Section 1 -->
+  <div class="print-break"></div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 1 — KEY WORDS
+       ═══════════════════════════════════════════════════════ -->
+  <div class="section" id="sec1">
+    <div class="section-header">
+      <div class="step-num">1</div>
+      <h2>Key Words — Check Off When Explained</h2>
+      <span class="section-check" id="sec1-check">⬜</span>
+    </div>
+    <div class="section-body">
+      <div class="step-note">Click each card when the instructor explains that term. All 6 checked = section done ✅</div>
+      <div class="vocab-grid" id="vocab-grid">
+        <div class="vocab-row">
+          <div class="vocab-card" onclick="toggleVocab(this)">
+            <div class="vocab-term">Method</div>
+            <div class="vocab-def">A named block of code that performs one specific task — write it once, run it anywhere by calling its name.</div>
+          </div>
+          <div class="vocab-card" onclick="toggleVocab(this)">
+            <div class="vocab-term">Parameter</div>
+            <div class="vocab-def">A variable in the method's ( ) that receives a value when the method is called — a placeholder for input.</div>
+          </div>
+        </div>
+        <div class="vocab-row">
+          <div class="vocab-card" onclick="toggleVocab(this)">
+            <div class="vocab-term">Argument</div>
+            <div class="vocab-def">The actual value passed when calling a method. In setSpeed(0.8), the argument is 0.8.</div>
+          </div>
+          <div class="vocab-card" onclick="toggleVocab(this)">
+            <div class="vocab-term">void</div>
+            <div class="vocab-def">The return type that means "this method does a job but doesn't send anything back."</div>
+          </div>
+        </div>
+        <div class="vocab-row">
+          <div class="vocab-card" onclick="toggleVocab(this)">
+            <div class="vocab-term">return</div>
+            <div class="vocab-def">The keyword that sends a value back to whatever code called the method — ends the method immediately.</div>
+          </div>
+          <div class="vocab-card" onclick="toggleVocab(this)">
+            <div class="vocab-term">Call / Invoke</div>
+            <div class="vocab-def">To run a method by writing its name followed by ( ) — like pressing a labeled button that triggers a sub-routine.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 2 — WHAT IS A METHOD?
+       ═══════════════════════════════════════════════════════ -->
+  <div class="section" id="sec2">
+    <div class="section-header">
+      <div class="step-num">2</div>
+      <h2>What Is a Method?</h2>
+      <span class="section-check" id="sec2-check">⬜</span>
+    </div>
+    <div class="section-body">
+
+      <div class="info-box">
+        💡 A method is like a labeled sub-routine on the robot. You give a block of steps a name, and then anywhere you need those steps you just use the name — one short line instead of repeating all the code.
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec2')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen: Instructor explains why copy-pasting code ten times causes problems</span>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">Java — Basic Method (no parameters, returns nothing)</div>
+        <code><span class="cmt">// Define the method — write this once, anywhere in your robot file</span>
+<span class="kw">void</span> <span class="fn">fireShooter</span>() {
+    shooterSpeed = <span class="num">1.0</span>;    <span class="cmt">// set shooter to 100% power</span>
+    isRunning     = <span class="kw">true</span>;   <span class="cmt">// mark it as active</span>
+}</code>
+      </div>
+
+      <div class="plain-eng">💬 Plain English: <strong>void</strong> means "nothing comes back out." The name <strong>fireShooter</strong> is what you'll type to run it. The curly braces { } hold every step the method performs.</div>
+
+      <div class="anatomy">
+        <div class="anatomy-title">🔍 Anatomy of a Method</div>
+        <code><span class="kw">void</span>   <span class="fn">fireShooter</span>   <span class="num">()</span>   <span class="str">{ ... }</span></code>
+        <div class="anatomy-labels">
+          <div class="anat-label">
+            <div class="anat-dot" style="background:#C792EA"></div>
+            <span><strong style="color:#C792EA">void</strong> — return type (nothing returned)</span>
+          </div>
+          <div class="anat-label">
+            <div class="anat-dot" style="background:#82AAFF"></div>
+            <span><strong style="color:#82AAFF">fireShooter</strong> — the method's name</span>
+          </div>
+          <div class="anat-label">
+            <div class="anat-dot" style="background:#F78C6C"></div>
+            <span><strong style="color:#F78C6C">( )</strong> — parameters go here (empty = none)</span>
+          </div>
+          <div class="anat-label">
+            <div class="anat-dot" style="background:#C3E88D"></div>
+            <span><strong style="color:#C3E88D">{ }</strong> — the body — your steps go here</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec2')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Observe: I can point to the 4 parts of the method above — return type, name, params, body</span>
+      </div>
+
+      <div class="write-in">
+        <div class="wi-label">✏️ Quick Question — Fill In</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="The keyword meaning 'this method returns nothing' is: ___">
+          <input type="text" class="wi-line" placeholder="The method's steps (its body) are wrapped inside: ___">
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec2')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Done: I filled in both answers above</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 3 — CALLING A METHOD
+       ═══════════════════════════════════════════════════════ -->
+  <div class="section" id="sec3">
+    <div class="section-header">
+      <div class="step-num">3</div>
+      <h2>Calling a Method — Making It Run</h2>
+      <span class="section-check" id="sec3-check">⬜</span>
+    </div>
+    <div class="section-body">
+
+      <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec3')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen: Instructor explains the difference between defining a method and calling it</span>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">Java — Defining vs. Calling</div>
+        <code><span class="cmt">// ① DEFINE — write it once</span>
+<span class="kw">void</span> <span class="fn">fireShooter</span>() {
+    shooterSpeed = <span class="num">1.0</span>;
+    isRunning     = <span class="kw">true</span>;
+}
+
+<span class="cmt">// ② CALL — use it whenever you need it</span>
+<span class="kw">if</span> (buttonPressed) {
+    <span class="fn">fireShooter</span>();   <span class="cmt">// runs every line inside the method</span>
+}</code>
+      </div>
+
+      <div class="plain-eng">💬 Plain English: Defining a method is like writing a recipe. Calling it is like actually cooking the meal. You write the recipe once — cook it as many times as you want.</div>
+
+      <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec3')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Observe: I see that fireShooter() in the if-block runs all the code inside the method definition</span>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">Java — Same Method Called in Two Different Places</div>
+        <code><span class="cmt">// In teleop (driver control)</span>
+<span class="kw">if</span> (buttonPressed) {
+    <span class="fn">fireShooter</span>();   <span class="cmt">// same method — no copy-paste needed</span>
+}
+
+<span class="cmt">// In auto (no driver)</span>
+<span class="kw">if</span> (autoMode) {
+    <span class="fn">fireShooter</span>();   <span class="cmt">// called again from a completely different spot</span>
+}</code>
+      </div>
+
+      <div class="plain-eng">💬 Plain English: One definition, used in two places. If you ever need to change how the shooter fires, you update <strong>one method</strong> and it's fixed everywhere automatically.</div>
+
+      <div class="write-in">
+        <div class="wi-label">✏️ Try It — Write the Call</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="How would you call a method named stopDrive? Write the call: ___">
+          <input type="text" class="wi-line" placeholder="If you need to use that method in 5 places, how many definitions do you write? ___">
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec3')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Done: I wrote the method call above</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 4 — PARAMETERS
+       ═══════════════════════════════════════════════════════ -->
+  <div class="section" id="sec4">
+    <div class="section-header">
+      <div class="step-num">4</div>
+      <h2>Parameters — Giving a Method Information</h2>
+      <span class="section-check" id="sec4-check">⬜</span>
+    </div>
+    <div class="section-body">
+
+      <div class="info-box">
+        💡 A method with no parameters always does the exact same thing. What if you want to set the drive speed to <em>any</em> value? Add a <strong>parameter</strong> — a slot the caller fills in with a specific value each time.
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec4')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen: Instructor explains parameters vs. arguments and why they're different words</span>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">Java — Method with One Parameter</div>
+        <code><span class="cmt">// Parameter: "double speed" — expects a decimal number, calls it 'speed'</span>
+<span class="kw">void</span> <span class="fn">setDriveSpeed</span>(<span class="tp">double</span> speed) {
+    driveSpeed = speed;   <span class="cmt">// use whatever was passed in</span>
+}
+
+<span class="cmt">// Call it with different arguments each time</span>
+<span class="fn">setDriveSpeed</span>(<span class="num">0.8</span>);   <span class="cmt">// 80% power — speed becomes 0.8 inside</span>
+<span class="fn">setDriveSpeed</span>(<span class="num">0.5</span>);   <span class="cmt">// 50% power — speed becomes 0.5 inside</span>
+<span class="fn">setDriveSpeed</span>(<span class="num">0.0</span>);   <span class="cmt">// stop   — speed becomes 0.0 inside</span></code>
+      </div>
+
+      <div class="plain-eng">💬 Plain English: <strong>double speed</strong> is the <em>parameter</em> — a labeled slot waiting to be filled. The <strong>0.8</strong> in <code style="font-family:'DM Mono',monospace;font-size:.85em;background:transparent;padding:0;color:var(--amber)">setDriveSpeed(0.8)</code> is the <em>argument</em> — the actual value dropped into that slot for that call.</div>
+
+      <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec4')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Observe: I can trace how the argument 0.8 travels into the parameter "speed" and becomes driveSpeed</span>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">Java — Method with Two Parameters</div>
+        <code><span class="cmt">// Two parameters — left and right sides of a tank drive</span>
+<span class="kw">void</span> <span class="fn">setTankDrive</span>(<span class="tp">double</span> leftSpeed, <span class="tp">double</span> rightSpeed) {
+    driveLeft  = leftSpeed;    <span class="cmt">// left wheels</span>
+    driveRight = rightSpeed;   <span class="cmt">// right wheels</span>
+}
+
+<span class="cmt">// Spin left: left backward, right forward</span>
+<span class="fn">setTankDrive</span>(-<span class="num">0.5</span>, <span class="num">0.5</span>);
+
+<span class="cmt">// Drive straight forward at full speed</span>
+<span class="fn">setTankDrive</span>(<span class="num">1.0</span>, <span class="num">1.0</span>);</code>
+      </div>
+
+      <div class="plain-eng">💬 Plain English: Separate multiple parameters with commas — same in the definition and in the call. Order matters: first argument → first parameter, second argument → second parameter.</div>
+
+      <div class="write-in">
+        <div class="wi-label">✏️ Try It — Parameters</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="In setDriveSpeed(0.8), what is the parameter NAME? ___">
+          <input type="text" class="wi-line" placeholder="In setDriveSpeed(0.8), what is the ARGUMENT (the actual value passed in)? ___">
+          <input type="text" class="wi-line" placeholder="Write a call to setTankDrive that reverses both sides at half speed: ___">
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec4')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Done: I answered all three parameter questions above</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 5 — RETURN VALUES
+       ═══════════════════════════════════════════════════════ -->
+  <div class="section" id="sec5">
+    <div class="section-header">
+      <div class="step-num">5</div>
+      <h2>Return Values — Getting Information Back</h2>
+      <span class="section-check" id="sec5-check">⬜</span>
+    </div>
+    <div class="section-body">
+
+      <div class="info-box">
+        💡 Sometimes you don't want a method to <em>do</em> something — you want it to <em>check</em> something and hand back an answer. Replace <strong>void</strong> with the type you're sending back, and use <strong>return</strong> to send it.
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec5')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen: Instructor explains when you'd use a return value instead of void</span>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">Java — Method That Returns a boolean</div>
+        <code><span class="cmt">// Ask: is the robot going fast? Returns true or false</span>
+<span class="tp">boolean</span> <span class="fn">isAtFullSpeed</span>() {
+    <span class="kw">return</span> driveSpeed > <span class="num">0.9</span>;   <span class="cmt">// true if above 90%, false otherwise</span>
+}
+
+<span class="cmt">// Use the answer directly in an if-statement</span>
+<span class="kw">if</span> (<span class="fn">isAtFullSpeed</span>()) {
+    warningLight = <span class="kw">true</span>;   <span class="cmt">// turn on warning light at full speed</span>
+}</code>
+      </div>
+
+      <div class="plain-eng">💬 Plain English: Swap <strong>void</strong> for <strong>boolean</strong> to say "this method answers yes or no." The <strong>return</strong> line is where the answer gets sent back — and the method stops right there.</div>
+
+      <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec5')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Observe: I see that the return type (boolean) must match what's after the return keyword</span>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">Java — Method That Returns a double (with safety check)</div>
+        <code><span class="cmt">// Clamp the throttle so it never exceeds 1.0</span>
+<span class="tp">double</span> <span class="fn">getSafeSpeed</span>(<span class="tp">double</span> rawThrottle) {
+    <span class="kw">if</span> (rawThrottle > <span class="num">1.0</span>) {
+        <span class="kw">return</span> <span class="num">1.0</span>;       <span class="cmt">// cap at max — exit the method here</span>
+    }
+    <span class="kw">return</span> rawThrottle;   <span class="cmt">// normal case — pass the value through</span>
+}
+
+<span class="cmt">// Store the safe value in driveSpeed</span>
+driveSpeed = <span class="fn">getSafeSpeed</span>(throttle);</code>
+      </div>
+
+      <div class="plain-eng">💬 Plain English: You can have more than one <strong>return</strong> — the method exits at the first one it reaches. Check the dangerous case first and return early; let the normal case fall through to the end.</div>
+
+      <div class="write-in">
+        <div class="wi-label">✏️ Quick Question — Return Values</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="If a method returns a whole number like 5, its return type should be: ___">
+          <input type="text" class="wi-line" placeholder="What keyword sends a value back from a method? ___">
+          <input type="text" class="wi-line" placeholder="What return type means 'this method gives nothing back'? ___">
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec5')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Done: I answered all three return-value questions above</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 6 — ROBOT SCENARIO
+       ═══════════════════════════════════════════════════════ -->
+  <div class="section sc-section" id="sec6">
+    <div class="section-header">
+      <div class="sc-badge">🎯</div>
+      <h2>Robot Scenario — Put It All Together</h2>
+      <span class="section-check" id="sec6-check">⬜</span>
+    </div>
+    <div class="section-body">
+
+      <div class="scenario">
+        <div class="sc-title">🤖 Autonomous Shooting Routine</div>
+        <p>During autonomous, your robot needs to check if the turret is aimed before firing. Your job is to write two methods and wire them together:</p>
+        <ul>
+          <li><strong>isAimed()</strong> — returns <code style="font-family:'DM Mono',monospace;font-size:.85em">true</code> if <code style="font-family:'DM Mono',monospace;font-size:.85em">turretAngle</code> is between 43 and 47 degrees</li>
+          <li><strong>fireShooter()</strong> — sets <code style="font-family:'DM Mono',monospace;font-size:.85em">shooterSpeed</code> to <code style="font-family:'DM Mono',monospace;font-size:.85em">1.0</code> and <code style="font-family:'DM Mono',monospace;font-size:.85em">isRunning</code> to <code style="font-family:'DM Mono',monospace;font-size:.85em">true</code></li>
+          <li>An <strong>if-statement</strong> that calls isAimed() and, if true, calls fireShooter()</li>
+        </ul>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec6')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen: Instructor walks through the scenario before writing anything</span>
+      </div>
+
+      <div class="write-in">
+        <div class="wi-label">✏️ Step 1 — Write the isAimed() method</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="Return type (true/false answer): ___">
+          <input type="text" class="wi-line" placeholder="Method signature: ___ isAimed() {">
+          <input type="text" class="wi-line" placeholder="    return turretAngle ___ 43  &&  turretAngle ___ 47;">
+          <input type="text" class="wi-line" placeholder="}">
+        </div>
+      </div>
+
+      <div class="write-in">
+        <div class="wi-label">✏️ Step 2 — Write the fireShooter() method</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="Return type (nothing returned): ___">
+          <input type="text" class="wi-line" placeholder="Method signature: ___ fireShooter() {">
+          <input type="text" class="wi-line" placeholder="    shooterSpeed = ___;">
+          <input type="text" class="wi-line" placeholder="    isRunning = ___;">
+          <input type="text" class="wi-line" placeholder="}">
+        </div>
+      </div>
+
+      <div class="write-in">
+        <div class="wi-label">✏️ Step 3 — Wire them together with an if-statement</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="if ( ___() ) {">
+          <input type="text" class="wi-line" placeholder="    ___();">
+          <input type="text" class="wi-line" placeholder="}">
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec6')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Done: I completed all 3 steps of the robot scenario</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       END CHECKLIST
+       ═══════════════════════════════════════════════════════ -->
+  <div class="end-section">
+    <div class="end-title">✅ End of Lesson — I Can...</div>
+    <div class="end-item" onclick="toggleEnd(this)">
+      <div class="cb-box">✓</div>
+      <span class="check-label">Explain what a method is in plain English — without using the word "method"</span>
+    </div>
+    <div class="end-item" onclick="toggleEnd(this)">
+      <div class="cb-box">✓</div>
+      <span class="check-label">Write a void method with no parameters that sets a robot variable</span>
+    </div>
+    <div class="end-item" onclick="toggleEnd(this)">
+      <div class="cb-box">✓</div>
+      <span class="check-label">Write a method that accepts a parameter and uses it inside the body</span>
+    </div>
+    <div class="end-item" onclick="toggleEnd(this)">
+      <div class="cb-box">✓</div>
+      <span class="check-label">Write a method that returns a boolean or double value using the return keyword</span>
+    </div>
+    <div class="end-item" onclick="toggleEnd(this)">
+      <div class="cb-box">✓</div>
+      <span class="check-label">Call a method inside an if-statement in my robot code</span>
+    </div>
+  </div>
+
+</div><!-- .page -->
+
+<script>
+  const TOTAL_SECTIONS = 6;
+
+  function selectFocus(el) {
+    document.querySelectorAll('.focus-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function toggleSection(id) { /* sections stay open */ }
+
+  function markSectionDone(id) {
+    const sec = document.getElementById(id);
+    if (!sec) return;
+    const items = sec.querySelectorAll('.check-item');
+    const allDone = items.length > 0 && [...items].every(i => i.classList.contains('done'));
+    const ck = document.getElementById(id + '-check');
+    if (ck) ck.textContent = allDone ? '✅' : '⬜';
+    updateProgress();
+  }
+
+  function toggleCheck(el) {
+    el.classList.toggle('done');
+  }
+
+  function toggleVocab(el) {
+    el.classList.toggle('checked');
+    checkVocabDone();
+  }
+
+  function checkVocabDone() {
+    const cards = document.querySelectorAll('#vocab-grid .vocab-card');
+    const allChecked = [...cards].every(c => c.classList.contains('checked'));
+    const ck = document.getElementById('sec1-check');
+    if (ck) ck.textContent = allChecked ? '✅' : '⬜';
+    updateProgress();
+  }
+
+  function toggleEnd(el) {
+    el.classList.toggle('done');
+  }
+
+  function updateProgress() {
+    const checks = document.querySelectorAll('[id$="-check"]');
+    const done = [...checks].filter(c => c.textContent === '✅').length;
+    const pct = Math.round((done / TOTAL_SECTIONS) * 100);
+    const fill = document.getElementById('progress-fill');
+    const label = document.getElementById('progress-label');
+    if (fill)  fill.style.width = pct + '%';
+    if (label) label.textContent = `⬤ Your Progress — ${done} of ${TOTAL_SECTIONS} sections complete`;
+  }
+</script>
+</body>
+</html>

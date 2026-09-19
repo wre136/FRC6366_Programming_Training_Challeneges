@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Variables &amp; Primitive Data Types</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏎️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ── Color tokens ── */
+  :root {
+    --bg: #ffffff;
+    --bg-alt: #FDF2F2;
+    --text: #1C1314;
+    --text-muted: #6B4A4B;
+    --blue: #CC0F11;
+    --blue-light: #FEE2E2;
+    --amber: #D97706;
+    --amber-light: #FEF3C7;
+    --green: #059669;
+    --green-light: #D1FAE5;
+    --red: #9B0C0E;
+    --border: #F0CECE;
+    --code-bg: #1C1314;
+    --code-text: #F1E8E8;
+    --shadow-sm: 0 1px 4px rgba(204,15,17,0.07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #160A0A; --bg-alt: #241010; --text: #F9ECEC; --text-muted: #C49A9B;
+      --blue: #F25254; --blue-light: #3D1010; --amber: #FCD34D; --amber-light: #3D2E0A;
+      --green: #34D399; --green-light: #064E3B; --red: #F87171; --border: #3D1818;
+      --code-bg: #0D0606; --code-text: #F1E8E8; --shadow-sm: 0 1px 4px rgba(0,0,0,0.3);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #160A0A; --bg-alt: #241010; --text: #F9ECEC; --text-muted: #C49A9B;
+    --blue: #F25254; --blue-light: #3D1010; --amber: #FCD34D; --amber-light: #3D2E0A;
+    --green: #34D399; --green-light: #064E3B; --red: #F87171; --border: #3D1818;
+    --code-bg: #0D0606; --code-text: #F1E8E8; --shadow-sm: 0 1px 4px rgba(0,0,0,0.3);
+  }
+
+  /* ── Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    padding-inline: 24px;
+    padding-block: 28px;
+  }
+  .page-wrap { max-width: 780px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+
+  /* ── Header ── */
+  .page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+  .page-header h1 {
+    font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.9rem;
+    color: var(--blue); line-height: 1.15; flex: 1;
+  }
+  .page-header .subtitle {
+    font-family: 'Outfit', sans-serif; font-size: 0.82rem; font-weight: 600;
+    color: var(--text-muted); margin-top: 4px; letter-spacing: 0.02em;
+  }
+  .badge { font-size: 2rem; flex-shrink: 0; }
+
+  /* ── Name / Date ── */
+  .name-line {
+    display: flex; gap: 24px; align-items: flex-end;
+    font-family: 'Outfit', sans-serif; font-size: 0.88rem; font-weight: 600;
+    color: var(--text-muted);
+  }
+  .name-line label { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .name-line input {
+    border: none; border-bottom: 2px solid var(--border); background: transparent;
+    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 1rem;
+    padding: 4px 2px; outline: none; width: 100%;
+  }
+  .name-line input:focus { border-bottom-color: var(--blue); }
+
+  /* ── Banner ── */
+  .team-banner {
+    background: #CC0F11; color: white; text-align: center;
+    font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.82rem;
+    letter-spacing: 0.05em; padding: 10px 16px; border-radius: 8px;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+
+  /* ── Progress bar ── */
+  .progress-bar-wrap {
+    background: var(--bg-alt); border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 12px 16px; box-shadow: var(--shadow-sm);
+  }
+  .progress-label {
+    font-family: 'Outfit', sans-serif; font-size: 0.8rem; font-weight: 700;
+    color: var(--text-muted); margin-bottom: 8px; display: flex; justify-content: space-between;
+  }
+  .progress-track { background: var(--border); border-radius: 99px; height: 12px; overflow: hidden; }
+  .progress-fill {
+    height: 100%; width: 0%; border-radius: 99px;
+    background: linear-gradient(90deg, #CC0F11, #059669);
+    transition: width 0.4s ease;
+  }
+
+  /* ── Focus bar ── */
+  .focus-bar {
+    background: var(--amber-light); border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 12px 16px; box-shadow: var(--shadow-sm);
+  }
+  .focus-bar-label {
+    font-family: 'Outfit', sans-serif; font-size: 0.8rem; font-weight: 700;
+    color: var(--amber); margin-bottom: 8px;
+  }
+  .focus-pills { display: flex; gap: 10px; flex-wrap: wrap; }
+  .focus-pill {
+    background: white; border: 1.5px solid var(--border); border-radius: 99px;
+    padding: 6px 14px; font-family: 'Outfit', sans-serif; font-size: 0.85rem;
+    font-weight: 600; cursor: pointer; transition: all 0.15s;
+  }
+  .focus-pill.active { background: var(--amber); color: white; border-color: var(--amber); }
+
+  /* ── Big question ── */
+  .big-q {
+    border-left: 5px solid var(--blue); background: var(--blue-light);
+    border-radius: 0 10px 10px 0; padding: 14px 18px;
+  }
+  .big-q .bq-tag {
+    font-family: 'Outfit', sans-serif; font-size: 0.75rem; font-weight: 700;
+    color: var(--blue); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px;
+  }
+  .big-q p { font-size: 1.05rem; font-weight: 500; color: var(--text); }
+
+  /* ── Parking lot ── */
+  .parking {
+    border: 2px dashed var(--border); border-radius: 10px;
+    padding: 14px 16px; box-shadow: var(--shadow-sm);
+  }
+  .parking h3 {
+    font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 700;
+    color: var(--text-muted); margin-bottom: 6px;
+  }
+  .parking-lines { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+
+  /* ── Sections ── */
+  .section {
+    border: 1.5px solid var(--border); border-radius: 10px;
+    box-shadow: var(--shadow-sm); overflow: hidden;
+  }
+  .section-header {
+    display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+    background: var(--bg-alt); cursor: pointer; user-select: none;
+  }
+  .section-header:hover { background: var(--blue-light); }
+  .step-num {
+    background: var(--blue); color: white; width: 30px; height: 30px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 0.9rem; flex-shrink: 0;
+  }
+  .section-header h2 { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; flex: 1; }
+  .section-check { font-size: 1.2rem; }
+  .section-body { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .section-body.collapsed { display: none; }
+
+  /* ── Vocab grid ── */
+  .vocab-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .vocab-row { display: contents; }
+  .print-break { display: none; }
+  .vocab-card {
+    background: var(--bg-alt); border: 1.5px solid var(--border);
+    border-radius: 8px; padding: 10px 14px; cursor: pointer; transition: all 0.15s;
+  }
+  .vocab-card:hover { border-color: var(--blue); }
+  .vocab-card.checked { background: var(--green-light); border-color: var(--green); }
+  .vocab-term { font-family: 'Outfit', sans-serif; font-weight: 700; color: var(--blue); font-size: 0.95rem; margin-bottom: 3px; }
+  .vocab-def { font-size: 0.82rem; color: var(--text-muted); }
+
+  /* ── Check items ── */
+  .check-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: var(--bg-alt); border: 1.5px solid var(--border);
+    border-radius: 8px; padding: 10px 14px; cursor: pointer; transition: all 0.15s;
+  }
+  .check-item:hover { border-color: var(--blue); }
+  .check-item.done { background: var(--green-light); border-color: var(--green); }
+  .cb-box {
+    width: 22px; height: 22px; border: 2px solid var(--border); border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; color: transparent; flex-shrink: 0; margin-top: 1px; transition: all 0.15s;
+  }
+  .check-item.done .cb-box { background: var(--green); border-color: var(--green); color: white; }
+  .check-label { font-size: 0.92rem; }
+
+  /* ── Code blocks ── */
+  .code-wrap { border-radius: 8px; overflow: hidden; border: 1.5px solid var(--border); }
+  .code-label {
+    background: var(--blue); color: white;
+    font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.75rem;
+    letter-spacing: 0.05em; padding: 5px 14px;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .code-wrap code {
+    display: block; background: var(--code-bg); color: var(--code-text);
+    font-family: 'DM Mono', monospace; font-size: 0.85rem;
+    line-height: 1.65; padding: 14px 16px; white-space: pre; overflow-x: auto;
+  }
+  .kw  { color: #C792EA; }
+  .fn  { color: #82AAFF; }
+  .num { color: #F78C6C; }
+  .str { color: #C3E88D; }
+  .cmt { color: #546E7A; font-style: italic; }
+  .tp  { color: #FFCB6B; }
+
+  /* ── Anatomy ── */
+  .anatomy { border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .anatomy-label {
+    background: var(--bg-alt);
+    font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.78rem;
+    color: var(--text-muted); padding: 5px 14px; letter-spacing: 0.03em;
+  }
+  .anatomy code {
+    display: block; background: var(--code-bg); color: var(--code-text);
+    font-family: 'DM Mono', monospace; font-size: 0.85rem;
+    line-height: 1.65; padding: 14px 16px; white-space: pre; overflow-x: auto;
+  }
+
+  /* ── Plain English ── */
+  .plain-eng {
+    background: var(--amber-light); border-left: 4px solid var(--amber);
+    border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 0.9rem; color: var(--text);
+  }
+  .plain-eng strong { color: var(--amber); }
+
+  /* ── Info box ── */
+  .info-box {
+    background: var(--blue-light); border: 1.5px solid var(--border);
+    border-radius: 8px; padding: 12px 14px; font-size: 0.9rem;
+  }
+  .info-box strong { color: var(--blue); }
+  .info-box code { font-family: 'DM Mono', monospace; font-size: 0.85rem; }
+
+  /* ── Write-in ── */
+  .write-in { border: 1.5px dashed var(--border); border-radius: 8px; padding: 12px 14px; }
+  .wi-label {
+    font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.82rem;
+    color: var(--blue); margin-bottom: 8px;
+  }
+  .wi-lines { display: flex; flex-direction: column; gap: 6px; }
+  .wi-line {
+    border: none; border-bottom: 1.5px solid var(--border); background: transparent;
+    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+    padding: 4px 2px; outline: none; width: 100%;
+  }
+  .wi-line:focus { border-bottom-color: var(--blue); }
+
+  /* ── Reference table ── */
+  .op-table-wrap { overflow-x: auto; border-radius: 8px; border: 1.5px solid var(--border); }
+  .op-table-wrap table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  .op-table-wrap th {
+    background: var(--blue); color: white; font-family: 'Outfit', sans-serif;
+    font-weight: 700; padding: 8px 12px; text-align: left;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .op-table-wrap td {
+    padding: 8px 12px; border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .op-table-wrap tr:last-child td { border-bottom: none; }
+  .op-table-wrap tr:nth-child(even) td { background: var(--bg-alt); }
+  .op-table-wrap code { font-family: 'DM Mono', monospace; font-size: 0.83rem; }
+  .type-badge {
+    display: inline-block; background: var(--blue); color: white;
+    font-family: 'DM Mono', monospace; font-size: 0.78rem; font-weight: 500;
+    padding: 2px 8px; border-radius: 4px;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+
+  /* ── Scenario ── */
+  .scenario {
+    background: var(--blue-light); border: 1.5px solid var(--border);
+    border-left: 5px solid var(--blue); border-radius: 0 8px 8px 0; padding: 14px 16px;
+  }
+  .sc-title {
+    font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 0.9rem;
+    color: var(--blue); margin-bottom: 6px;
+  }
+  .scenario ul { padding-left: 18px; margin-top: 6px; }
+  .scenario li { margin-bottom: 4px; font-size: 0.9rem; }
+
+  /* ── Scenario section wrapper ── */
+  .scenario-section {
+    border: 1.5px solid var(--blue); border-radius: 10px; overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .scenario-section-header {
+    background: var(--blue); color: white; padding: 12px 16px;
+    font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem;
+    display: flex; justify-content: space-between; align-items: center;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .scenario-section-body { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+  /* ── End of lesson ── */
+  .end-section {
+    background: var(--green-light); border: 1.5px solid var(--green);
+    border-radius: 10px; padding: 18px; box-shadow: var(--shadow-sm);
+  }
+  .end-title {
+    font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem;
+    color: var(--green); margin-bottom: 12px;
+  }
+  .end-items { display: flex; flex-direction: column; gap: 8px; }
+  .end-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: white; border: 1.5px solid var(--green);
+    border-radius: 8px; padding: 10px 14px; cursor: pointer; transition: all 0.15s;
+  }
+  .end-item:hover { background: var(--green-light); }
+  .end-item.done { background: var(--green); }
+  .end-item.done .end-label { color: white; text-decoration: line-through; }
+  .end-box {
+    width: 22px; height: 22px; border: 2px solid var(--green); border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; color: transparent; flex-shrink: 0; transition: all 0.15s;
+  }
+  .end-item.done .end-box { background: white; color: var(--green); }
+  .end-label { font-size: 0.92rem; color: var(--text); }
+
+  /* ── Print styles ── */
+  @page { size: letter portrait; margin: 0.55in; }
+  @media print {
+    .progress-bar-wrap { display: none !important; }
+    * { box-shadow: none !important; }
+    body { background: white !important; }
+    .code-wrap code, .anatomy code {
+      background: #ffffff !important; color: #000000 !important; border: 1px solid #ccc !important;
+    }
+    .code-wrap code .kw,  .code-wrap code .fn,  .code-wrap code .num,
+    .code-wrap code .str, .code-wrap code .cmt, .code-wrap code .tp,
+    .anatomy code .kw,    .anatomy code .fn,    .anatomy code .num,
+    .anatomy code .str,   .anatomy code .cmt,   .anatomy code .tp {
+      color: #000000 !important; font-style: normal;
+    }
+    .code-label { background: #CC0F11 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    ::placeholder { color: transparent !important; }
+    ::-webkit-input-placeholder { color: transparent !important; }
+    .check-item, .vocab-card, .write-in, .plain-eng,
+    .info-box, .scenario, .anatomy, .code-wrap,
+    .op-table-wrap, .end-item { break-inside: avoid; page-break-inside: avoid; }
+    p, li { orphans: 3; widows: 3; }
+    .vocab-grid { display: block !important; }
+    .vocab-row {
+      display: flex !important; gap: 16px;
+      break-inside: avoid; page-break-inside: avoid; margin-bottom: 10px;
+    }
+    .vocab-card { flex: 1; break-inside: avoid; page-break-inside: avoid; }
+    .check-item { background: #f8f8f8 !important; border-color: #ddd !important; }
+    .check-item.done { background: #f0fff4 !important; }
+    .focus-bar, .parking { break-inside: avoid; }
+    /* Reference table header: keep red on paper */
+    .op-table-wrap th { background: #CC0F11 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .op-table-wrap tr:nth-child(even) td { background: #f8f8f8 !important; }
+    .type-badge { background: #CC0F11 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    /* Page break: Key Words starts on page 2 */
+    .print-break {
+      display: block !important; height: 0;
+      break-after: page !important; page-break-after: always !important;
+    }
+    /* End of Lesson on its own page */
+    .end-section {
+      break-before: page !important; page-break-before: always !important;
+    }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 480px) {
+    h1 { font-size: 1.3rem; }
+    .vocab-grid { grid-template-columns: 1fr; }
+    .name-line { flex-direction: column; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- ══ Header ══ -->
+  <div class="page-header">
+    <div>
+      <h1>Variables &amp; Primitive Data Types</h1>
+      <div class="subtitle">🏎️🔥 RamRodz Robotics · Team 6366 · Programming Worksheet</div>
+    </div>
+    <div class="badge">🏎️🔥</div>
+  </div>
+
+  <!-- ══ Name / Date ══ -->
+  <div class="name-line">
+    <label>Name <input type="text" placeholder="Your name…"></label>
+    <label>Date <input type="text" placeholder="Today's date…"></label>
+  </div>
+
+  <!-- ══ Team Banner ══ -->
+  <div class="team-banner">
+    🏎️🔥 RAM RODZ ROBOTICS | TEAM #6366 | HILLCREST &amp; WOODMONT HIGH SCHOOLS · SIMPSONVILLE, SC
+  </div>
+
+  <!-- ══ Progress bar ══ -->
+  <div class="progress-bar-wrap">
+    <div class="progress-label">
+      <span>⬤ Your Progress</span>
+      <span id="progress-text">0 / 8 sections</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <!-- ══ Focus Check-In ══ -->
+  <div class="focus-bar">
+    <div class="focus-bar-label">🎯 Focus Check-In — How are you feeling right now?</div>
+    <div class="focus-pills">
+      <div class="focus-pill" onclick="selectFocus(this)">😵 Struggling</div>
+      <div class="focus-pill" onclick="selectFocus(this)">😐 Okay</div>
+      <div class="focus-pill" onclick="selectFocus(this)">😤 Ready</div>
+    </div>
+  </div>
+
+  <!-- ══ Big Question ══ -->
+  <div class="big-q">
+    <div class="bq-tag">🤔 Today's Big Question</div>
+    <p>The robot needs to remember how fast its motors are spinning, whether a button is being held, and how many shots it has fired — all at the same time. How does the code keep track of all of that?</p>
+  </div>
+
+  <!-- ══ Parking Lot ══ -->
+  <div class="parking">
+    <h3>🅿️ Parking Lot — Random Thoughts</h3>
+    <p style="font-size:0.82rem; color:var(--text-muted); margin:0 0 8px;">If your brain jumps to a question or idea, write it here so you don't lose it — ask later!</p>
+    <div class="parking-lines">
+      <input type="text" class="wi-line" placeholder="thought or question...">
+      <input type="text" class="wi-line" placeholder="thought or question...">
+      <input type="text" class="wi-line" placeholder="thought or question...">
+      <input type="text" class="wi-line" placeholder="thought or question...">
+      <input type="text" class="wi-line" placeholder="thought or question...">
+      <input type="text" class="wi-line" placeholder="thought or question...">
+      <input type="text" class="wi-line" placeholder="thought or question...">
+    </div>
+  </div>
+
+  <div class="print-break"></div>
+
+  <!-- ══ Section 1: Vocab ══ -->
+  <div class="section" id="sec1">
+    <div class="section-header" onclick="toggleSection('sec1')">
+      <div class="step-num">1</div>
+      <h2>Key Words — Check Off When Explained</h2>
+      <span class="section-check" id="sec1-check">⬜</span>
+    </div>
+    <div class="section-body" id="sec1-body">
+      <div class="vocab-grid">
+        <div class="vocab-row">
+          <div class="vocab-card" onclick="toggleVocab(this)">
+            <div class="vocab-term">Variable</div>
+            <div class="vocab-def">A named container in memory that holds a value. You can read it, change it, and use it anywhere in your code.</div>
+          </div>
+          <div class="vocab-card" onclick="toggleVocab(this)">
+            <div class="vocab-term">Data Type</div>
+            <div class="vocab-def">Tells Java <em>what kind</em> of value a variable can hold — a whole number, a decimal, true/false, etc.</div>
+          </div>
+        </div>
+        <div class="vocab-row">
+          <div class="vocab-card" onclick="toggleVocab(this)">
+            <div class="vocab-term">int</div>
+            <div class="vocab-def">A whole number with no decimal point. Examples: 0, 5, -3, 1000. Used for counts, port numbers, and indexes.</div>
+          </div>
+          <div class="vocab-card" onclick="toggleVocab(this)">
+            <div class="vocab-term">double</div>
+            <div class="vocab-def">A number that <em>can</em> have a decimal point. Examples: 0.0, 0.75, -1.5. The go-to type for motor speeds and sensor values.</div>
+          </div>
+        </div>
+        <div class="vocab-row">
+          <div class="vocab-card" onclick="toggleVocab(this)">
+            <div class="vocab-term">boolean</div>
+            <div class="vocab-def">Can only be <code>true</code> or <code>false</code> — nothing else. Used for button states, flags, and on/off conditions.</div>
+          </div>
+          <div class="vocab-card" onclick="toggleVocab(this)">
+            <div class="vocab-term">Declare / Assign</div>
+            <div class="vocab-def"><strong>Declare</strong> = create a variable and give it a type. <strong>Assign</strong> = put a value into it using <code>=</code>.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Section 2: What is a Variable? ══ -->
+  <div class="section" id="sec2">
+    <div class="section-header" onclick="toggleSection('sec2')">
+      <div class="step-num">2</div>
+      <h2>What is a Variable?</h2>
+      <span class="section-check" id="sec2-check">⬜</span>
+    </div>
+    <div class="section-body" id="sec2-body">
+      <div class="check-item" onclick="toggleCheck(this); markSectionDone('sec2')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen — A variable is like a labeled box in memory. You give it a name, put a value in it, and you can change that value any time.</span>
+      </div>
+      <div class="anatomy">
+        <div class="anatomy-label">ANATOMY OF A VARIABLE DECLARATION</div>
+        <code><span class="tp">int</span>  driveSpeed  =  <span class="num">5</span>;
+ ↑       ↑       ↑   ↑
+<b>type   name  assign value</b></code>
+      </div>
+      <div class="plain-eng">💬 Plain English: <strong>type</strong> = what kind of value. <strong>name</strong> = what you call it. <strong>=</strong> = "put this in the box." <strong>value</strong> = what goes in. The semicolon <code>;</code> ends the line.</div>
+      <div class="info-box">
+        <strong>Naming rules:</strong>
+        Start with a lowercase letter · No spaces (use camelCase: <code>driveSpeed</code>) · No special characters except <code>_</code> · Make it <em>descriptive</em> — <code>shooterSpeed</code> is better than <code>x</code>.
+      </div>
+      <div class="write-in">
+        <div class="wi-label">✏️ Quick Question — Label each part of this line:</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="double  throttle  =  0.5;  →  type = _____, name = _____, value = _____">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Section 3: int ══ -->
+  <div class="section" id="sec3">
+    <div class="section-header" onclick="toggleSection('sec3')">
+      <div class="step-num">3</div>
+      <h2>int — Whole Numbers</h2>
+      <span class="section-check" id="sec3-check">⬜</span>
+    </div>
+    <div class="section-body" id="sec3-body">
+      <div class="check-item" onclick="toggleCheck(this); markSectionDone('sec3')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen — Use <code>int</code> whenever the value is always a whole number: port numbers, button indexes, shot counters, loop counts.</span>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">Java — int in FRC</div>
+        <code><span class="tp">int</span> motorChannel = <span class="num">0</span>;    <span class="cmt">// left drive motor is on port 0</span>
+<span class="tp">int</span> buttonIndex  = <span class="num">1</span>;    <span class="cmt">// the A button is at index 1</span>
+<span class="tp">int</span> shotsFired    = <span class="num">0</span>;    <span class="cmt">// start the counter at zero</span>
+<span class="tp">int</span> autoStepCount = <span class="num">3</span>;    <span class="cmt">// autonomous has 3 steps</span></code>
+      </div>
+      <div class="plain-eng">💬 Plain English: <strong>ints can't hold decimals.</strong> If you try to store 0.5 in an int, Java cuts off the decimal and keeps only 0. Use <code>double</code> (next section) for anything that needs a fraction.</div>
+      <div class="write-in">
+        <div class="wi-label">✏️ Try It — Write an int variable that stores the number of balls loaded in the robot (start at 0)</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="int _______ = __;   // number of balls loaded">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Section 4: double ══ -->
+  <div class="section" id="sec4">
+    <div class="section-header" onclick="toggleSection('sec4')">
+      <div class="step-num">4</div>
+      <h2>double — Decimal Numbers</h2>
+      <span class="section-check" id="sec4-check">⬜</span>
+    </div>
+    <div class="section-body" id="sec4-body">
+      <div class="check-item" onclick="toggleCheck(this); markSectionDone('sec4')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen — <code>double</code> is the most common type in FRC robot code. Motor speeds, sensor distances, and joystick values all need decimals.</span>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">Java — double in FRC</div>
+        <code><span class="tp">double</span> shooterSpeed   = <span class="num">0.8</span>;  <span class="cmt">// 80% power (motors go 0.0 to 1.0)</span>
+<span class="tp">double</span> driveThrottle  = <span class="num">0.0</span>;  <span class="cmt">// start stopped</span>
+<span class="tp">double</span> distanceInches = <span class="num">24.5</span>; <span class="cmt">// sensor reading: 24.5 inches away</span>
+<span class="tp">double</span> turnRate       = <span class="num">-0.3</span>; <span class="cmt">// negative = turning left</span></code>
+      </div>
+      <div class="plain-eng">💬 Plain English: <strong>Motor speeds in WPILib are always doubles between -1.0 and 1.0.</strong> Full forward = 1.0, full reverse = -1.0, stopped = 0.0. That's why <code>double</code> shows up everywhere in drive code.</div>
+      <div class="write-in">
+        <div class="wi-label">✏️ Try It — Write a double variable for a shooter speed set to 75% power</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="double _______ = ____;   // 75% power">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Section 5: boolean ══ -->
+  <div class="section" id="sec5">
+    <div class="section-header" onclick="toggleSection('sec5')">
+      <div class="step-num">5</div>
+      <h2>boolean — True or False</h2>
+      <span class="section-check" id="sec5-check">⬜</span>
+    </div>
+    <div class="section-body" id="sec5-body">
+      <div class="check-item" onclick="toggleCheck(this); markSectionDone('sec5')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen — A <code>boolean</code> can only ever be <code>true</code> or <code>false</code>. It's perfect for anything that is either on or off, pressed or not pressed, done or not done.</span>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">Java — boolean in FRC</div>
+        <code><span class="tp">boolean</span> buttonPressed = <span class="kw">false</span>; <span class="cmt">// A button is not being held down</span>
+<span class="tp">boolean</span> isShooting   = <span class="kw">false</span>; <span class="cmt">// shooter is currently off</span>
+<span class="tp">boolean</span> autoFinished  = <span class="kw">false</span>; <span class="cmt">// autonomous routine not done yet</span>
+<span class="tp">boolean</span> limitHit      = <span class="kw">true</span>;  <span class="cmt">// limit switch has been triggered</span></code>
+      </div>
+      <div class="plain-eng">💬 Plain English: <strong><code>true</code> and <code>false</code> are written in all lowercase</strong> — Java is case-sensitive. <code>True</code> or <code>TRUE</code> won't work. Boolean variables are often named like a yes/no question: <code>isRunning</code>, <code>buttonPressed</code>, <code>hasTarget</code>.</div>
+      <div class="write-in">
+        <div class="wi-label">✏️ Try It — Write a boolean that tracks whether the intake motor is running (start as not running)</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="boolean _______ = _______;   // intake is off">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Section 6: String ══ -->
+  <div class="section" id="sec6">
+    <div class="section-header" onclick="toggleSection('sec6')">
+      <div class="step-num">6</div>
+      <h2>String — Text Values</h2>
+      <span class="section-check" id="sec6-check">⬜</span>
+    </div>
+    <div class="section-body" id="sec6-body">
+      <div class="check-item" onclick="toggleCheck(this); markSectionDone('sec6')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen — A <code>String</code> holds text: words, sentences, labels, messages. Unlike <code>int</code> or <code>boolean</code>, it is <em>not</em> a primitive — notice it starts with a capital S.</span>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">Java — String in FRC</div>
+        <code><span class="tp">String</span> robotStatus = <span class="str">"Ready"</span>;          <span class="cmt">// current status to show on dashboard</span>
+<span class="tp">String</span> autoRoutine = <span class="str">"Drive Forward"</span>;  <span class="cmt">// which autonomous path to run</span>
+<span class="tp">String</span> teamName    = <span class="str">"RamRodz"</span>;         <span class="cmt">// team name — won't change</span>
+<span class="tp">String</span> shooterState = <span class="str">"Off"</span>;            <span class="cmt">// shooter status message</span></code>
+      </div>
+      <div class="plain-eng">💬 Plain English: <strong>Text always goes inside double quotes <code>" "</code>.</strong> Forget the quotes and Java thinks <code>Ready</code> is a variable name, not the word "Ready" — and your code won't compile. Always: <code>String label = "some text";</code></div>
+      <div class="info-box">
+        <strong>Combining Strings with +</strong><br>
+        You can glue a String and another variable together using <code>+</code>. This is called <strong>concatenation</strong>.<br><br>
+        <code>String message = "Speed: " + shooterSpeed;</code><br>
+        <span style="font-size:0.85rem; color:var(--text-muted);">If <code>shooterSpeed</code> is <code>0.8</code>, <code>message</code> becomes <code>"Speed: 0.8"</code></span><br><br>
+        <code>String label = "Team " + teamNumber;</code><br>
+        <span style="font-size:0.85rem; color:var(--text-muted);">If <code>teamNumber</code> is <code>6366</code>, <code>label</code> becomes <code>"Team 6366"</code></span>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">Java — Reassigning a String</div>
+        <code><span class="tp">String</span> shooterState = <span class="str">"Off"</span>;    <span class="cmt">// starts as "Off"</span>
+shooterState = <span class="str">"Spinning Up"</span>;      <span class="cmt">// update the message (no "String" again)</span>
+shooterState = <span class="str">"Ready to Fire"</span>;    <span class="cmt">// update again when fully spun up</span></code>
+      </div>
+      <div class="plain-eng">💬 Plain English: <strong>Strings update exactly like any other variable</strong> — write the name and the new value, no type keyword again. The old text is replaced by the new text.</div>
+      <div class="write-in">
+        <div class="wi-label">✏️ Try It — Write a String variable for the robot's current game mode. Start it as "Disabled".</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder='String _______ = "________";   // game mode starts as disabled'>
+        </div>
+      </div>
+      <div class="write-in">
+        <div class="wi-label">✏️ Concatenation — Write a line that builds a status message combining the text "Balls loaded: " with an int variable named <code>ballCount</code></div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder='String statusMsg = "Balls loaded: " + _______;'>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Section 7: Reassignment + Reference Table ══ -->
+  <div class="section" id="sec7">
+    <div class="section-header" onclick="toggleSection('sec7')">
+      <div class="step-num">7</div>
+      <h2>Changing a Variable's Value</h2>
+      <span class="section-check" id="sec7-check">⬜</span>
+    </div>
+    <div class="section-body" id="sec7-body">
+      <div class="check-item" onclick="toggleCheck(this); markSectionDone('sec7')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen — After a variable is declared, you can change its value any time. Leave out the type — just write the name and the new value.</span>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">Java — Reassigning Variables</div>
+        <code><span class="tp">double</span> motorSpeed = <span class="num">0.0</span>;   <span class="cmt">// declare and set to 0 (stopped)</span>
+motorSpeed = <span class="num">0.75</span>;         <span class="cmt">// now running at 75% — no "double" needed</span>
+motorSpeed = <span class="num">0.0</span>;          <span class="cmt">// stopped again</span>
+
+<span class="tp">boolean</span> buttonDown = <span class="kw">false</span>; <span class="cmt">// button not pressed</span>
+buttonDown = <span class="kw">true</span>;           <span class="cmt">// button is now held — no "boolean" needed</span></code>
+      </div>
+      <div class="plain-eng">💬 Plain English: <strong>The type is written once — when you first create the variable.</strong> After that, just write <code>name = newValue;</code> to update it. Writing the type again is an error: Java would think you're trying to create a second variable with the same name.</div>
+
+      <p style="font-family:'Outfit',sans-serif; font-weight:700; font-size:0.88rem; color:var(--text-muted); margin-top:4px;">📋 Quick Reference — Java Types</p>
+      <div class="op-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Holds</th>
+              <th>Example values</th>
+              <th>FRC use case</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="type-badge">int</span></td>
+              <td>Whole numbers</td>
+              <td><code>0</code>, <code>5</code>, <code>-3</code>, <code>1000</code></td>
+              <td>Port numbers, counters, button indexes</td>
+            </tr>
+            <tr>
+              <td><span class="type-badge">double</span></td>
+              <td>Decimal numbers</td>
+              <td><code>0.0</code>, <code>0.75</code>, <code>-1.0</code></td>
+              <td>Motor speeds, sensor distances, throttle</td>
+            </tr>
+            <tr>
+              <td><span class="type-badge">boolean</span></td>
+              <td>True or false only</td>
+              <td><code>true</code>, <code>false</code></td>
+              <td>Button states, flags, limit switches</td>
+            </tr>
+            <tr>
+              <td><span class="type-badge">String</span></td>
+              <td>Text (not a primitive)</td>
+              <td><code>"Ready"</code>, <code>"Auto"</code></td>
+              <td>Dashboard labels, mode names</td>
+            </tr>
+            <tr>
+              <td><span class="type-badge">long</span></td>
+              <td>Very large whole numbers</td>
+              <td><code>1000000L</code></td>
+              <td>Timestamps, encoder ticks over time</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="write-in">
+        <div class="wi-label">✏️ Quick Question — Which type would you use for each? Write int, double, boolean, or String.</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="The motor's port number (always a whole number) → _______">
+          <input type="text" class="wi-line" placeholder="Whether the limit switch is triggered (yes or no) → _______">
+          <input type="text" class="wi-line" placeholder="The joystick's current position (-1.0 to 1.0) → _______">
+          <input type="text" class="wi-line" placeholder="The name of the current autonomous routine → _______">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Robot Scenario ══ -->
+  <div class="scenario-section">
+    <div class="scenario-section-header">
+      🤖 Robot Scenario — Set Up the Variables
+      <span class="section-check" id="scenario-check">⬜</span>
+    </div>
+    <div class="scenario-section-body">
+      <div class="scenario">
+        <div class="sc-title">🎯 The Challenge</div>
+        <p>The programming team needs to set up the starting variables for a robot's intake system. The intake needs to track:</p>
+        <ul>
+          <li>The <strong>motor speed</strong> for the intake roller (starts stopped)</li>
+          <li>Whether the <strong>intake button</strong> is currently being held (starts not pressed)</li>
+          <li>The <strong>port number</strong> of the intake motor (it's on port 2)</li>
+          <li>The <strong>number of game pieces</strong> collected so far (starts at zero)</li>
+          <li>A <strong>status message</strong> String for the dashboard (starts as <code>"Idle"</code>)</li>
+        </ul>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this); markSectionDone('scenario')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">I can identify the right type for each: speed → double, button → boolean, port → int, count → int, status message → String.</span>
+      </div>
+      <div class="write-in">
+        <div class="wi-label">✏️ Write It — Declare all five variables with their correct types and starting values</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="_______ intakeSpeed   = _______;     // roller speed, starts stopped">
+          <input type="text" class="wi-line" placeholder="_______ intakeButton  = _______;     // button, starts not pressed">
+          <input type="text" class="wi-line" placeholder="_______ intakePort    = _______;     // motor is on port 2">
+          <input type="text" class="wi-line" placeholder="_______ piecesScored  = _______;     // nothing collected yet">
+          <input type="text" class="wi-line" placeholder='_______ intakeStatus  = "______";    // dashboard message, starts "Idle"'>
+        </div>
+      </div>
+      <div class="write-in">
+        <div class="wi-label">✏️ Bonus — Write the reassignment lines to update the speed to 0.6, mark the button as pressed, and update the status message to "Running"</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="intakeSpeed  = _______;     // 60% power">
+          <input type="text" class="wi-line" placeholder="intakeButton = _______;     // button is now held">
+          <input type="text" class="wi-line" placeholder='intakeStatus = "________";  // update the dashboard message'>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ End of Lesson ══ -->
+  <div class="end-section">
+    <div class="end-title">✅ End of Lesson — I Can…</div>
+    <div class="end-items">
+      <div class="end-item" onclick="toggleEnd(this)">
+        <div class="end-box">✓</div>
+        <span class="end-label">Explain what a variable is and why code needs them — the robot has to <strong>remember</strong> values like speed and button state.</span>
+      </div>
+      <div class="end-item" onclick="toggleEnd(this)">
+        <div class="end-box">✓</div>
+        <span class="end-label">Write a variable declaration with the correct syntax: <strong>type name = value;</strong></span>
+      </div>
+      <div class="end-item" onclick="toggleEnd(this)">
+        <div class="end-box">✓</div>
+        <span class="end-label">Choose the right type for a given situation: <strong>int</strong> for whole numbers, <strong>double</strong> for decimals, <strong>boolean</strong> for true/false.</span>
+      </div>
+      <div class="end-item" onclick="toggleEnd(this)">
+        <div class="end-box">✓</div>
+        <span class="end-label">Update a variable's value after it's been declared — without writing the type again.</span>
+      </div>
+      <div class="end-item" onclick="toggleEnd(this)">
+        <div class="end-box">✓</div>
+        <span class="end-label">Declare and use a <strong>String</strong> variable — wrap text in double quotes, use <code>+</code> to combine it with other variables.</span>
+      </div>
+      <div class="end-item" onclick="toggleEnd(this)">
+        <div class="end-box">✓</div>
+        <span class="end-label">Name variables clearly using <strong>camelCase</strong> so other programmers (and future me) know what each one holds.</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end .page-wrap -->
+
+<script>
+  function selectFocus(el) {
+    document.querySelectorAll('.focus-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function toggleSection(id) {
+    const body = document.getElementById(id + '-body');
+    if (body) body.classList.toggle('collapsed');
+  }
+
+  function toggleCheck(el) {
+    el.classList.toggle('done');
+  }
+
+  function markSectionDone(secId) {
+    const sec = document.getElementById(secId);
+    if (!sec) return;
+    const items = sec.querySelectorAll('.check-item');
+    const allDone = items.length > 0 && [...items].every(i => i.classList.contains('done'));
+    const checkEl = document.getElementById(secId + '-check');
+    if (checkEl) checkEl.textContent = allDone ? '✅' : '⬜';
+    updateProgress();
+  }
+
+  function toggleVocab(el) {
+    el.classList.toggle('checked');
+    checkVocabDone();
+  }
+
+  function checkVocabDone() {
+    const cards = document.querySelectorAll('#sec1 .vocab-card');
+    const allChecked = cards.length > 0 && [...cards].every(c => c.classList.contains('checked'));
+    const checkEl = document.getElementById('sec1-check');
+    if (checkEl) checkEl.textContent = allChecked ? '✅' : '⬜';
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const checks = document.querySelectorAll('[id$="-check"]');
+    const total = checks.length;
+    const done = [...checks].filter(c => c.textContent === '✅').length;
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    const fill = document.getElementById('progress-fill');
+    const label = document.getElementById('progress-text');
+    if (fill) fill.style.width = pct + '%';
+    if (label) label.textContent = done + ' / ' + total + ' sections';
+  }
+
+  function toggleEnd(el) {
+    el.classList.toggle('done');
+  }
+
+  updateProgress();
+</script>
+</body>
+</html>

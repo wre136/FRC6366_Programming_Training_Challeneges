@@ -1,0 +1,14 @@
+Primitives Data Types In Java - All the Primitives And What They Do
+by: Coding with John
+https://youtu.be/WQ7mvQFSmYc
+
+How To Create Variables That Don't Suck - Writing Clean Java Code
+by: Coding with John
+https://youtu.be/eVpwH1SPl1g
+
+
+
+*** Extras ***
+How to Break Java with a Ridiculous Variable Name
+by: Coding with John
+https://youtu.be/J_JOfvS5E_E

@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 1 — Conditionals &amp; If-Else Statements</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-alt: #FDF2F2;
+    --text: #1C1314;
+    --text-muted: #6B4A4B;
+    --blue: #CC0F11;
+    --blue-light: #FEE2E2;
+    --amber: #D97706;
+    --amber-light: #FEF3C7;
+    --green: #059669;
+    --green-light: #D1FAE5;
+    --red: #9B0C0E;
+    --border: #F0CECE;
+    --code-bg: #1C1314;
+    --code-text: #F1E8E8;
+    --shadow-sm: 0 1px 3px rgba(204,15,17,0.08);
+    --shadow: 0 2px 8px rgba(204,15,17,0.10);
+    --radius: 10px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #160A0A;
+      --bg-alt: #241010;
+      --text: #F9ECEC;
+      --text-muted: #C49A9B;
+      --blue: #F25254;
+      --blue-light: #3D1010;
+      --amber: #FCD34D;
+      --amber-light: #3D2E0A;
+      --green: #34D399;
+      --green-light: #064E3B;
+      --red: #F87171;
+      --border: #3D1818;
+      --code-bg: #0D0606;
+      --code-text: #F1E8E8;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #160A0A;
+    --bg-alt: #241010;
+    --text: #F9ECEC;
+    --text-muted: #C49A9B;
+    --blue: #F25254;
+    --blue-light: #3D1010;
+    --amber: #FCD34D;
+    --amber-light: #3D2E0A;
+    --green: #34D399;
+    --green-light: #064E3B;
+    --red: #F87171;
+    --border: #3D1818;
+    --code-bg: #0D0606;
+    --code-text: #F1E8E8;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--text);
+    background: var(--bg);
+    margin: 0;
+    padding-inline: 24px;
+    padding-block: 28px;
+    max-width: 780px;
+    margin-inline: auto;
+  }
+
+  /* ── Header ── */
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .robot-badge {
+    font-size: 2.8rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .header-text { flex: 1; min-width: 200px; }
+
+  h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--blue);
+    margin: 0 0 2px;
+    text-wrap: balance;
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .name-line {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    padding-top: 4px;
+  }
+
+  .name-line span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 140px;
+  }
+
+  .name-line span::after {
+    content: '';
+    flex: 1;
+    display: inline-block;
+    border-bottom: 1.5px solid var(--border);
+    min-width: 60px;
+  }
+
+  /* ── Focus check ── */
+  .focus-bar {
+    background: var(--amber-light);
+    border: 1.5px solid var(--amber);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .focus-bar .label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--amber);
+    white-space: nowrap;
+  }
+
+  .focus-dots {
+    display: flex;
+    gap: 8px;
+  }
+
+  .focus-dot {
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .focus-dot.red { background: #FEE2E2; color: var(--red); border-color: var(--red); }
+  .focus-dot.yellow { background: #FEF9C3; color: #B45309; border-color: #D97706; }
+  .focus-dot.green { background: var(--green-light); color: var(--green); border-color: var(--green); }
+  .focus-dot.selected { opacity: 1; box-shadow: 0 0 0 3px currentColor inset; }
+  .focus-dot:not(.selected) { opacity: 0.55; }
+
+  /* ── Big question ── */
+  .big-question {
+    background: var(--blue-light);
+    border-left: 4px solid var(--blue);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 10px 14px;
+    margin-bottom: 20px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 0.97rem;
+    color: var(--blue);
+  }
+
+  .big-question .tag {
+    font-size: 0.73rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+    opacity: 0.7;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  /* ── Sections ── */
+  .section {
+    margin-bottom: 18px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--bg);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 14px;
+    background: var(--bg-alt);
+    border-bottom: 1.5px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .section-header .step-num {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--bg);
+    background: var(--blue);
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    letter-spacing: 0;
+  }
+
+  .section-header h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 0;
+    flex: 1;
+    color: var(--text);
+  }
+
+  .section-check {
+    font-size: 1.15rem;
+  }
+
+  .section-body {
+    padding: 12px 14px;
+  }
+
+  /* ── Vocab list ── */
+  .vocab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 7px;
+  }
+  /* Transparent wrapper — display:contents lets grid layout ignore it on screen */
+  .vocab-row { display: contents; }
+  .print-break { display: none; }
+
+  .vocab-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    padding: 6px 8px;
+    border-radius: 7px;
+    background: var(--bg-alt);
+    transition: background 0.15s;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .vocab-item.checked {
+    background: var(--green-light);
+  }
+
+  .vocab-item .cb { flex-shrink: 0; margin-top: 2px; }
+
+  .vocab-item .term {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--blue);
+  }
+
+  .vocab-item .def {
+    font-size: 0.83rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  /* ── Checklist ── */
+  .checklist { display: flex; flex-direction: column; gap: 7px; }
+
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 7px 10px;
+    border-radius: 7px;
+    background: var(--bg-alt);
+    cursor: pointer;
+    transition: background 0.15s;
+    user-select: none;
+  }
+
+  .check-item:hover { background: var(--blue-light); }
+  .check-item.done { background: var(--green-light); }
+  .check-item.done .check-label { color: var(--text-muted); }
+
+  .cb-box {
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem;
+    color: var(--green);
+    transition: all 0.15s;
+    background: var(--bg);
+  }
+
+  .check-item.done .cb-box {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+  }
+
+  .check-label { font-size: 0.9rem; line-height: 1.4; }
+  .check-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 1px; display: block; }
+
+  /* ── Code block ── */
+  .code-wrap {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin: 10px 0;
+    overflow-x: auto;
+  }
+
+  .code-label {
+    font-size: 0.7rem;
+    font-family: 'Outfit', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #9ca3af;
+    margin-bottom: 5px;
+    font-weight: 600;
+  }
+
+  code {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--code-text);
+    white-space: pre;
+    display: block;
+  }
+
+  .kw { color: #C792EA; }
+  .val { color: #F78C6C; }
+  .str { color: #C3E88D; }
+  .cmt { color: #546E7A; font-style: italic; }
+  .fn  { color: #82AAFF; }
+  .num { color: #F78C6C; }
+
+  /* ── Plain English ── */
+  .plain-eng {
+    background: var(--amber-light);
+    border-radius: 7px;
+    padding: 8px 12px;
+    font-size: 0.88rem;
+    color: var(--amber);
+    font-weight: 500;
+    margin: 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ── Write-in ── */
+  .write-in {
+    background: var(--bg-alt);
+    border: 1.5px dashed var(--border);
+    border-radius: 7px;
+    padding: 10px 12px;
+    margin: 10px 0;
+  }
+
+  .write-in .wi-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .wi-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .wi-line {
+    border: none;
+    border-bottom: 1.5px solid var(--border);
+    background: transparent;
+    width: 100%;
+    padding: 3px 0;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text);
+    outline: none;
+  }
+
+  .wi-line::placeholder { color: var(--border); }
+  .wi-line:focus { border-bottom-color: var(--blue); }
+
+  /* ── Operator table ── */
+  .op-table-wrap { overflow-x: auto; }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.88rem;
+  }
+
+  th {
+    background: var(--blue);
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    padding: 7px 12px;
+    text-align: left;
+    font-size: 0.8rem;
+    letter-spacing: 0.03em;
+  }
+
+  th:first-child { border-radius: 7px 0 0 0; }
+  th:last-child { border-radius: 0 7px 0 0; }
+
+  td {
+    padding: 6px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  tr:nth-child(even) td { background: var(--bg-alt); }
+
+  .op-sym {
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    color: var(--blue);
+    font-size: 0.95rem;
+  }
+
+  .op-code {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+  }
+
+  /* ── Scenario callout ── */
+  .scenario {
+    background: var(--blue-light);
+    border: 1.5px solid var(--blue);
+    border-radius: 8px;
+    padding: 10px 13px;
+    margin: 10px 0;
+    font-size: 0.88rem;
+  }
+
+  .scenario .sc-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--blue);
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .scenario ul {
+    margin: 5px 0 0;
+    padding-left: 18px;
+  }
+
+  .scenario li { margin-bottom: 3px; }
+
+  /* ── Parking lot ── */
+  .parking {
+    background: var(--bg-alt);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    margin-bottom: 18px;
+  }
+
+  .parking h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin: 0 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .parking-lines { display: flex; flex-direction: column; gap: 8px; }
+
+  /* ── End checklist ── */
+  .end-section {
+    background: var(--green-light);
+    border: 1.5px solid var(--green);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    margin-bottom: 18px;
+  }
+
+  .end-section h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--green);
+    margin: 0 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .end-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    padding: 5px 0;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    user-select: none;
+    transition: opacity 0.15s;
+  }
+
+  .end-item:last-child { border-bottom: none; }
+  .end-item.done .end-label { text-decoration: line-through; opacity: 0.55; }
+
+  .end-label { font-size: 0.9rem; }
+
+  /* ── Progress strip ── */
+  .progress-bar-wrap {
+    margin-bottom: 20px;
+  }
+
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+
+  .progress-track {
+    height: 7px;
+    background: var(--bg-alt);
+    border-radius: 99px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--green));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  /* ── Print styles ── */
+  @page { size: letter portrait; margin: 0.55in; }
+  @media print {
+    body { padding-inline: 14px; padding-block: 14px; font-size: 13px; }
+    /* Do NOT put break-inside:avoid on large containers (.section, .end-section,
+       .parking, .focus-bar) — they are too tall to fit on one page and Chrome
+       just creates blank gaps trying to honor it, inflating the page count.
+       Individual content elements (below) carry the avoid rules instead. */
+    .section { box-shadow: none; }
+    .focus-bar, .end-section, .parking { box-shadow: none; }
+    .progress-bar-wrap { display: none; }
+    .check-item { background: #f8f8f8 !important; }
+    .check-item.done { background: #f0fff4 !important; }
+    .vocab-item { background: #f8f8f8 !important; }
+    /* Code blocks: white bg + black text — no dark theme on paper */
+    .code-wrap {
+      background: #ffffff !important;
+      border: 1px solid #ccc !important;
+    }
+    .code-wrap code {
+      color: #000000 !important;
+    }
+    .code-wrap .kw,  .code-wrap .fn,  .code-wrap .num,
+    .code-wrap .str, .code-wrap .cmt, .code-wrap .val {
+      color: #000000 !important;
+      font-style: normal;
+    }
+    .code-label { color: #333333 !important; }
+    /* Hide placeholder hint text — blank lines only on paper */
+    ::placeholder { color: transparent !important; }
+    ::-webkit-input-placeholder { color: transparent !important; }
+    /* Prevent individual elements from splitting across page breaks */
+    .check-item, .vocab-item, .write-in, .plain-eng,
+    .scenario, .code-wrap,
+    .end-item { break-inside: avoid; page-break-inside: avoid; }
+    p, li { orphans: 3; widows: 3; }
+    /* Vocab grid: row wrappers become flex rows in print — Chrome respects
+       break-inside:avoid on flex containers far more reliably than on grid items */
+    .vocab-grid { display: block !important; }
+    .vocab-row {
+      display: flex !important;
+      gap: 12px;
+      break-inside: avoid;
+      page-break-inside: avoid;
+      margin-bottom: 8px;
+    }
+    .vocab-item {
+      flex: 1;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    /* Page break before Key Words — forces vocab to start on page 2 */
+    .print-break {
+      display: block !important;
+      height: 0;
+      break-after: page !important;
+      page-break-after: always !important;
+    }
+    /* End of Lesson on its own page */
+    .end-section {
+      break-before: page !important;
+      page-break-before: always !important;
+    }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 480px) {
+    h1 { font-size: 1.3rem; }
+    .vocab-grid { grid-template-columns: 1fr; }
+    .name-line { flex-direction: column; gap: 8px; }
+  }
+</style>
+
+<!-- ══ Header ══ -->
+<div class="page-header">
+  <div class="header-text">
+    <h1>Conditionals &amp; If-Else Statements</h1>
+    <p class="subtitle">🔥 RamRodz Robotics · Team 6366 · Programming Worksheet</p>
+  </div>
+  <div class="robot-badge">🏎️🔥</div>
+</div>
+
+<div class="name-line">
+  <span>Name </span>
+  <span>Date </span>
+</div>
+
+<div style="background: #CC0F11; color: white; border-radius: var(--radius); padding: 7px 14px; margin-top: 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-family: 'Outfit', sans-serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em;">
+  <span>🏎️🔥 RAM RODZ ROBOTICS</span>
+  <span>TEAM #6366</span>
+  <span>HILLCREST &amp; WOODMONT HIGH SCHOOLS · SIMPSONVILLE, SC</span>
+</div>
+
+<br>
+
+<!-- ══ Progress ══ -->
+<div class="progress-bar-wrap">
+  <div class="progress-meta">
+    <span>⬤ Your Progress</span>
+    <span id="prog-label">0 / 5 sections</span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+  </div>
+</div>
+
+<!-- ══ Focus check ══ -->
+<div class="focus-bar">
+  <span class="label">🧠 Focus Check-In</span>
+  <div class="focus-dots">
+    <div class="focus-dot red" onclick="selectFocus(this)">😵 Struggling</div>
+    <div class="focus-dot yellow" onclick="selectFocus(this)">😐 Okay</div>
+    <div class="focus-dot green selected" onclick="selectFocus(this)">😤 Ready</div>
+  </div>
+</div>
+
+<!-- ══ Big Question ══ -->
+<div class="big-question">
+  <span class="tag">🎯 Today's Big Question</span>
+  How does a robot decide WHAT to do based on what's happening around it?
+</div>
+
+<!-- ══ Parking Lot ══ -->
+<div class="parking">
+  <h3>🅿️ Parking Lot — Random Thoughts</h3>
+  <p style="font-size:0.82rem; color:var(--text-muted); margin:0 0 8px;">If your brain jumps to a question or idea, write it here so you don't lose it — ask later!</p>
+  <div class="parking-lines">
+    <input type="text" class="wi-line" placeholder="thought or question...">
+    <input type="text" class="wi-line" placeholder="thought or question...">
+    <input type="text" class="wi-line" placeholder="thought or question...">
+    <input type="text" class="wi-line" placeholder="thought or question...">
+    <input type="text" class="wi-line" placeholder="thought or question...">
+    <input type="text" class="wi-line" placeholder="thought or question...">
+    <input type="text" class="wi-line" placeholder="thought or question...">
+  </div>
+</div>
+
+<div class="print-break"></div>
+
+<!-- ══ Section 1: Vocab ══ -->
+<div class="section" id="sec1">
+  <div class="section-header" onclick="toggleSection('sec1')">
+    <div class="step-num">1</div>
+    <h2>Key Words — Check Off When Explained</h2>
+    <span class="section-check" id="sec1-check">⬜</span>
+  </div>
+  <div class="section-body">
+    <div class="vocab-grid" id="vocab-grid">
+
+      <div class="vocab-row">
+        <div class="vocab-item" onclick="toggleVocab(this)">
+          <input type="checkbox" class="cb" onclick="event.stopPropagation()">
+          <div><div class="term">Condition</div><div class="def">A yes/no question: "Is the button pressed?"</div></div>
+        </div>
+        <div class="vocab-item" onclick="toggleVocab(this)">
+          <input type="checkbox" class="cb" onclick="event.stopPropagation()">
+          <div><div class="term">Boolean</div><div class="def">A value that's only <code style="background:none;display:inline;color:var(--green);font-size:0.85em;">true</code> or <code style="background:none;display:inline;color:var(--red);font-size:0.85em;">false</code></div></div>
+        </div>
+      </div>
+
+      <div class="vocab-row">
+        <div class="vocab-item" onclick="toggleVocab(this)">
+          <input type="checkbox" class="cb" onclick="event.stopPropagation()">
+          <div><div class="term">if statement</div><div class="def">"IF this is true → do this"</div></div>
+        </div>
+        <div class="vocab-item" onclick="toggleVocab(this)">
+          <input type="checkbox" class="cb" onclick="event.stopPropagation()">
+          <div><div class="term">else statement</div><div class="def">"OTHERWISE → do this instead"</div></div>
+        </div>
+      </div>
+
+      <div class="vocab-row">
+        <div class="vocab-item" onclick="toggleVocab(this)">
+          <input type="checkbox" class="cb" onclick="event.stopPropagation()">
+          <div><div class="term">else if</div><div class="def">"OR IF this other thing is true..."</div></div>
+        </div>
+        <div class="vocab-item" onclick="toggleVocab(this)">
+          <input type="checkbox" class="cb" onclick="event.stopPropagation()">
+          <div><div class="term">Comparison Operator</div><div class="def">Symbols that compare two values: <code style="background:none;display:inline;font-family:'DM Mono',monospace;font-size:0.85em;">== != &lt; &gt;</code></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ Section 2: if ══ -->
+<div class="section" id="sec2">
+  <div class="section-header" onclick="toggleSection('sec2')">
+    <div class="step-num">2</div>
+    <h2>The <code style="background:none;font-family:'DM Mono',monospace;font-size:0.9em;">if</code> Statement</h2>
+    <span class="section-check" id="sec2-check">⬜</span>
+  </div>
+  <div class="section-body">
+    <div class="checklist">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="cb-box">✓</div>
+        <div><span class="check-label">Listen: instructor explains <code style="font-family:'DM Mono',monospace;font-size:0.85em;">if</code></span></div>
+      </div>
+    </div>
+
+    <div class="code-wrap" style="margin-top:10px;">
+      <div class="code-label">Java — FRC Example</div>
+      <code><span class="kw">if</span> (buttonPressed) {
+    shooterSpeed = <span class="num">0.8</span>;  <span class="cmt">// fire shooter</span>
+}</code>
+    </div>
+
+    <div class="plain-eng">💬 Plain English: <strong>IF</strong> the A button is pressed → run the shooter at 80%</div>
+
+    <div class="checklist" style="margin-top:10px;">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="cb-box">✓</div>
+        <div><span class="check-label">I can see where the condition is (inside the parentheses)</span><span class="check-sub">Hint: it's what's between the ( )</span></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="cb-box">✓</div>
+        <div><span class="check-label">I can see where the action is (inside the curly braces { })</span></div>
+      </div>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Try It — Fill in the blank</div>
+      <div style="font-size:0.88rem; color: var(--text-muted); margin-bottom:6px;">Complete this sentence: IF ____________, THEN run the intake motor.</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="your answer...">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Section 3: if-else ══ -->
+<div class="section" id="sec3">
+  <div class="section-header" onclick="toggleSection('sec3')">
+    <div class="step-num">3</div>
+    <h2>Adding <code style="background:none;font-family:'DM Mono',monospace;font-size:0.9em;">else</code> — The "Otherwise"</h2>
+    <span class="section-check" id="sec3-check">⬜</span>
+  </div>
+  <div class="section-body">
+
+    <div class="checklist">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen: instructor explains <code style="font-family:'DM Mono',monospace;font-size:0.85em;">else</code></span>
+      </div>
+    </div>
+
+    <div class="code-wrap" style="margin-top:10px;">
+      <div class="code-label">Java — FRC Example</div>
+      <code><span class="kw">if</span> (buttonPressed) {
+    shooterSpeed = <span class="num">0.8</span>;   <span class="cmt">// button pressed → fire!</span>
+} <span class="kw">else</span> {
+    shooterSpeed = <span class="num">0.0</span>;   <span class="cmt">// button NOT pressed → stop</span>
+}</code>
+    </div>
+
+    <div class="plain-eng">💬 Plain English: <strong>IF</strong> A button → shoot &nbsp;|&nbsp; <strong>OTHERWISE</strong> → stop</div>
+
+    <div class="checklist" style="margin-top:10px;">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="cb-box">✓</div>
+        <span class="check-label">The robot always does <em>one</em> of two things — never both, never nothing</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="cb-box">✓</div>
+        <span class="check-label"><code style="font-family:'DM Mono',monospace;font-size:0.85em;">else</code> runs only when the <code style="font-family:'DM Mono',monospace;font-size:0.85em;">if</code> condition is <strong>false</strong></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Section 4: else if ══ -->
+<div class="section" id="sec4">
+  <div class="section-header" onclick="toggleSection('sec4')">
+    <div class="step-num">4</div>
+    <h2>Multiple Choices with <code style="background:none;font-family:'DM Mono',monospace;font-size:0.9em;">else if</code></h2>
+    <span class="section-check" id="sec4-check">⬜</span>
+  </div>
+  <div class="section-body">
+
+    <div class="checklist">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen: instructor explains <code style="font-family:'DM Mono',monospace;font-size:0.85em;">else if</code></span>
+      </div>
+    </div>
+
+    <div class="code-wrap" style="margin-top:10px;">
+      <div class="code-label">Java — Drive Speed Control</div>
+      <code><span class="kw">if</span> (throttle &gt; <span class="num">0.8</span>) {
+    driveSpeed = <span class="num">1.0</span>;    <span class="cmt">// full power</span>
+} <span class="kw">else if</span> (throttle &gt; <span class="num">0.4</span>) {
+    driveSpeed = <span class="num">0.5</span>;    <span class="cmt">// half power</span>
+} <span class="kw">else</span> {
+    driveSpeed = <span class="num">0.0</span>;    <span class="cmt">// stop</span>
+}</code>
+    </div>
+
+    <div class="plain-eng">💬 The computer checks top-to-bottom and <strong>stops at the first true condition</strong></div>
+
+    <div class="checklist" style="margin-top:10px;">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Only ONE branch runs, even if multiple conditions are true</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Order matters! More specific conditions go first</span>
+      </div>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Quick Question</div>
+      <div style="font-size:0.88rem; color:var(--text-muted); margin-bottom:6px;">If <code style="font-family:'DM Mono',monospace;">throttle = 0.9</code>, which branch runs above? Write it here:</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="the ___ branch runs because...">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Section 5: Operators ══ -->
+<div class="section" id="sec5">
+  <div class="section-header" onclick="toggleSection('sec5')">
+    <div class="step-num">5</div>
+    <h2>Comparison Operators Cheat Sheet</h2>
+    <span class="section-check" id="sec5-check">⬜</span>
+  </div>
+  <div class="section-body">
+
+    <div class="checklist">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen: instructor reviews comparison symbols</span>
+      </div>
+    </div>
+
+    <div class="op-table-wrap" style="margin-top:10px;">
+      <table>
+        <thead>
+          <tr><th>Symbol</th><th>Means</th><th>Robot Example</th><th>Result</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="op-sym">==</td><td>equals</td><td class="op-code">teamNumber == 254</td><td>true / false</td></tr>
+          <tr><td class="op-sym">!=</td><td>not equals</td><td class="op-code">mode != "auto"</td><td>true / false</td></tr>
+          <tr><td class="op-sym">&gt;</td><td>greater than</td><td class="op-code">rpm &gt; 500</td><td>true / false</td></tr>
+          <tr><td class="op-sym">&lt;</td><td>less than</td><td class="op-code">temp &lt; 90</td><td>true / false</td></tr>
+          <tr><td class="op-sym">&gt;=</td><td>greater or equal</td><td class="op-code">score &gt;= 10</td><td>true / false</td></tr>
+          <tr><td class="op-sym">&lt;=</td><td>less or equal</td><td class="op-code">timeLeft &lt;= 30</td><td>true / false</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="write-in" style="margin-top:10px;">
+      <div class="wi-label">✏️ Write Your Own</div>
+      <div style="font-size:0.88rem; color:var(--text-muted); margin-bottom:6px;">Write a condition using any operator above. (It can be silly — what matters is the syntax!)</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="e.g.  pizzaCount >= 3">
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ Robot Scenario ══ -->
+<div class="section" id="sec6" style="border-color: var(--blue);">
+  <div class="section-header" style="background: var(--blue-light);" onclick="toggleSection('sec6')">
+    <div class="step-num" style="background: var(--blue);">🤖</div>
+    <h2 style="color: var(--blue);">Robot Scenario — Put It Together</h2>
+    <span class="section-check" id="sec6-check">⬜</span>
+  </div>
+  <div class="section-body">
+
+    <div class="scenario">
+      <div class="sc-title">🎯 Scenario</div>
+      Our robot needs logic for the shooter:
+      <ul>
+        <li>If the <strong>Shoot button</strong> is pressed AND we're within range → fire the shooter</li>
+        <li>Else if only <strong>in range</strong> (no button) → spin up the flywheel to prep</li>
+        <li>Otherwise → everything off</li>
+      </ul>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Sketch It — Flowchart or Code (your choice)</div>
+      <div style="height: 80px; border-bottom: 1.5px solid var(--border);"></div>
+      <div style="height: 80px; border-bottom: 1.5px solid var(--border);"></div>
+      <div style="height: 80px;"></div>
+    </div>
+
+    <div class="checklist" style="margin-top:10px;">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="cb-box">✓</div>
+        <span class="check-label">I attempted the scenario (even a partial answer counts!)</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ End Checklist ══ -->
+<div class="end-section">
+  <h3>✅ End of Lesson — I Can Do This</h3>
+  <div id="end-list">
+    <div class="end-item" onclick="toggleEnd(this)"><div class="cb-box" style="border-color:var(--green);background:var(--bg);">✓</div><span class="end-label">Explain what a condition is in my own words</span></div>
+    <div class="end-item" onclick="toggleEnd(this)"><div class="cb-box" style="border-color:var(--green);background:var(--bg);">✓</div><span class="end-label">Read an <code style="font-family:'DM Mono',monospace;font-size:0.85em;">if</code> statement and say what it does</span></div>
+    <div class="end-item" onclick="toggleEnd(this)"><div class="cb-box" style="border-color:var(--green);background:var(--bg);">✓</div><span class="end-label">Explain the difference between <code style="font-family:'DM Mono',monospace;font-size:0.85em;">else</code> and <code style="font-family:'DM Mono',monospace;font-size:0.85em;">else if</code></span></div>
+    <div class="end-item" onclick="toggleEnd(this)"><div class="cb-box" style="border-color:var(--green);background:var(--bg);">✓</div><span class="end-label">Name at least 3 comparison operators</span></div>
+    <div class="end-item" onclick="toggleEnd(this)"><div class="cb-box" style="border-color:var(--green);background:var(--bg);">✓</div><span class="end-label">Write a simple <code style="font-family:'DM Mono',monospace;font-size:0.85em;">if-else</code> for a robot action</span></div>
+  </div>
+</div>
+
+<script>
+  // Focus check-in
+  function selectFocus(el) {
+    document.querySelectorAll('.focus-dot').forEach(d => d.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function toggleSection(id) {
+    // sections stay open
+  }
+
+  function markSectionDone(id) {
+    const el = document.getElementById(id + '-check');
+    if (!el) return;
+    const sec = document.getElementById(id);
+    if (!sec) return;
+    const items = sec.querySelectorAll('.check-item');
+    if (items.length === 0) return;
+    const allDone = [...items].every(i => i.classList.contains('done'));
+    el.textContent = allDone ? '✅' : '⬜';
+    updateProgress();
+  }
+
+  function toggleCheck(el) {
+    el.classList.toggle('done');
+    const secId = el.closest('.section')?.id;
+    if (secId) markSectionDone(secId);
+  }
+
+  function toggleVocab(el) {
+    el.classList.toggle('checked');
+    const cb = el.querySelector('input[type=checkbox]');
+    if (cb) cb.checked = !cb.checked;
+    checkVocabDone();
+  }
+
+  function checkVocabDone() {
+    const items = document.querySelectorAll('#vocab-grid .vocab-item');
+    const allChecked = [...items].every(i => i.classList.contains('checked'));
+    const el = document.getElementById('sec1-check');
+    if (el) el.textContent = allChecked ? '✅' : '⬜';
+    updateProgress();
+  }
+
+  function toggleEnd(el) {
+    el.classList.toggle('done');
+    const box = el.querySelector('.cb-box');
+    if (box) {
+      if (el.classList.contains('done')) {
+        box.style.background = 'var(--green)';
+        box.style.color = 'white';
+        box.style.borderColor = 'var(--green)';
+      } else {
+        box.style.background = 'var(--bg)';
+        box.style.color = 'var(--green)';
+        box.style.borderColor = 'var(--green)';
+      }
+    }
+  }
+
+  function updateProgress() {
+    const checks = document.querySelectorAll('[id$="-check"]');
+    const done = [...checks].filter(c => c.textContent === '✅').length;
+    const total = checks.length;
+    const pct = total ? (done / total) * 100 : 0;
+    const fill = document.getElementById('progress-fill');
+    const label = document.getElementById('prog-label');
+    if (fill) fill.style.width = pct + '%';
+    if (label) label.textContent = done + ' / ' + total + ' sections';
+  }
+
+  const sec6Items = document.querySelectorAll('#sec6 .check-item');
+  sec6Items.forEach(item => {
+    item.onclick = function() {
+      toggleCheck(this);
+      markSectionDone('sec6');
+    };
+  });
+
+  ['sec2','sec3','sec4','sec5'].forEach(id => {
+    const sec = document.getElementById(id);
+    if (!sec) return;
+    sec.querySelectorAll('.check-item').forEach(item => {
+      item.onclick = function() {
+        toggleCheck(this);
+        markSectionDone(id);
+      };
+    });
+  });
+
+  updateProgress();
+</script>
