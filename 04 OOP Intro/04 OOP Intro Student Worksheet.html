@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intro to OOP — Objects &amp; Classes</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏎️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ── Color tokens ── */
+  :root {
+    --bg: #ffffff;
+    --bg-alt: #FDF2F2;
+    --text: #1C1314;
+    --text-muted: #6B4A4B;
+    --blue: #CC0F11;
+    --blue-light: #FEE2E2;
+    --amber: #D97706;
+    --amber-light: #FEF3C7;
+    --green: #059669;
+    --green-light: #D1FAE5;
+    --red: #9B0C0E;
+    --border: #F0CECE;
+    --code-bg: #1C1314;
+    --code-text: #F1E8E8;
+    --shadow-sm: 0 1px 4px rgba(204,15,17,0.07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #160A0A; --bg-alt: #241010; --text: #F9ECEC; --text-muted: #C49A9B;
+      --blue: #F25254; --blue-light: #3D1010; --amber: #FCD34D; --amber-light: #3D2E0A;
+      --green: #34D399; --green-light: #064E3B; --red: #F87171; --border: #3D1818;
+      --code-bg: #0D0606; --code-text: #F1E8E8; --shadow-sm: 0 1px 4px rgba(0,0,0,0.3);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #160A0A; --bg-alt: #241010; --text: #F9ECEC; --text-muted: #C49A9B;
+    --blue: #F25254; --blue-light: #3D1010; --amber: #FCD34D; --amber-light: #3D2E0A;
+    --green: #34D399; --green-light: #064E3B; --red: #F87171; --border: #3D1818;
+    --code-bg: #0D0606; --code-text: #F1E8E8; --shadow-sm: 0 1px 4px rgba(0,0,0,0.3);
+  }
+
+  /* ── Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    padding-inline: 24px;
+    padding-block: 28px;
+  }
+  .page-wrap { max-width: 780px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+
+  /* ── Header ── */
+  .page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+  .page-header h1 {
+    font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.9rem;
+    color: var(--blue); line-height: 1.15; flex: 1;
+  }
+  .page-header .subtitle {
+    font-family: 'Outfit', sans-serif; font-size: 0.82rem; font-weight: 600;
+    color: var(--text-muted); margin-top: 4px; letter-spacing: 0.02em;
+  }
+  .badge { font-size: 2rem; flex-shrink: 0; }
+
+  /* ── Name / Date ── */
+  .name-line {
+    display: flex; gap: 24px; align-items: flex-end;
+    font-family: 'Outfit', sans-serif; font-size: 0.88rem; font-weight: 600;
+    color: var(--text-muted);
+  }
+  .name-line label { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .name-line input {
+    border: none; border-bottom: 2px solid var(--border); background: transparent;
+    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 1rem;
+    padding: 4px 2px; outline: none; width: 100%;
+  }
+  .name-line input:focus { border-bottom-color: var(--blue); }
+
+  /* ── Banner ── */
+  .team-banner {
+    background: #CC0F11; color: white; text-align: center;
+    font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.82rem;
+    letter-spacing: 0.05em; padding: 10px 16px; border-radius: 8px;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+
+  /* ── Progress bar ── */
+  .progress-bar-wrap {
+    background: var(--bg-alt); border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 12px 16px; box-shadow: var(--shadow-sm);
+  }
+  .progress-label {
+    font-family: 'Outfit', sans-serif; font-size: 0.8rem; font-weight: 700;
+    color: var(--text-muted); margin-bottom: 8px; display: flex; justify-content: space-between;
+  }
+  .progress-track {
+    background: var(--border); border-radius: 99px; height: 12px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; width: 0%; border-radius: 99px;
+    background: linear-gradient(90deg, #CC0F11, #059669);
+    transition: width 0.4s ease;
+  }
+
+  /* ── Focus bar ── */
+  .focus-bar {
+    background: var(--amber-light); border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 12px 16px; box-shadow: var(--shadow-sm);
+  }
+  .focus-bar-label {
+    font-family: 'Outfit', sans-serif; font-size: 0.8rem; font-weight: 700;
+    color: var(--amber); margin-bottom: 8px;
+  }
+  .focus-pills { display: flex; gap: 10px; flex-wrap: wrap; }
+  .focus-pill {
+    background: white; border: 1.5px solid var(--border); border-radius: 99px;
+    padding: 6px 14px; font-family: 'Outfit', sans-serif; font-size: 0.85rem;
+    font-weight: 600; cursor: pointer; transition: all 0.15s;
+  }
+  .focus-pill.active { background: var(--amber); color: white; border-color: var(--amber); }
+
+  /* ── Big question ── */
+  .big-q {
+    border-left: 5px solid var(--blue); background: var(--blue-light);
+    border-radius: 0 10px 10px 0; padding: 14px 18px;
+  }
+  .big-q .bq-tag {
+    font-family: 'Outfit', sans-serif; font-size: 0.75rem; font-weight: 700;
+    color: var(--blue); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px;
+  }
+  .big-q p { font-size: 1.05rem; font-weight: 500; color: var(--text); }
+
+  /* ── Parking lot ── */
+  .parking {
+    border: 2px dashed var(--border); border-radius: 10px;
+    padding: 14px 16px; box-shadow: var(--shadow-sm);
+  }
+  .parking h3 {
+    font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 700;
+    color: var(--text-muted); margin-bottom: 6px;
+  }
+  .parking-lines { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+
+  /* ── Sections ── */
+  .section {
+    border: 1.5px solid var(--border); border-radius: 10px;
+    box-shadow: var(--shadow-sm); overflow: hidden;
+  }
+  .section-header {
+    display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+    background: var(--bg-alt); cursor: pointer; user-select: none;
+  }
+  .section-header:hover { background: var(--blue-light); }
+  .step-num {
+    background: var(--blue); color: white; width: 30px; height: 30px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+  .section-header h2 {
+    font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; flex: 1;
+  }
+  .section-check { font-size: 1.2rem; }
+  .section-body { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .section-body.collapsed { display: none; }
+
+  /* ── Vocab grid ── */
+  .vocab-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+  .vocab-row { display: contents; }
+  .print-break { display: none; }
+  .vocab-card {
+    background: var(--bg-alt); border: 1.5px solid var(--border);
+    border-radius: 8px; padding: 10px 14px; cursor: pointer; transition: all 0.15s;
+  }
+  .vocab-card:hover { border-color: var(--blue); }
+  .vocab-card.checked { background: var(--green-light); border-color: var(--green); }
+  .vocab-term {
+    font-family: 'Outfit', sans-serif; font-weight: 700; color: var(--blue);
+    font-size: 0.95rem; margin-bottom: 3px;
+  }
+  .vocab-def { font-size: 0.82rem; color: var(--text-muted); }
+
+  /* ── Check items ── */
+  .check-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: var(--bg-alt); border: 1.5px solid var(--border);
+    border-radius: 8px; padding: 10px 14px; cursor: pointer; transition: all 0.15s;
+  }
+  .check-item:hover { border-color: var(--blue); }
+  .check-item.done { background: var(--green-light); border-color: var(--green); }
+  .cb-box {
+    width: 22px; height: 22px; border: 2px solid var(--border); border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; color: transparent; flex-shrink: 0; margin-top: 1px;
+    transition: all 0.15s;
+  }
+  .check-item.done .cb-box { background: var(--green); border-color: var(--green); color: white; }
+  .check-label { font-size: 0.92rem; }
+
+  /* ── Code blocks ── */
+  .code-wrap {
+    border-radius: 8px; overflow: hidden; border: 1.5px solid var(--border);
+  }
+  .code-label {
+    background: var(--blue); color: white;
+    font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.75rem;
+    letter-spacing: 0.05em; padding: 5px 14px;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .code-wrap code {
+    display: block; background: var(--code-bg); color: var(--code-text);
+    font-family: 'DM Mono', monospace; font-size: 0.85rem;
+    line-height: 1.65; padding: 14px 16px; white-space: pre; overflow-x: auto;
+  }
+  .kw  { color: #C792EA; }
+  .fn  { color: #82AAFF; }
+  .num { color: #F78C6C; }
+  .str { color: #C3E88D; }
+  .cmt { color: #546E7A; font-style: italic; }
+  .tp  { color: #FFCB6B; }
+
+  /* ── Plain English ── */
+  .plain-eng {
+    background: var(--amber-light); border-left: 4px solid var(--amber);
+    border-radius: 0 8px 8px 0; padding: 10px 14px;
+    font-size: 0.9rem; color: var(--text);
+  }
+  .plain-eng strong { color: var(--amber); }
+
+  /* ── Write-in ── */
+  .write-in {
+    border: 1.5px dashed var(--border); border-radius: 8px; padding: 12px 14px;
+  }
+  .wi-label {
+    font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.82rem;
+    color: var(--blue); margin-bottom: 8px;
+  }
+  .wi-lines { display: flex; flex-direction: column; gap: 6px; }
+  .wi-line {
+    border: none; border-bottom: 1.5px solid var(--border); background: transparent;
+    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+    padding: 4px 2px; outline: none; width: 100%;
+  }
+  .wi-line:focus { border-bottom-color: var(--blue); }
+
+  /* ── Info box ── */
+  .info-box {
+    background: var(--blue-light); border: 1.5px solid var(--border);
+    border-radius: 8px; padding: 12px 14px; font-size: 0.9rem;
+  }
+  .info-box strong { color: var(--blue); }
+
+  /* ── Anatomy diagram ── */
+  .anatomy {
+    border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden;
+  }
+  .anatomy-label {
+    background: var(--bg-alt);
+    font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.78rem;
+    color: var(--text-muted); padding: 5px 14px; letter-spacing: 0.03em;
+  }
+  .anatomy code {
+    display: block; background: var(--code-bg); color: var(--code-text);
+    font-family: 'DM Mono', monospace; font-size: 0.85rem;
+    line-height: 1.65; padding: 14px 16px; white-space: pre; overflow-x: auto;
+  }
+
+  /* ── Scenario ── */
+  .scenario {
+    background: var(--blue-light); border: 1.5px solid var(--border);
+    border-left: 5px solid var(--blue); border-radius: 0 8px 8px 0; padding: 14px 16px;
+  }
+  .sc-title {
+    font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 0.9rem;
+    color: var(--blue); margin-bottom: 6px;
+  }
+  .scenario ul { padding-left: 18px; margin-top: 6px; }
+  .scenario li { margin-bottom: 4px; font-size: 0.9rem; }
+
+  /* ── Scenario section wrapper ── */
+  .scenario-section {
+    border: 1.5px solid var(--blue); border-radius: 10px; overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .scenario-section-header {
+    background: var(--blue); color: white; padding: 12px 16px;
+    font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .scenario-section-body { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+  /* ── End of lesson ── */
+  .end-section {
+    background: var(--green-light); border: 1.5px solid var(--green);
+    border-radius: 10px; padding: 18px; box-shadow: var(--shadow-sm);
+  }
+  .end-title {
+    font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem;
+    color: var(--green); margin-bottom: 12px;
+  }
+  .end-items { display: flex; flex-direction: column; gap: 8px; }
+  .end-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: white; border: 1.5px solid var(--green);
+    border-radius: 8px; padding: 10px 14px; cursor: pointer; transition: all 0.15s;
+  }
+  .end-item:hover { background: var(--green-light); }
+  .end-item.done { background: var(--green); }
+  .end-item.done .end-label { color: white; text-decoration: line-through; }
+  .end-box {
+    width: 22px; height: 22px; border: 2px solid var(--green); border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; color: transparent; flex-shrink: 0; transition: all 0.15s;
+  }
+  .end-item.done .end-box { background: white; color: var(--green); }
+  .end-label { font-size: 0.92rem; color: var(--text); }
+
+  /* ── Print styles ── */
+  @page { size: letter portrait; margin: 0.55in; }
+  @media print {
+    .progress-bar-wrap { display: none !important; }
+    * { box-shadow: none !important; }
+    body { background: white !important; }
+    /* Code blocks: white bg + black text on paper */
+    .code-wrap code, .anatomy code {
+      background: #ffffff !important;
+      color: #000000 !important;
+      border: 1px solid #ccc !important;
+    }
+    .code-wrap code .kw,  .code-wrap code .fn,  .code-wrap code .num,
+    .code-wrap code .str, .code-wrap code .cmt, .code-wrap code .tp,
+    .anatomy code .kw,    .anatomy code .fn,    .anatomy code .num,
+    .anatomy code .str,   .anatomy code .cmt,   .anatomy code .tp {
+      color: #000000 !important;
+      font-style: normal;
+    }
+    .code-label { background: #CC0F11 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    /* Hide placeholder hint text */
+    ::placeholder { color: transparent !important; }
+    ::-webkit-input-placeholder { color: transparent !important; }
+    /* Individual elements — avoid splitting */
+    .check-item, .vocab-card, .write-in, .plain-eng,
+    .info-box, .scenario, .anatomy, .code-wrap,
+    .end-item { break-inside: avoid; page-break-inside: avoid; }
+    p, li { orphans: 3; widows: 3; }
+    /* Vocab grid: flex rows in print */
+    .vocab-grid { display: block !important; }
+    .vocab-row {
+      display: flex !important; gap: 16px;
+      break-inside: avoid; page-break-inside: avoid; margin-bottom: 10px;
+    }
+    .vocab-card { flex: 1; break-inside: avoid; page-break-inside: avoid; }
+    /* Ink economy */
+    .check-item { background: #f8f8f8 !important; border-color: #ddd !important; }
+    .check-item.done { background: #f0fff4 !important; }
+    .focus-bar, .parking { break-inside: avoid; }
+    /* Page break: Key Words starts on page 2 */
+    .print-break {
+      display: block !important; height: 0;
+      break-after: page !important; page-break-after: always !important;
+    }
+    /* End of Lesson on its own page */
+    .end-section {
+      break-before: page !important; page-break-before: always !important;
+    }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 480px) {
+    h1 { font-size: 1.3rem; }
+    .vocab-grid { grid-template-columns: 1fr; }
+    .name-line { flex-direction: column; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- ══ Header ══ -->
+  <div class="page-header">
+    <div>
+      <h1>Intro to OOP — Objects &amp; Classes</h1>
+      <div class="subtitle">🏎️🔥 RamRodz Robotics · Team 6366 · Programming Worksheet</div>
+    </div>
+    <div class="badge">🏎️🔥</div>
+  </div>
+
+  <!-- ══ Name / Date ══ -->
+  <div class="name-line">
+    <label>Name <input type="text" placeholder="Your name…"></label>
+    <label>Date <input type="text" placeholder="Today's date…"></label>
+  </div>
+
+  <!-- ══ Team Banner ══ -->
+  <div class="team-banner">
+    🏎️🔥 RAM RODZ ROBOTICS | TEAM #6366 | HILLCREST &amp; WOODMONT HIGH SCHOOLS · SIMPSONVILLE, SC
+  </div>
+
+  <!-- ══ Progress bar ══ -->
+  <div class="progress-bar-wrap">
+    <div class="progress-label">
+      <span>⬤ Your Progress</span>
+      <span id="progress-text">0 / 7 sections</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <!-- ══ Focus Check-In ══ -->
+  <div class="focus-bar">
+    <div class="focus-bar-label">🎯 Focus Check-In — How are you feeling right now?</div>
+    <div class="focus-pills">
+      <div class="focus-pill" onclick="selectFocus(this)">😵 Struggling</div>
+      <div class="focus-pill" onclick="selectFocus(this)">😐 Okay</div>
+      <div class="focus-pill" onclick="selectFocus(this)">😤 Ready</div>
+    </div>
+  </div>
+
+  <!-- ══ Big Question ══ -->
+  <div class="big-q">
+    <div class="bq-tag">🤔 Today's Big Question</div>
+    <p>WPILib gives us a <code>motor</code>, a <code>controller</code>, and a <code>drivetrain</code> — each one does different things. How does the code keep all of that organized without turning into a giant mess?</p>
+  </div>
+
+  <!-- ══ Parking Lot ══ -->
+  <div class="parking">
+    <h3>🅿️ Parking Lot — Random Thoughts</h3>
+    <p style="font-size:0.82rem; color:var(--text-muted); margin:0 0 8px;">If your brain jumps to a question or idea, write it here so you don't lose it — ask later!</p>
+    <div class="parking-lines">
+      <input type="text" class="wi-line" placeholder="thought or question...">
+      <input type="text" class="wi-line" placeholder="thought or question...">
+      <input type="text" class="wi-line" placeholder="thought or question...">
+      <input type="text" class="wi-line" placeholder="thought or question...">
+      <input type="text" class="wi-line" placeholder="thought or question...">
+      <input type="text" class="wi-line" placeholder="thought or question...">
+      <input type="text" class="wi-line" placeholder="thought or question...">
+    </div>
+  </div>
+
+  <div class="print-break"></div>
+
+  <!-- ══ Section 1: Vocab ══ -->
+  <div class="section" id="sec1">
+    <div class="section-header" onclick="toggleSection('sec1')">
+      <div class="step-num">1</div>
+      <h2>Key Words — Check Off When Explained</h2>
+      <span class="section-check" id="sec1-check">⬜</span>
+    </div>
+    <div class="section-body" id="sec1-body">
+      <div class="vocab-grid">
+        <div class="vocab-row">
+          <div class="vocab-card" onclick="toggleVocab(this)">
+            <div class="vocab-term">Class</div>
+            <div class="vocab-def">A blueprint that describes what an object looks like and what it can do — like a recipe before the food is made.</div>
+          </div>
+          <div class="vocab-card" onclick="toggleVocab(this)">
+            <div class="vocab-term">Object</div>
+            <div class="vocab-def">A real thing built from a class blueprint. You can have many objects from one class — just like many cars built from the same design.</div>
+          </div>
+        </div>
+        <div class="vocab-row">
+          <div class="vocab-card" onclick="toggleVocab(this)">
+            <div class="vocab-term">Field</div>
+            <div class="vocab-def">A variable that lives inside a class and holds data the object remembers — like a robot part knowing its own speed.</div>
+          </div>
+          <div class="vocab-card" onclick="toggleVocab(this)">
+            <div class="vocab-term">Constructor</div>
+            <div class="vocab-def">A special method that runs once when you create an object — it sets the object's starting values.</div>
+          </div>
+        </div>
+        <div class="vocab-row">
+          <div class="vocab-card" onclick="toggleVocab(this)">
+            <div class="vocab-term">Instance</div>
+            <div class="vocab-def">Another word for "one specific object." If you make two Shooter objects, each one is a separate instance.</div>
+          </div>
+          <div class="vocab-card" onclick="toggleVocab(this)">
+            <div class="vocab-term">Dot Notation</div>
+            <div class="vocab-def">The way you talk to an object: <code>objectName.methodName()</code> — like telling a specific robot part what to do.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Section 2: What is a Class? ══ -->
+  <div class="section" id="sec2">
+    <div class="section-header" onclick="toggleSection('sec2')">
+      <div class="step-num">2</div>
+      <h2>The Blueprint — What is a Class?</h2>
+      <span class="section-check" id="sec2-check">⬜</span>
+    </div>
+    <div class="section-body" id="sec2-body">
+      <div class="info-box">
+        <strong>Think about it:</strong> A car factory has one set of blueprints, but it can build thousands of cars from it. A <strong>class</strong> is like that blueprint — you write it once, and Java can create as many objects from it as you need.
+      </div>
+      <div class="check-item" onclick="toggleCheck(this); markSectionDone('sec2')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen — A class is a <em>description</em>, not a thing yet. It has no memory and does nothing until an object is created from it.</span>
+      </div>
+      <div class="anatomy">
+        <div class="anatomy-label">ANATOMY OF A CLASS</div>
+        <code><span class="kw">class</span> <span class="tp">Shooter</span> {           <span class="cmt">// class name — always capitalized</span>
+
+    <span class="cmt">// fields go here (what the object remembers)</span>
+    <span class="cmt">// constructor goes here (how to set it up)</span>
+    <span class="cmt">// methods go here (what the object can do)</span>
+
+}</code>
+      </div>
+      <div class="plain-eng">💬 Plain English: The word <strong>class</strong> starts the blueprint. The curly braces <code>{ }</code> hold everything that belongs to it. Nothing happens yet — this is just the description.</div>
+      <div class="write-in">
+        <div class="wi-label">✏️ Quick Question — In one word, what is a class?</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="A class is a _______ for making objects.">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Section 3: What is an Object? ══ -->
+  <div class="section" id="sec3">
+    <div class="section-header" onclick="toggleSection('sec3')">
+      <div class="step-num">3</div>
+      <h2>The Real Thing — What is an Object?</h2>
+      <span class="section-check" id="sec3-check">⬜</span>
+    </div>
+    <div class="section-body" id="sec3-body">
+      <div class="check-item" onclick="toggleCheck(this); markSectionDone('sec3')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen — An object is a <em>real instance</em> built from the class blueprint. You create one using the <code>new</code> keyword.</span>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">Java — Creating an Object</div>
+        <code><span class="tp">Shooter</span> myShooter = <span class="kw">new</span> <span class="fn">Shooter</span>(); <span class="cmt">// build a real Shooter object</span></code>
+      </div>
+      <div class="plain-eng">💬 Plain English: <strong><code>new Shooter()</code></strong> takes the blueprint and builds a real object in memory. Now <code>myShooter</code> is a real thing — it has its own data and can do things.</div>
+      <div class="info-box">
+        <strong>🔑 Key idea:</strong> You can have multiple objects from one class.<br>
+        <code>Shooter frontShooter = new Shooter();</code><br>
+        <code>Shooter backShooter = new Shooter();</code><br>
+        Both are Shooters, but they are totally separate — changing one doesn't change the other.
+      </div>
+      <div class="write-in">
+        <div class="wi-label">✏️ Try It — Write a line that creates a new Shooter object named <code>topShooter</code></div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="Shooter _______ = new Shooter();">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Section 4: Fields ══ -->
+  <div class="section" id="sec4">
+    <div class="section-header" onclick="toggleSection('sec4')">
+      <div class="step-num">4</div>
+      <h2>Fields — What an Object Remembers</h2>
+      <span class="section-check" id="sec4-check">⬜</span>
+    </div>
+    <div class="section-body" id="sec4-body">
+      <div class="check-item" onclick="toggleCheck(this); markSectionDone('sec4')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen — Fields are variables that live <em>inside</em> the class. Every object gets its own copy of each field.</span>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">Java — Adding Fields to a Class</div>
+        <code><span class="kw">class</span> <span class="tp">Shooter</span> {
+
+    <span class="kw">double</span> speed;      <span class="cmt">// how fast the shooter spins (0.0 to 1.0)</span>
+    <span class="kw">boolean</span> isRunning; <span class="cmt">// is the shooter currently on?</span>
+
+}</code>
+      </div>
+      <div class="plain-eng">💬 Plain English: <strong>Fields are the object's memory.</strong> The <code>Shooter</code> object will remember its own <code>speed</code> and whether it's <code>isRunning</code>. Each Shooter you create gets its own copy of these.</div>
+      <div class="write-in">
+        <div class="wi-label">✏️ Think It — What two things does a Shooter object remember, according to the code above?</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="1. It remembers its _______ (how fast it spins)">
+          <input type="text" class="wi-line" placeholder="2. It remembers whether it is _______ (true or false)">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Section 5: Constructor ══ -->
+  <div class="section" id="sec5">
+    <div class="section-header" onclick="toggleSection('sec5')">
+      <div class="step-num">5</div>
+      <h2>The Constructor — Setting Up a New Object</h2>
+      <span class="section-check" id="sec5-check">⬜</span>
+    </div>
+    <div class="section-body" id="sec5-body">
+      <div class="check-item" onclick="toggleCheck(this); markSectionDone('sec5')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen — The constructor runs automatically when you use <code>new</code>. It gives the object its starting values so it's ready to use.</span>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">Java — Shooter Class with Constructor</div>
+        <code><span class="kw">class</span> <span class="tp">Shooter</span> {
+
+    <span class="kw">double</span> speed;      <span class="cmt">// field: spin speed</span>
+    <span class="kw">boolean</span> isRunning; <span class="cmt">// field: on or off</span>
+
+    <span class="fn">Shooter</span>() {              <span class="cmt">// constructor — same name as the class, no return type</span>
+        speed = <span class="num">0.0</span>;       <span class="cmt">// start stopped</span>
+        isRunning = <span class="kw">false</span>;  <span class="cmt">// start off</span>
+    }
+
+}</code>
+      </div>
+      <div class="plain-eng">💬 Plain English: <strong>The constructor is like the "setup" step.</strong> The moment you write <code>new Shooter()</code>, Java runs the constructor and sets <code>speed</code> to 0 and <code>isRunning</code> to false — so the shooter always starts in a safe, stopped state.</div>
+      <div class="write-in">
+        <div class="wi-label">✏️ Quick Question — When does the constructor run?</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="The constructor runs when you use the _______ keyword to create an object.">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Section 6: Dot Notation ══ -->
+  <div class="section" id="sec6">
+    <div class="section-header" onclick="toggleSection('sec6')">
+      <div class="step-num">6</div>
+      <h2>Dot Notation — Talking to Your Object</h2>
+      <span class="section-check" id="sec6-check">⬜</span>
+    </div>
+    <div class="section-body" id="sec6-body">
+      <div class="check-item" onclick="toggleCheck(this); markSectionDone('sec6')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen — After you create an object, you use a <em>dot</em> to call its methods: <code>objectName.methodName()</code>. This is called dot notation.</span>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">Java — Full Shooter Class + Calling It</div>
+        <code><span class="kw">class</span> <span class="tp">Shooter</span> {
+
+    <span class="kw">double</span> speed;
+    <span class="kw">boolean</span> isRunning;
+
+    <span class="fn">Shooter</span>() {
+        speed = <span class="num">0.0</span>;
+        isRunning = <span class="kw">false</span>;
+    }
+
+    <span class="kw">void</span> <span class="fn">spinUp</span>() {       <span class="cmt">// method: start the shooter</span>
+        isRunning = <span class="kw">true</span>;
+        speed = <span class="num">0.8</span>;        <span class="cmt">// 80% power</span>
+    }
+
+    <span class="kw">void</span> <span class="fn">stop</span>() {          <span class="cmt">// method: stop the shooter</span>
+        isRunning = <span class="kw">false</span>;
+        speed = <span class="num">0.0</span>;        <span class="cmt">// no power</span>
+    }
+
+}
+
+<span class="cmt">// Using the class:</span>
+<span class="tp">Shooter</span> myShooter = <span class="kw">new</span> <span class="fn">Shooter</span>(); <span class="cmt">// create the object</span>
+myShooter.<span class="fn">spinUp</span>();                 <span class="cmt">// tell it to spin up</span>
+myShooter.<span class="fn">stop</span>();                   <span class="cmt">// tell it to stop</span></code>
+      </div>
+      <div class="plain-eng">💬 Plain English: <strong>The dot is how you give an order to a specific object.</strong> <code>myShooter.spinUp()</code> means "hey, <em>myShooter</em>, run your spinUp method." If you had two shooters, each one responds only to its own dot.</div>
+      <div class="info-box">
+        <strong>🔌 WPILib works exactly the same way!</strong><br>
+        <code>PWMSparkMax motor = new PWMSparkMax(0);</code>  ← create a motor object<br>
+        <code>motor.set(0.5);</code>  ← dot notation to set its speed to 50%<br><br>
+        Every WPILib component — motors, controllers, encoders — is an <strong>object</strong> built from a <strong>class</strong>.
+      </div>
+      <div class="write-in">
+        <div class="wi-label">✏️ Try It — Write the dot-notation call to stop the shooter using the <code>myShooter</code> object</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="myShooter._______();">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Robot Scenario ══ -->
+  <div class="scenario-section">
+    <div class="scenario-section-header">
+      🤖 Robot Scenario — Design a Drivetrain Class
+      <span class="section-check" id="scenario-check">⬜</span>
+    </div>
+    <div class="scenario-section-body">
+      <div class="scenario">
+        <div class="sc-title">🎯 The Challenge</div>
+        <p>Your robot needs a <code>Drivetrain</code> class to control its two drive motors. The drivetrain should:</p>
+        <ul>
+          <li>Remember the current speed for the <strong>left</strong> motor and the <strong>right</strong> motor (both start at 0.0)</li>
+          <li>Have a method called <code>drive()</code> that could set both motors to full power</li>
+          <li>Have a method called <code>stop()</code> that sets both speeds back to 0.0</li>
+        </ul>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this); markSectionDone('scenario')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">I understand the challenge — a Drivetrain class needs fields for left and right speed, a constructor to set them to 0, and at least two methods.</span>
+      </div>
+      <div class="write-in">
+        <div class="wi-label">✏️ Sketch It — Write out the skeleton of a Drivetrain class (fields + constructor + method names)</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="class _______ {">
+          <input type="text" class="wi-line" placeholder="    double _______; // left motor speed">
+          <input type="text" class="wi-line" placeholder="    double _______; // right motor speed">
+          <input type="text" class="wi-line" placeholder="    Drivetrain() { leftSpeed = ___; rightSpeed = ___; }">
+          <input type="text" class="wi-line" placeholder="    void drive() { ... }">
+          <input type="text" class="wi-line" placeholder="    void stop()  { ... }">
+          <input type="text" class="wi-line" placeholder="}">
+        </div>
+      </div>
+      <div class="write-in">
+        <div class="wi-label">✏️ Apply It — Write the line that creates a Drivetrain object named <code>dt</code> and calls its <code>drive()</code> method</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="Drivetrain dt = new _______();">
+          <input type="text" class="wi-line" placeholder="dt._______();">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ End of Lesson ══ -->
+  <div class="end-section">
+    <div class="end-title">✅ End of Lesson — I Can…</div>
+    <div class="end-items">
+      <div class="end-item" onclick="toggleEnd(this)">
+        <div class="end-box">✓</div>
+        <span class="end-label">Explain the difference between a <strong>class</strong> (blueprint) and an <strong>object</strong> (real thing built from it).</span>
+      </div>
+      <div class="end-item" onclick="toggleEnd(this)">
+        <div class="end-box">✓</div>
+        <span class="end-label">Write a basic class in Java with at least two <strong>fields</strong> and a <strong>constructor</strong> that sets their starting values.</span>
+      </div>
+      <div class="end-item" onclick="toggleEnd(this)">
+        <div class="end-box">✓</div>
+        <span class="end-label">Use <strong><code>new</code></strong> to create an object from a class and store it in a variable.</span>
+      </div>
+      <div class="end-item" onclick="toggleEnd(this)">
+        <div class="end-box">✓</div>
+        <span class="end-label">Use <strong>dot notation</strong> to call a method on an object: <code>myShooter.spinUp()</code>.</span>
+      </div>
+      <div class="end-item" onclick="toggleEnd(this)">
+        <div class="end-box">✓</div>
+        <span class="end-label">Recognize that WPILib components (motors, controllers) are <strong>objects</strong> — and that <code>motor.set(0.5)</code> is dot notation calling a method.</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end .page-wrap -->
+
+<script>
+  // ── Focus check-in ──
+  function selectFocus(el) {
+    document.querySelectorAll('.focus-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // ── Section collapse toggle ──
+  function toggleSection(id) {
+    const body = document.getElementById(id + '-body');
+    if (body) body.classList.toggle('collapsed');
+  }
+
+  // ── Check items ──
+  function toggleCheck(el) {
+    el.classList.toggle('done');
+  }
+
+  // ── Mark section done when all check-items are done ──
+  function markSectionDone(secId) {
+    // Find the section container
+    const sec = document.getElementById(secId);
+    if (!sec) return;
+    const items = sec.querySelectorAll('.check-item');
+    const allDone = items.length > 0 && [...items].every(i => i.classList.contains('done'));
+    const checkEl = document.getElementById(secId + '-check');
+    if (checkEl) checkEl.textContent = allDone ? '✅' : '⬜';
+    updateProgress();
+  }
+
+  // ── Vocab cards ──
+  function toggleVocab(el) {
+    el.classList.toggle('checked');
+    checkVocabDone();
+  }
+
+  function checkVocabDone() {
+    const cards = document.querySelectorAll('#sec1 .vocab-card');
+    const allChecked = cards.length > 0 && [...cards].every(c => c.classList.contains('checked'));
+    const checkEl = document.getElementById('sec1-check');
+    if (checkEl) checkEl.textContent = allChecked ? '✅' : '⬜';
+    updateProgress();
+  }
+
+  // ── Progress bar ──
+  function updateProgress() {
+    const checks = document.querySelectorAll('[id$="-check"]');
+    const total = checks.length;
+    const done = [...checks].filter(c => c.textContent === '✅').length;
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    const fill = document.getElementById('progress-fill');
+    const label = document.getElementById('progress-text');
+    if (fill) fill.style.width = pct + '%';
+    if (label) label.textContent = done + ' / ' + total + ' sections';
+  }
+
+  // ── End-of-lesson items ──
+  function toggleEnd(el) {
+    el.classList.toggle('done');
+  }
+
+  // ── Init ──
+  updateProgress();
+</script>
+</body>
+</html>
