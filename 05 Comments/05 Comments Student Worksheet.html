@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comments</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏎️</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ── Tokens ─────────────────────────────────────────────── */
+    :root {
+      --bg: #ffffff;
+      --bg-alt: #FDF2F2;
+      --text: #1C1314;
+      --text-muted: #6B4A4B;
+      --blue: #CC0F11;
+      --blue-light: #FEE2E2;
+      --amber: #D97706;
+      --amber-light: #FEF3C7;
+      --green: #059669;
+      --green-light: #D1FAE5;
+      --red: #9B0C0E;
+      --border: #F0CECE;
+      --code-bg: #1C1314;
+      --code-text: #F1E8E8;
+      --shadow-sm: 0 1px 4px rgba(0,0,0,.07);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #160A0A; --bg-alt: #241010; --text: #F9ECEC;
+        --text-muted: #C49A9B; --blue: #F25254; --blue-light: #3D1010;
+        --amber: #FCD34D; --amber-light: #3D2E0A; --green: #34D399;
+        --green-light: #064E3B; --red: #F87171; --border: #3D1818;
+        --code-bg: #0D0606; --code-text: #F1E8E8;
+      }
+    }
+    :root[data-theme="dark"] {
+      --bg: #160A0A; --bg-alt: #241010; --text: #F9ECEC;
+      --text-muted: #C49A9B; --blue: #F25254; --blue-light: #3D1010;
+      --amber: #FCD34D; --amber-light: #3D2E0A; --green: #34D399;
+      --green-light: #064E3B; --red: #F87171; --border: #3D1818;
+      --code-bg: #0D0606; --code-text: #F1E8E8;
+    }
+
+    /* ── Reset / Base ───────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      max-width: 780px;
+      margin: 0 auto;
+      padding-inline: 24px;
+      padding-block: 28px;
+      line-height: 1.6;
+    }
+
+    /* ── Page Header ────────────────────────────────────────── */
+    .page-header { margin-bottom: 18px; }
+    .page-header h1 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      color: var(--blue);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .page-header .badge { font-size: 2rem; }
+    .page-header .subtitle {
+      font-family: 'Outfit', sans-serif;
+      font-size: .85rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ── Name/Date ──────────────────────────────────────────── */
+    .name-row {
+      display: flex; gap: 24px; margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .name-row label {
+      font-family: 'Outfit', sans-serif; font-size: .85rem;
+      color: var(--text-muted); font-weight: 600; flex: 1; min-width: 180px;
+    }
+    .name-row input {
+      display: block; width: 100%; border: none;
+      border-bottom: 2px solid var(--border);
+      background: transparent; color: var(--text);
+      font-family: 'DM Sans', sans-serif; font-size: 1rem;
+      padding: 4px 2px; outline: none; margin-top: 4px;
+    }
+    .name-row input:focus { border-bottom-color: var(--blue); }
+
+    /* ── Banner ─────────────────────────────────────────────── */
+    .banner {
+      background: #CC0F11; color: white;
+      font-family: 'Outfit', sans-serif; font-weight: 600;
+      font-size: .78rem; text-align: center;
+      padding: 10px 16px; border-radius: 8px;
+      margin-bottom: 16px; letter-spacing: .03em;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+
+    /* ── Progress Bar ───────────────────────────────────────── */
+    .progress-bar-wrap {
+      margin-bottom: 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px; padding: 12px 16px;
+      background: var(--bg-alt); box-shadow: var(--shadow-sm);
+    }
+    .progress-label {
+      font-family: 'Outfit', sans-serif; font-size: .8rem;
+      color: var(--text-muted); margin-bottom: 6px; font-weight: 600;
+    }
+    .progress-track {
+      height: 12px; background: var(--border);
+      border-radius: 99px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, #CC0F11, #059669);
+      border-radius: 99px; transition: width .4s ease;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+
+    /* ── Focus Check-In ─────────────────────────────────────── */
+    .focus-bar {
+      background: var(--amber-light);
+      border: 1.5px solid var(--amber);
+      border-radius: 10px; padding: 12px 16px;
+      margin-bottom: 14px; display: flex;
+      align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .focus-bar .fl { font-family: 'Outfit', sans-serif; font-size: .85rem; font-weight: 700; color: var(--amber); white-space: nowrap; }
+    .focus-pill {
+      font-family: 'Outfit', sans-serif; font-size: .82rem; font-weight: 600;
+      padding: 5px 14px; border-radius: 99px; cursor: pointer;
+      border: 2px solid var(--amber); color: var(--amber);
+      background: transparent; transition: all .15s;
+      user-select: none;
+    }
+    .focus-pill.active { background: var(--amber); color: #fff; }
+
+    /* ── Big Question ───────────────────────────────────────── */
+    .big-question {
+      border-left: 4px solid var(--blue);
+      background: var(--blue-light);
+      border-radius: 0 10px 10px 0;
+      padding: 14px 18px; margin-bottom: 14px;
+    }
+    .bq-tag {
+      font-family: 'Outfit', sans-serif; font-size: .75rem;
+      font-weight: 700; color: var(--blue);
+      text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px;
+    }
+    .big-question p {
+      font-family: 'Outfit', sans-serif; font-size: 1.05rem;
+      font-weight: 700; color: var(--text);
+    }
+
+    /* ── Parking Lot ────────────────────────────────────────── */
+    .parking {
+      border: 2px dashed var(--border);
+      border-radius: 10px; padding: 14px 16px;
+      margin-bottom: 18px;
+    }
+    .parking-label {
+      font-family: 'Outfit', sans-serif; font-size: .85rem;
+      font-weight: 700; color: var(--text-muted); margin-bottom: 10px;
+    }
+    .park-line {
+      display: block; width: 100%; border: none;
+      border-bottom: 1.5px solid var(--border);
+      background: transparent; color: var(--text);
+      font-family: 'DM Sans', sans-serif; font-size: .9rem;
+      padding: 6px 2px; outline: none; margin-bottom: 4px;
+    }
+    .park-line:focus { border-bottom-color: var(--blue); }
+
+    /* ── Print break ────────────────────────────────────────── */
+    .print-break { display: none; }
+
+    /* ── Sections ───────────────────────────────────────────── */
+    .section {
+      border: 1.5px solid var(--border);
+      border-radius: 10px; margin-bottom: 14px;
+      overflow: hidden; box-shadow: var(--shadow-sm);
+    }
+    .section-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px; cursor: pointer;
+      background: var(--bg-alt);
+      user-select: none;
+    }
+    .section-header:hover { filter: brightness(.97); }
+    .step-num {
+      font-family: 'Outfit', sans-serif; font-weight: 800;
+      font-size: 1.1rem; color: #fff;
+      background: var(--blue); border-radius: 50%;
+      width: 32px; height: 32px; display: flex;
+      align-items: center; justify-content: center;
+      flex-shrink: 0;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .section-header h2 {
+      font-family: 'Outfit', sans-serif; font-weight: 700;
+      font-size: 1rem; color: var(--text); flex: 1;
+    }
+    .section-check { font-size: 1.2rem; }
+    .section-body { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+    .section-body.collapsed { display: none; }
+
+    /* ── Vocab Grid ─────────────────────────────────────────── */
+    .vocab-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .vocab-row { display: contents; }
+    .vocab-card {
+      border: 1.5px solid var(--border);
+      border-radius: 8px; padding: 12px;
+      cursor: pointer; background: var(--bg);
+      transition: all .15s; user-select: none;
+    }
+    .vocab-card:hover { border-color: var(--blue); }
+    .vocab-card.checked { background: var(--green-light); border-color: var(--green); }
+    .vocab-term {
+      font-family: 'Outfit', sans-serif; font-weight: 700;
+      font-size: .9rem; color: var(--blue); margin-bottom: 4px;
+    }
+    .vocab-card.checked .vocab-term { color: var(--green); }
+    .vocab-def { font-size: .82rem; color: var(--text-muted); }
+
+    /* ── Check Items ────────────────────────────────────────── */
+    .check-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 12px; border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: var(--bg); cursor: pointer;
+      transition: all .15s; user-select: none;
+    }
+    .check-item:hover { border-color: var(--blue); }
+    .check-item.done { background: var(--green-light); border-color: var(--green); }
+    .cb-box {
+      width: 22px; height: 22px; border-radius: 5px;
+      border: 2px solid var(--border); background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .8rem; color: transparent; flex-shrink: 0;
+      transition: all .15s;
+    }
+    .check-item.done .cb-box { background: var(--green); border-color: var(--green); color: white; }
+    .check-label { font-size: .9rem; color: var(--text); }
+
+    /* ── Code Blocks ────────────────────────────────────────── */
+    .code-wrap {
+      border-radius: 8px; overflow: hidden;
+      border: 1.5px solid var(--border);
+    }
+    .code-label {
+      background: var(--blue); color: white;
+      font-family: 'Outfit', sans-serif; font-size: .75rem;
+      font-weight: 600; padding: 5px 12px;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .code-wrap code {
+      display: block; background: var(--code-bg);
+      color: var(--code-text);
+      font-family: 'DM Mono', monospace; font-size: .82rem;
+      padding: 14px 16px; white-space: pre; overflow-x: auto;
+      line-height: 1.65;
+    }
+    .kw  { color: #C792EA; }
+    .fn  { color: #82AAFF; }
+    .num { color: #F78C6C; }
+    .str { color: #C3E88D; }
+    .cmt { color: #546E7A; font-style: italic; }
+    .tp  { color: #FFCB6B; }
+
+    /* ── Plain English ──────────────────────────────────────── */
+    .plain-eng {
+      background: var(--amber-light);
+      border: 1.5px solid var(--amber);
+      border-radius: 8px; padding: 10px 14px;
+      font-size: .88rem; color: var(--text);
+    }
+
+    /* ── Info Box ───────────────────────────────────────────── */
+    .info-box {
+      background: var(--blue-light);
+      border: 1.5px solid var(--blue);
+      border-radius: 8px; padding: 12px 16px;
+      font-size: .88rem; color: var(--text);
+    }
+    .info-box strong { color: var(--blue); }
+
+    /* ── Write-in Box ───────────────────────────────────────── */
+    .write-in {
+      border: 1.5px solid var(--border);
+      border-radius: 8px; overflow: hidden;
+    }
+    .wi-label {
+      background: var(--bg-alt);
+      font-family: 'Outfit', sans-serif; font-weight: 700;
+      font-size: .82rem; color: var(--text-muted);
+      padding: 7px 12px; border-bottom: 1px solid var(--border);
+    }
+    .wi-lines { padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; }
+    .wi-line {
+      border: none; border-bottom: 1.5px solid var(--border);
+      background: transparent; color: var(--text);
+      font-family: 'DM Mono', monospace; font-size: .85rem;
+      padding: 5px 2px; outline: none; width: 100%;
+    }
+    .wi-line:focus { border-bottom-color: var(--blue); }
+
+    /* ── Reference Table ────────────────────────────────────── */
+    .op-table-wrap { overflow-x: auto; border-radius: 8px; border: 1.5px solid var(--border); }
+    .op-table-wrap table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+    .op-table-wrap th {
+      background: var(--blue); color: white;
+      font-family: 'Outfit', sans-serif; font-weight: 700;
+      padding: 8px 12px; text-align: left;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .op-table-wrap td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+    .op-table-wrap tr:last-child td { border-bottom: none; }
+    .op-table-wrap tr:nth-child(even) td { background: var(--bg-alt); }
+    .op-table-wrap code {
+      font-family: 'DM Mono', monospace;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 2px 6px; border-radius: 4px; font-size: .82rem;
+    }
+
+    /* ── Scenario Section ───────────────────────────────────── */
+    .scenario-section {
+      border: 2px solid var(--blue);
+      border-radius: 10px; overflow: hidden;
+      margin-bottom: 14px; box-shadow: var(--shadow-sm);
+    }
+    .scenario-header {
+      background: var(--blue); color: white;
+      font-family: 'Outfit', sans-serif; font-weight: 700;
+      font-size: .95rem; padding: 10px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .scenario-body { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+    .scenario {
+      background: var(--blue-light);
+      border: 1.5px solid var(--blue);
+      border-radius: 8px; padding: 14px 16px; font-size: .9rem;
+    }
+    .sc-title {
+      font-family: 'Outfit', sans-serif; font-weight: 700;
+      color: var(--blue); margin-bottom: 8px; font-size: .92rem;
+    }
+    .scenario ul { padding-left: 18px; margin-top: 8px; }
+    .scenario li { margin-bottom: 4px; }
+
+    /* ── End of Lesson ──────────────────────────────────────── */
+    .end-section {
+      background: var(--green-light);
+      border: 2px solid var(--green);
+      border-radius: 10px; padding: 16px;
+      margin-bottom: 14px; box-shadow: var(--shadow-sm);
+    }
+    .end-title {
+      font-family: 'Outfit', sans-serif; font-weight: 800;
+      font-size: 1rem; color: var(--green); margin-bottom: 12px;
+    }
+    .end-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 9px 12px; border-radius: 8px;
+      border: 1.5px solid var(--green);
+      background: var(--bg); cursor: pointer;
+      margin-bottom: 7px; transition: all .15s;
+      user-select: none;
+    }
+    .end-item:last-child { margin-bottom: 0; }
+    .end-item:hover { border-color: var(--blue); }
+    .end-item.done { background: #bbf7d0; text-decoration: line-through; opacity: .75; }
+    .end-box {
+      width: 22px; height: 22px; border-radius: 5px;
+      border: 2px solid var(--green); background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .8rem; color: transparent; flex-shrink: 0;
+    }
+    .end-item.done .end-box { background: var(--green); color: white; }
+    .end-label { font-size: .9rem; color: var(--text); }
+
+    /* ── Print ──────────────────────────────────────────────── */
+    @media print {
+      @page { size: letter portrait; margin: 0.55in; }
+
+      .progress-bar-wrap { display: none !important; }
+      * { box-shadow: none !important; }
+      body { background: white !important; }
+
+      .print-break {
+        display: block !important; height: 0;
+        break-after: page !important; page-page-after: always !important;
+      }
+      .end-section {
+        break-before: page !important; page-break-before: always !important;
+      }
+
+      .code-wrap code, .anatomy code {
+        background: #ffffff !important;
+        color: #000000 !important;
+        border: 1px solid #ccc !important;
+      }
+      .code-wrap code .kw,  .code-wrap code .fn,  .code-wrap code .num,
+      .code-wrap code .str, .code-wrap code .cmt,  .code-wrap code .tp,
+      .code-wrap code .val {
+        color: #000000 !important;
+        font-style: normal;
+      }
+      .code-label {
+        background: #CC0F11 !important;
+        -webkit-print-color-adjust: exact; print-color-adjust: exact;
+      }
+
+      ::placeholder { color: transparent !important; }
+      ::-webkit-input-placeholder { color: transparent !important; }
+
+      .vocab-grid {
+        display: block;
+        column-count: 2;
+        column-gap: 16px;
+      }
+      .vocab-row { display: block; }
+      .vocab-card {
+        display: inline-block; width: 100%;
+        box-sizing: border-box; margin-bottom: 8px;
+        -webkit-column-break-inside: avoid;
+        break-inside: avoid; page-break-inside: avoid;
+      }
+
+      .check-item, .write-in, .plain-eng,
+      .info-box, .scenario, .code-wrap, .end-item, .op-table-wrap {
+        break-inside: avoid; page-break-inside: avoid;
+      }
+      p, li { orphans: 3; widows: 3; }
+
+      .check-item { background: #f8f8f8 !important; border-color: #ddd !important; }
+      .check-item.done { background: #f0fff4 !important; }
+      .focus-bar, .parking { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ Page Header ══════════════════════════════════════════ -->
+  <div class="page-header">
+    <h1>
+      Lesson 4 — Comments
+      <span class="badge">🏎️🔥</span>
+    </h1>
+    <div class="subtitle">🏎️🔥 RamRodz Robotics · Team 6366 · Programming Worksheet</div>
+  </div>
+
+  <!-- ══ Name / Date ══════════════════════════════════════════ -->
+  <div class="name-row">
+    <label>Name <input type="text" placeholder="Your name"></label>
+    <label>Date <input type="text" placeholder="MM / DD / YYYY"></label>
+  </div>
+
+  <!-- ══ Banner ═══════════════════════════════════════════════ -->
+  <div class="banner">
+    🏎️🔥 RAM RODZ ROBOTICS | TEAM #6366 | HILLCREST &amp; WOODMONT HIGH SCHOOLS · SIMPSONVILLE, SC
+  </div>
+
+  <!-- ══ Progress Bar ══════════════════════════════════════════ -->
+  <div class="progress-bar-wrap">
+    <div class="progress-label" id="prog-label">⬤ Your Progress — 0 / 6 sections</div>
+    <div class="progress-track">
+      <div class="progress-fill" id="prog-fill"></div>
+    </div>
+  </div>
+
+  <!-- ══ Focus Check-In ════════════════════════════════════════ -->
+  <div class="focus-bar">
+    <span class="fl">🎯 Focus Check-In:</span>
+    <div class="focus-pill" onclick="selectFocus(this)">😵 Struggling</div>
+    <div class="focus-pill" onclick="selectFocus(this)">😐 Okay</div>
+    <div class="focus-pill" onclick="selectFocus(this)">😤 Ready</div>
+  </div>
+
+  <!-- ══ Big Question ══════════════════════════════════════════ -->
+  <div class="big-question">
+    <div class="bq-tag">🤔 Today's Big Question</div>
+    <p>If someone else picks up your robot code in three months — or you come back after summer break — how will anyone know what each line is actually supposed to do?</p>
+  </div>
+
+  <!-- ══ Parking Lot ═══════════════════════════════════════════ -->
+  <div class="parking">
+    <div class="parking-label">🅿️ Parking Lot — Random Thoughts &amp; Questions</div>
+    <input class="park-line" type="text" placeholder="Drop a question here so you don't lose it...">
+    <input class="park-line" type="text" placeholder="">
+    <input class="park-line" type="text" placeholder="">
+    <input class="park-line" type="text" placeholder="">
+    <input class="park-line" type="text" placeholder="">
+    <input class="park-line" type="text" placeholder="">
+    <input class="park-line" type="text" placeholder="">
+  </div>
+
+  <!-- ══ Print break — Key Words start on page 2 ══════════════ -->
+  <div class="print-break"></div>
+
+  <!-- ══ Section 1: Key Words ══════════════════════════════════ -->
+  <div class="section" id="sec1">
+    <div class="section-header" onclick="toggleSection('sec1')">
+      <div class="step-num">1</div>
+      <h2>Key Words — Check Off When Explained</h2>
+      <span class="section-check" id="sec1-check">⬜</span>
+    </div>
+    <div class="section-body" id="sec1-body">
+      <div class="vocab-grid">
+        <div class="vocab-row">
+          <div class="vocab-card" onclick="toggleVocab(this, 'sec1')">
+            <div class="vocab-term">Comment</div>
+            <div class="vocab-def">A note written in code that Java ignores when running — it's just for humans to read.</div>
+          </div>
+          <div class="vocab-card" onclick="toggleVocab(this, 'sec1')">
+            <div class="vocab-term">Single-Line Comment</div>
+            <div class="vocab-def">Starts with <code style="font-family:'DM Mono',monospace;font-size:.8rem;">//</code> — everything after it on that line is ignored by Java.</div>
+          </div>
+        </div>
+        <div class="vocab-row">
+          <div class="vocab-card" onclick="toggleVocab(this, 'sec1')">
+            <div class="vocab-term">Multi-Line Comment</div>
+            <div class="vocab-def">Starts with <code style="font-family:'DM Mono',monospace;font-size:.8rem;">/*</code> and ends with <code style="font-family:'DM Mono',monospace;font-size:.8rem;">*/</code> — can span as many lines as needed.</div>
+          </div>
+          <div class="vocab-card" onclick="toggleVocab(this, 'sec1')">
+            <div class="vocab-term">Javadoc Comment</div>
+            <div class="vocab-def">Starts with <code style="font-family:'DM Mono',monospace;font-size:.8rem;">/**</code> — a special comment that documents a class or method.</div>
+          </div>
+        </div>
+        <div class="vocab-row">
+          <div class="vocab-card" onclick="toggleVocab(this, 'sec1')">
+            <div class="vocab-term">@param</div>
+            <div class="vocab-def">A Javadoc tag that describes one parameter (input) a method receives.</div>
+          </div>
+          <div class="vocab-card" onclick="toggleVocab(this, 'sec1')">
+            <div class="vocab-term">@return</div>
+            <div class="vocab-def">A Javadoc tag that describes what value a method gives back when it finishes.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Section 2: Single-Line Comments ══════════════════════ -->
+  <div class="section" id="sec2">
+    <div class="section-header" onclick="toggleSection('sec2')">
+      <div class="step-num">2</div>
+      <h2>Single-Line Comments — <code style="font-family:'DM Mono',monospace;font-size:.9rem;color:var(--text-muted);">//</code></h2>
+      <span class="section-check" id="sec2-check">⬜</span>
+    </div>
+    <div class="section-body" id="sec2-body">
+
+      <div class="check-item" onclick="toggleCheck(this); markSectionDone('sec2')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen — Instructor explains what a single-line comment is and when to use it.</span>
+      </div>
+
+      <p style="font-size:.9rem;color:var(--text-muted);">Write <code style="font-family:'DM Mono',monospace;">//</code> anywhere on a line. Everything after it is a comment — Java ignores it completely. You can put a comment on its own line, or at the end of a line of code.</p>
+
+      <div class="code-wrap">
+        <div class="code-label">Java — Single-Line Comments</div>
+        <code><span class="cmt">// This is a comment on its own line — Java skips it entirely</span>
+
+<span class="tp">double</span> shooterSpeed = <span class="num">0.0</span>;   <span class="cmt">// the shooter starts stopped</span>
+<span class="tp">boolean</span> isRunning = <span class="kw">false</span>;  <span class="cmt">// shooter is off at startup</span>
+
+<span class="cmt">// The next line sets the shooter to 80% power</span>
+shooterSpeed = <span class="num">0.8</span>;
+isRunning = <span class="kw">true</span>;</code>
+      </div>
+
+      <div class="plain-eng">💬 Plain English: <strong>// tells Java "skip this — it's a note for humans."</strong> It works on its own line OR at the end of a code line. Use it to explain what a variable is for, or why a line does what it does.</div>
+
+      <div class="info-box">
+        <strong>💡 Commenting Out Code</strong> — You can also use <code style="font-family:'DM Mono',monospace;font-size:.82rem;">//</code> to temporarily disable a line of code while testing. Put <code style="font-family:'DM Mono',monospace;font-size:.82rem;">//</code> in front and Java pretends the line doesn't exist.
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">Java — Commenting Out Code</div>
+        <code>shooterSpeed = <span class="num">0.8</span>;            <span class="cmt">// ← active: using this value</span>
+<span class="cmt">// shooterSpeed = 0.5;          // ← disabled: old value, turned off for now</span></code>
+      </div>
+
+      <div class="write-in">
+        <div class="wi-label">✏️ Try It — Add a single-line comment to each line below</div>
+        <div class="wi-lines">
+          <div style="font-family:'DM Mono',monospace;font-size:.83rem;color:var(--text-muted);padding:4px 2px;"><span style="color:var(--tp,#FFCB6B);">int</span> intakePort = 2;</div>
+          <input type="text" class="wi-line" placeholder="// your comment here...">
+          <div style="font-family:'DM Mono',monospace;font-size:.83rem;color:var(--text-muted);padding:4px 2px;margin-top:6px;"><span style="color:var(--tp,#FFCB6B);">boolean</span> intakeActive = false;</div>
+          <input type="text" class="wi-line" placeholder="// your comment here...">
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this); markSectionDone('sec2')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">I wrote single-line comments on both lines above.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ Section 3: Multi-Line Comments ════════════════════════ -->
+  <div class="section" id="sec3">
+    <div class="section-header" onclick="toggleSection('sec3')">
+      <div class="step-num">3</div>
+      <h2>Multi-Line Comments — <code style="font-family:'DM Mono',monospace;font-size:.9rem;color:var(--text-muted);">/* */</code></h2>
+      <span class="section-check" id="sec3-check">⬜</span>
+    </div>
+    <div class="section-body" id="sec3-body">
+
+      <div class="check-item" onclick="toggleCheck(this); markSectionDone('sec3')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen — Instructor explains multi-line comments and when to use them instead of <code style="font-family:'DM Mono',monospace;font-size:.82rem;">//</code>.</span>
+      </div>
+
+      <p style="font-size:.9rem;color:var(--text-muted);">Start with <code style="font-family:'DM Mono',monospace;">/*</code> and end with <code style="font-family:'DM Mono',monospace;">*/</code>. Everything between those two markers is a comment — it can span as many lines as you need.</p>
+
+      <div class="code-wrap">
+        <div class="code-label">Java — Multi-Line Comment</div>
+        <code><span class="cmt">/*
+  Shooter Subsystem — Teleop Control
+  Handles all shooter motor logic during the driver-controlled period.
+  The shooter spins up when the driver holds the fire button.
+  Written by: RamRodz Team 6366
+*/</span>
+
+<span class="tp">double</span> shooterSpeed = <span class="num">0.0</span>;
+<span class="tp">boolean</span> isRunning = <span class="kw">false</span>;</code>
+      </div>
+
+      <div class="plain-eng">💬 Plain English: <strong>/* opens the comment, */ closes it.</strong> Everything inside is ignored by Java. Use a multi-line comment at the top of a file or code block to describe the big picture — what the code is, why it exists, who wrote it.</div>
+
+      <div class="op-table-wrap">
+        <table>
+          <tr>
+            <th>Situation</th>
+            <th>Use This</th>
+          </tr>
+          <tr>
+            <td>Explain a single line or variable</td>
+            <td><code>//</code></td>
+          </tr>
+          <tr>
+            <td>Describe a block of code (big picture)</td>
+            <td><code>/* */</code></td>
+          </tr>
+          <tr>
+            <td>Temporarily disable one line</td>
+            <td><code>//</code> in front</td>
+          </tr>
+          <tr>
+            <td>Temporarily disable many lines</td>
+            <td><code>/* */</code> around them</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="write-in">
+        <div class="wi-label">✏️ Try It — Write a multi-line comment that describes this code block</div>
+        <div class="wi-lines">
+          <div style="font-size:.8rem;color:var(--text-muted);margin-bottom:6px;">Code block: <code style="font-family:'DM Mono',monospace;font-size:.8rem;">double driveSpeed = 0.0;  boolean isMoving = false;</code></div>
+          <input type="text" class="wi-line" placeholder="/*">
+          <input type="text" class="wi-line" placeholder="  What does this block control?">
+          <input type="text" class="wi-line" placeholder="  Starting values: ...">
+          <input type="text" class="wi-line" placeholder="*/">
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this); markSectionDone('sec3')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">I wrote a multi-line comment describing the drive block above.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ Section 4: Javadoc Comments ═══════════════════════════ -->
+  <div class="section" id="sec4">
+    <div class="section-header" onclick="toggleSection('sec4')">
+      <div class="step-num">4</div>
+      <h2>Javadoc Comments — <code style="font-family:'DM Mono',monospace;font-size:.9rem;color:var(--text-muted);">/** */</code></h2>
+      <span class="section-check" id="sec4-check">⬜</span>
+    </div>
+    <div class="section-body" id="sec4-body">
+
+      <div class="check-item" onclick="toggleCheck(this); markSectionDone('sec4')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen — Instructor explains Javadoc comments and the @param / @return tags.</span>
+      </div>
+
+      <p style="font-size:.9rem;color:var(--text-muted);">A Javadoc comment starts with <code style="font-family:'DM Mono',monospace;">/**</code> (two stars). It goes <strong>directly above</strong> a class or method definition and explains what it does, what it needs, and what it gives back. This is the professional standard for documenting Java code — IDEs use it to show hints as you type.</p>
+
+      <div class="code-wrap">
+        <div class="code-label">Java — Javadoc on a Method</div>
+        <code><span class="cmt">/**
+ * Calculates the safe speed for the shooter motor.
+ * Clamps the value so the motor never exceeds 90% power.
+ *
+ * @param requested  the speed the driver asked for (0.0 to 1.0)
+ * @return           the safe speed to actually send to the motor
+ */</span>
+<span class="kw">static</span> <span class="tp">double</span> <span class="fn">getSafeSpeed</span>(<span class="tp">double</span> requested) {
+    <span class="kw">if</span> (requested &gt; <span class="num">0.9</span>) {
+        <span class="kw">return</span> <span class="num">0.9</span>;   <span class="cmt">// cap it at 90%</span>
+    }
+    <span class="kw">return</span> requested;
+}</code>
+      </div>
+
+      <div class="plain-eng">💬 Plain English: <strong>/** starts the Javadoc, */ ends it.</strong> The first sentence describes what the method does. <strong>@param</strong> explains each input. <strong>@return</strong> explains what comes back. Tools like IntelliJ and VS Code read these to show you helpful hints while you code.</div>
+
+      <div class="code-wrap">
+        <div class="code-label">Java — Javadoc on a Class</div>
+        <code><span class="cmt">/**
+ * Represents the robot's shooter subsystem.
+ * Controls motor speed and tracks whether the shooter is running.
+ *
+ * @author RamRodz — Team 6366
+ * @version 1.0
+ */</span>
+<span class="kw">class</span> <span class="tp">Shooter</span> {
+    <span class="tp">double</span> speed;      <span class="cmt">// current motor speed</span>
+    <span class="tp">boolean</span> isRunning; <span class="cmt">// is the shooter on?</span>
+
+    <span class="cmt">/**
+     * Creates a new Shooter with the motor stopped.
+     */</span>
+    <span class="fn">Shooter</span>() {
+        speed = <span class="num">0.0</span>;
+        isRunning = <span class="kw">false</span>;
+    }
+}</code>
+      </div>
+
+      <div class="plain-eng">💬 Plain English: <strong>Put a Javadoc above every class and every method.</strong> On a class, use <strong>@author</strong> to show who wrote it. On a constructor with no parameters, just write a one-sentence description — no @param needed.</div>
+
+      <div class="write-in">
+        <div class="wi-label">✏️ Try It — Write a Javadoc comment for this method</div>
+        <div class="wi-lines">
+          <div style="font-size:.8rem;color:var(--text-muted);margin-bottom:6px;">Method: <code style="font-family:'DM Mono',monospace;font-size:.8rem;">static void setDriveSpeed(double speed)</code> — sets both drive motors to the same speed, prints a status line.</div>
+          <input type="text" class="wi-line" placeholder="/**">
+          <input type="text" class="wi-line" placeholder=" * What does this method do? (one sentence)">
+          <input type="text" class="wi-line" placeholder=" *">
+          <input type="text" class="wi-line" placeholder=" * @param speed  ...describe the speed parameter...">
+          <input type="text" class="wi-line" placeholder=" */">
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this); markSectionDone('sec4')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">I wrote a complete Javadoc comment with @param above.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ Section 5: All Three Types — Quick Reference ══════════ -->
+  <div class="section" id="sec5">
+    <div class="section-header" onclick="toggleSection('sec5')">
+      <div class="step-num">5</div>
+      <h2>All Three Types — Side by Side</h2>
+      <span class="section-check" id="sec5-check">⬜</span>
+    </div>
+    <div class="section-body" id="sec5-body">
+
+      <div class="check-item" onclick="toggleCheck(this); markSectionDone('sec5')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen — Instructor compares all three comment types and shows the full example.</span>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">Java — All Three Comment Types Together</div>
+        <code><span class="cmt">/*
+  Intake Subsystem — Team 6366
+  Controls the intake roller motor during teleop.
+*/</span>
+
+<span class="cmt">/**
+ * Starts the intake roller at the given speed.
+ *
+ * @param speed  roller motor speed from 0.0 (off) to 1.0 (full)
+ */</span>
+<span class="kw">static</span> <span class="tp">void</span> <span class="fn">startIntake</span>(<span class="tp">double</span> speed) {
+    <span class="tp">double</span> rollerSpeed = speed;   <span class="cmt">// store the requested speed</span>
+    <span class="tp">boolean</span> isActive = <span class="kw">true</span>;    <span class="cmt">// mark the intake as running</span>
+    System.out.<span class="fn">println</span>(<span class="str">"Intake ON at: "</span> + rollerSpeed);
+}</code>
+      </div>
+
+      <div class="plain-eng">💬 Plain English: <strong>The multi-line comment describes the file/block. The Javadoc documents the method. The single-line comments explain individual lines.</strong> Each type has its own job — using all three keeps your code professional and easy for teammates to read.</div>
+
+      <div class="op-table-wrap">
+        <table>
+          <tr>
+            <th>Type</th>
+            <th>Syntax</th>
+            <th>Where to Use It</th>
+          </tr>
+          <tr>
+            <td><strong>Single-Line</strong></td>
+            <td><code>// text</code></td>
+            <td>End of a line; explaining one variable; disabling one line</td>
+          </tr>
+          <tr>
+            <td><strong>Multi-Line</strong></td>
+            <td><code>/* text */</code></td>
+            <td>Top of a file or block; big-picture descriptions; disabling many lines</td>
+          </tr>
+          <tr>
+            <td><strong>Javadoc</strong></td>
+            <td><code>/** text */</code></td>
+            <td>Directly above a class or method; always include @param and @return</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="write-in">
+        <div class="wi-label">✏️ Quick Check — Which comment type would you use for each situation?</div>
+        <div class="wi-lines">
+          <div style="font-size:.85rem;color:var(--text-muted);padding:3px 0;">Explain what a variable named <code style="font-family:'DM Mono',monospace;">ballCount</code> stores:</div>
+          <input type="text" class="wi-line" placeholder="// , /* */, or /** */ ?">
+          <div style="font-size:.85rem;color:var(--text-muted);padding:3px 0;margin-top:6px;">Document a method named <code style="font-family:'DM Mono',monospace;">fire()</code> that takes a speed parameter:</div>
+          <input type="text" class="wi-line" placeholder="// , /* */, or /** */ ?">
+          <div style="font-size:.85rem;color:var(--text-muted);padding:3px 0;margin-top:6px;">Write a header at the top of your robot file with your name and the date:</div>
+          <input type="text" class="wi-line" placeholder="// , /* */, or /** */ ?">
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this); markSectionDone('sec5')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">I filled in all three Quick Check answers above.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ Robot Scenario ════════════════════════════════════════ -->
+  <div class="scenario-section" id="scenario">
+    <div class="scenario-header">
+      🤖 Robot Scenario — Your Turn
+      <span class="section-check" id="scenario-check">⬜</span>
+    </div>
+    <div class="scenario-body">
+
+      <div class="scenario">
+        <div class="sc-title">🎯 Scenario</div>
+        <p>A teammate wrote the climber subsystem code below — but left <strong>zero comments</strong>. At the next meeting someone else has to fix a bug in it, and nobody knows what anything does.</p>
+        <p style="margin-top:8px;">Your job: add comments to the entire code block so any team member could pick it up and understand it immediately.</p>
+        <ul>
+          <li>Write a <strong>multi-line comment</strong> at the top of the block describing what this code is</li>
+          <li>Write a <strong>Javadoc comment</strong> above the <code style="font-family:'DM Mono',monospace;font-size:.85rem;">deployClimber</code> method (it takes a <code style="font-family:'DM Mono',monospace;font-size:.85rem;">double position</code> and returns nothing)</li>
+          <li>Add a <strong>single-line comment</strong> to every variable line explaining what it stores</li>
+        </ul>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">Java — The Uncommented Code (read this, then write your comments below)</div>
+        <code><span class="tp">double</span> armPosition = <span class="num">0.0</span>;
+<span class="tp">boolean</span> isDeployed = <span class="kw">false</span>;
+<span class="tp">int</span> climberPort = <span class="num">5</span>;
+
+<span class="kw">static</span> <span class="tp">void</span> <span class="fn">deployClimber</span>(<span class="tp">double</span> position) {
+    armPosition = position;
+    isDeployed = <span class="kw">true</span>;
+    System.out.<span class="fn">println</span>(<span class="str">"Climber deployed to: "</span> + armPosition);
+}</code>
+      </div>
+
+      <div class="write-in">
+        <div class="wi-label">✏️ Write your multi-line comment for the top of the block</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="/*">
+          <input type="text" class="wi-line" placeholder="  What subsystem is this?">
+          <input type="text" class="wi-line" placeholder="  What does it do?">
+          <input type="text" class="wi-line" placeholder="*/">
+        </div>
+      </div>
+
+      <div class="write-in">
+        <div class="wi-label">✏️ Write your Javadoc for deployClimber</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="/**">
+          <input type="text" class="wi-line" placeholder=" * What does this method do?">
+          <input type="text" class="wi-line" placeholder=" *">
+          <input type="text" class="wi-line" placeholder=" * @param position  ...">
+          <input type="text" class="wi-line" placeholder=" */">
+        </div>
+      </div>
+
+      <div class="write-in">
+        <div class="wi-label">✏️ Write single-line comments for the three variables</div>
+        <div class="wi-lines">
+          <div style="font-family:'DM Mono',monospace;font-size:.83rem;color:var(--text-muted);padding:4px 2px;"><span style="color:#FFCB6B;">double</span> armPosition = 0.0;</div>
+          <input type="text" class="wi-line" placeholder="// ...">
+          <div style="font-family:'DM Mono',monospace;font-size:.83rem;color:var(--text-muted);padding:4px 2px;margin-top:6px;"><span style="color:#FFCB6B;">boolean</span> isDeployed = false;</div>
+          <input type="text" class="wi-line" placeholder="// ...">
+          <div style="font-family:'DM Mono',monospace;font-size:.83rem;color:var(--text-muted);padding:4px 2px;margin-top:6px;"><span style="color:#FFCB6B;">int</span> climberPort = 5;</div>
+          <input type="text" class="wi-line" placeholder="// ...">
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this); markSectionDone('scenario')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">I completed all three comment tasks for the climber code.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ End of Lesson ══════════════════════════════════════════ -->
+  <div class="end-section">
+    <div class="end-title">✅ End of Lesson — I Can… (click each one when you're confident)</div>
+    <div class="end-item" onclick="toggleEnd(this)">
+      <div class="end-box">✓</div>
+      <span class="end-label">Write a single-line comment using <code style="font-family:'DM Mono',monospace;font-size:.85rem;">//</code> to explain what a variable or line of code does.</span>
+    </div>
+    <div class="end-item" onclick="toggleEnd(this)">
+      <div class="end-box">✓</div>
+      <span class="end-label">Write a multi-line comment using <code style="font-family:'DM Mono',monospace;font-size:.85rem;">/* */</code> to describe a block of code or a file header.</span>
+    </div>
+    <div class="end-item" onclick="toggleEnd(this)">
+      <div class="end-box">✓</div>
+      <span class="end-label">Write a Javadoc comment using <code style="font-family:'DM Mono',monospace;font-size:.85rem;">/** */</code> above a method, including <code style="font-family:'DM Mono',monospace;font-size:.85rem;">@param</code> and <code style="font-family:'DM Mono',monospace;font-size:.85rem;">@return</code> tags.</span>
+    </div>
+    <div class="end-item" onclick="toggleEnd(this)">
+      <div class="end-box">✓</div>
+      <span class="end-label">Write a Javadoc comment above a class using <code style="font-family:'DM Mono',monospace;font-size:.85rem;">@author</code>.</span>
+    </div>
+    <div class="end-item" onclick="toggleEnd(this)">
+      <div class="end-box">✓</div>
+      <span class="end-label">Explain why comments matter — for teammates, for future-you, and for professional code.</span>
+    </div>
+  </div>
+
+  <script>
+    // ── Focus pills ───────────────────────────────────────────
+    function selectFocus(el) {
+      document.querySelectorAll('.focus-pill').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    // ── Section toggle ────────────────────────────────────────
+    function toggleSection(id) {
+      const body = document.getElementById(id + '-body');
+      if (body) body.classList.toggle('collapsed');
+    }
+
+    // ── Check items ───────────────────────────────────────────
+    function toggleCheck(el) {
+      el.classList.toggle('done');
+    }
+
+    function markSectionDone(id) {
+      const sec = document.getElementById(id);
+      if (!sec) return;
+      const items = sec.querySelectorAll('.check-item');
+      const allDone = [...items].every(i => i.classList.contains('done'));
+      const chk = document.getElementById(id + '-check');
+      if (chk) chk.textContent = allDone ? '✅' : '⬜';
+      updateProgress();
+    }
+
+    // ── Vocab cards ───────────────────────────────────────────
+    function toggleVocab(el, secId) {
+      el.classList.toggle('checked');
+      checkVocabDone(secId);
+    }
+
+    function checkVocabDone(secId) {
+      const sec = document.getElementById(secId);
+      if (!sec) return;
+      const cards = sec.querySelectorAll('.vocab-card');
+      const allDone = cards.length > 0 && [...cards].every(c => c.classList.contains('checked'));
+      const chk = document.getElementById(secId + '-check');
+      if (chk) chk.textContent = allDone ? '✅' : '⬜';
+      updateProgress();
+    }
+
+    // ── Progress bar ──────────────────────────────────────────
+    function updateProgress() {
+      const all = document.querySelectorAll('[id$="-check"]');
+      const done = [...all].filter(el => el.textContent === '✅').length;
+      const total = all.length;
+      const pct = total ? (done / total) * 100 : 0;
+      const fill = document.getElementById('prog-fill');
+      const label = document.getElementById('prog-label');
+      if (fill) fill.style.width = pct + '%';
+      if (label) label.textContent = `⬤ Your Progress — ${done} / ${total} sections`;
+    }
+
+    // ── End checklist ─────────────────────────────────────────
+    function toggleEnd(el) {
+      el.classList.toggle('done');
+    }
+  </script>
+</body>
+</html>
