@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intro to WPILib</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏎️</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff; --bg-alt: #FDF2F2; --text: #1C1314;
+      --text-muted: #6B4A4B; --blue: #CC0F11; --blue-light: #FEE2E2;
+      --amber: #D97706; --amber-light: #FEF3C7;
+      --green: #059669; --green-light: #D1FAE5;
+      --red: #9B0C0E; --border: #F0CECE;
+      --code-bg: #1C1314; --code-text: #F1E8E8;
+      --shadow-sm: 0 1px 4px rgba(0,0,0,.07);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg:#160A0A;--bg-alt:#241010;--text:#F9ECEC;--text-muted:#C49A9B;
+        --blue:#F25254;--blue-light:#3D1010;--amber:#FCD34D;--amber-light:#3D2E0A;
+        --green:#34D399;--green-light:#064E3B;--red:#F87171;--border:#3D1818;
+        --code-bg:#0D0606;--code-text:#F1E8E8;
+      }
+    }
+    :root[data-theme="dark"] {
+      --bg:#160A0A;--bg-alt:#241010;--text:#F9ECEC;--text-muted:#C49A9B;
+      --blue:#F25254;--blue-light:#3D1010;--amber:#FCD34D;--amber-light:#3D2E0A;
+      --green:#34D399;--green-light:#064E3B;--red:#F87171;--border:#3D1818;
+      --code-bg:#0D0606;--code-text:#F1E8E8;
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);
+      max-width:780px;margin:0 auto;padding-inline:24px;padding-block:28px;line-height:1.6;}
+
+    .page-header{margin-bottom:18px;}
+    .page-header h1{font-family:'Outfit',sans-serif;font-weight:800;
+      font-size:clamp(1.5rem,4vw,2.1rem);color:var(--blue);
+      display:flex;align-items:center;justify-content:space-between;}
+    .page-header .badge{font-size:2rem;}
+    .page-header .subtitle{font-family:'Outfit',sans-serif;font-size:.85rem;
+      color:var(--text-muted);margin-top:4px;}
+
+    .name-row{display:flex;gap:24px;margin-bottom:16px;flex-wrap:wrap;}
+    .name-row label{font-family:'Outfit',sans-serif;font-size:.85rem;
+      color:var(--text-muted);font-weight:600;flex:1;min-width:180px;}
+    .name-row input{display:block;width:100%;border:none;
+      border-bottom:2px solid var(--border);background:transparent;color:var(--text);
+      font-family:'DM Sans',sans-serif;font-size:1rem;padding:4px 2px;outline:none;margin-top:4px;}
+    .name-row input:focus{border-bottom-color:var(--blue);}
+
+    .banner{background:#CC0F11;color:white;font-family:'Outfit',sans-serif;font-weight:600;
+      font-size:.78rem;text-align:center;padding:10px 16px;border-radius:8px;
+      margin-bottom:16px;letter-spacing:.03em;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact;}
+
+    .progress-bar-wrap{margin-bottom:14px;border:1.5px solid var(--border);
+      border-radius:10px;padding:12px 16px;background:var(--bg-alt);box-shadow:var(--shadow-sm);}
+    .progress-label{font-family:'Outfit',sans-serif;font-size:.8rem;
+      color:var(--text-muted);margin-bottom:6px;font-weight:600;}
+    .progress-track{height:12px;background:var(--border);border-radius:99px;overflow:hidden;}
+    .progress-fill{height:100%;width:0%;
+      background:linear-gradient(90deg,#CC0F11,#059669);
+      border-radius:99px;transition:width .4s ease;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact;}
+
+    .focus-bar{background:var(--amber-light);border:1.5px solid var(--amber);
+      border-radius:10px;padding:12px 16px;margin-bottom:14px;
+      display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+    .focus-bar .fl{font-family:'Outfit',sans-serif;font-size:.85rem;
+      font-weight:700;color:var(--amber);white-space:nowrap;}
+    .focus-pill{font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;
+      padding:5px 14px;border-radius:99px;cursor:pointer;
+      border:2px solid var(--amber);color:var(--amber);
+      background:transparent;transition:all .15s;user-select:none;}
+    .focus-pill.active{background:var(--amber);color:#fff;}
+
+    .big-question{border-left:4px solid var(--blue);background:var(--blue-light);
+      border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:14px;}
+    .bq-tag{font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:700;
+      color:var(--blue);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+    .big-question p{font-family:'Outfit',sans-serif;font-size:1.05rem;
+      font-weight:700;color:var(--text);}
+
+    .parking{border:2px dashed var(--border);border-radius:10px;
+      padding:14px 16px;margin-bottom:18px;}
+    .parking-label{font-family:'Outfit',sans-serif;font-size:.85rem;
+      font-weight:700;color:var(--text-muted);margin-bottom:10px;}
+    .park-line{display:block;width:100%;border:none;
+      border-bottom:1.5px solid var(--border);background:transparent;color:var(--text);
+      font-family:'DM Sans',sans-serif;font-size:.9rem;
+      padding:6px 2px;outline:none;margin-bottom:4px;}
+    .park-line:focus{border-bottom-color:var(--blue);}
+
+    .print-break{display:none;}
+
+    .section{border:1.5px solid var(--border);border-radius:10px;
+      margin-bottom:14px;overflow:hidden;box-shadow:var(--shadow-sm);}
+    .section-header{display:flex;align-items:center;gap:12px;
+      padding:12px 16px;cursor:pointer;background:var(--bg-alt);user-select:none;}
+    .section-header:hover{filter:brightness(.97);}
+    .step-num{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.1rem;
+      color:#fff;background:var(--blue);border-radius:50%;
+      width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .section-header h2{font-family:'Outfit',sans-serif;font-weight:700;
+      font-size:1rem;color:var(--text);flex:1;}
+    .section-check{font-size:1.2rem;}
+    .section-body{padding:16px;display:flex;flex-direction:column;gap:12px;}
+    .section-body.collapsed{display:none;}
+
+    .vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
+    .vocab-row{display:contents;}
+    .vocab-card{border:1.5px solid var(--border);border-radius:8px;padding:12px;
+      cursor:pointer;background:var(--bg);transition:all .15s;user-select:none;}
+    .vocab-card:hover{border-color:var(--blue);}
+    .vocab-card.checked{background:var(--green-light);border-color:var(--green);}
+    .vocab-term{font-family:'Outfit',sans-serif;font-weight:700;
+      font-size:.9rem;color:var(--blue);margin-bottom:4px;}
+    .vocab-card.checked .vocab-term{color:var(--green);}
+    .vocab-def{font-size:.82rem;color:var(--text-muted);}
+
+    .check-item{display:flex;align-items:flex-start;gap:10px;
+      padding:10px 12px;border-radius:8px;border:1.5px solid var(--border);
+      background:var(--bg);cursor:pointer;transition:all .15s;user-select:none;}
+    .check-item:hover{border-color:var(--blue);}
+    .check-item.done{background:var(--green-light);border-color:var(--green);}
+    .cb-box{width:22px;height:22px;border-radius:5px;border:2px solid var(--border);
+      background:var(--bg);display:flex;align-items:center;justify-content:center;
+      font-size:.8rem;color:transparent;flex-shrink:0;transition:all .15s;}
+    .check-item.done .cb-box{background:var(--green);border-color:var(--green);color:white;}
+    .check-label{font-size:.9rem;color:var(--text);}
+
+    .code-wrap{border-radius:8px;overflow:hidden;border:1.5px solid var(--border);}
+    .code-label{background:var(--blue);color:white;font-family:'Outfit',sans-serif;
+      font-size:.75rem;font-weight:600;padding:5px 12px;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .code-wrap code{display:block;background:var(--code-bg);color:var(--code-text);
+      font-family:'DM Mono',monospace;font-size:.82rem;
+      padding:14px 16px;white-space:pre;overflow-x:auto;line-height:1.65;}
+    .kw{color:#C792EA;} .fn{color:#82AAFF;} .num{color:#F78C6C;}
+    .str{color:#C3E88D;} .cmt{color:#546E7A;font-style:italic;}
+    .tp{color:#FFCB6B;} .im{color:#89DDFF;}
+
+    .plain-eng{background:var(--amber-light);border:1.5px solid var(--amber);
+      border-radius:8px;padding:10px 14px;font-size:.88rem;color:var(--text);}
+
+    .info-box{background:var(--blue-light);border:1.5px solid var(--blue);
+      border-radius:8px;padding:12px 16px;font-size:.88rem;color:var(--text);}
+    .info-box strong{color:var(--blue);}
+
+    .write-in{border:1.5px solid var(--border);border-radius:8px;overflow:hidden;}
+    .wi-label{background:var(--bg-alt);font-family:'Outfit',sans-serif;font-weight:700;
+      font-size:.82rem;color:var(--text-muted);padding:7px 12px;
+      border-bottom:1px solid var(--border);}
+    .wi-lines{padding:10px 12px;display:flex;flex-direction:column;gap:6px;}
+    .wi-line{border:none;border-bottom:1.5px solid var(--border);background:transparent;
+      color:var(--text);font-family:'DM Mono',monospace;font-size:.85rem;
+      padding:5px 2px;outline:none;width:100%;}
+    .wi-line:focus{border-bottom-color:var(--blue);}
+
+    .op-table-wrap{overflow-x:auto;border-radius:8px;border:1.5px solid var(--border);}
+    .op-table-wrap table{width:100%;border-collapse:collapse;font-size:.85rem;}
+    .op-table-wrap th{background:var(--blue);color:white;font-family:'Outfit',sans-serif;
+      font-weight:700;padding:8px 12px;text-align:left;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .op-table-wrap td{padding:8px 12px;border-bottom:1px solid var(--border);}
+    .op-table-wrap tr:last-child td{border-bottom:none;}
+    .op-table-wrap tr:nth-child(even) td{background:var(--bg-alt);}
+    .op-table-wrap code{font-family:'DM Mono',monospace;background:var(--code-bg);
+      color:var(--code-text);padding:2px 6px;border-radius:4px;font-size:.82rem;}
+
+    /* Anatomy diagram */
+    .anatomy{border:1.5px solid var(--border);border-radius:8px;overflow:hidden;}
+    .anatomy-label{background:var(--bg-alt);font-family:'Outfit',sans-serif;font-weight:700;
+      font-size:.75rem;color:var(--text-muted);padding:5px 12px;
+      border-bottom:1px solid var(--border);}
+    .anatomy code{display:block;background:var(--code-bg);color:var(--code-text);
+      font-family:'DM Mono',monospace;font-size:.82rem;
+      padding:14px 16px;white-space:pre;overflow-x:auto;line-height:1.9;}
+    .ann{color:#89DDFF;font-style:normal;}
+
+    /* Hardware callout */
+    .hw-callout{background:var(--bg-alt);border:1.5px solid var(--border);
+      border-radius:8px;padding:12px 16px;font-size:.88rem;display:flex;
+      gap:12px;align-items:flex-start;}
+    .hw-icon{font-size:1.6rem;flex-shrink:0;line-height:1;}
+    .hw-text strong{font-family:'Outfit',sans-serif;font-size:.9rem;color:var(--blue);}
+
+    .scenario-section{border:2px solid var(--blue);border-radius:10px;
+      overflow:hidden;margin-bottom:14px;box-shadow:var(--shadow-sm);}
+    .scenario-header{background:var(--blue);color:white;font-family:'Outfit',sans-serif;
+      font-weight:700;font-size:.95rem;padding:10px 16px;
+      display:flex;align-items:center;justify-content:space-between;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .scenario-body{padding:16px;display:flex;flex-direction:column;gap:12px;}
+    .scenario{background:var(--blue-light);border:1.5px solid var(--blue);
+      border-radius:8px;padding:14px 16px;font-size:.9rem;}
+    .sc-title{font-family:'Outfit',sans-serif;font-weight:700;
+      color:var(--blue);margin-bottom:8px;font-size:.92rem;}
+    .scenario ul{padding-left:18px;margin-top:8px;}
+    .scenario li{margin-bottom:4px;}
+
+    .end-section{background:var(--green-light);border:2px solid var(--green);
+      border-radius:10px;padding:16px;margin-bottom:14px;box-shadow:var(--shadow-sm);}
+    .end-title{font-family:'Outfit',sans-serif;font-weight:800;
+      font-size:1rem;color:var(--green);margin-bottom:12px;}
+    .end-item{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;
+      border-radius:8px;border:1.5px solid var(--green);background:var(--bg);
+      cursor:pointer;margin-bottom:7px;transition:all .15s;user-select:none;}
+    .end-item:last-child{margin-bottom:0;}
+    .end-item:hover{border-color:var(--blue);}
+    .end-item.done{background:#bbf7d0;text-decoration:line-through;opacity:.75;}
+    .end-box{width:22px;height:22px;border-radius:5px;border:2px solid var(--green);
+      background:var(--bg);display:flex;align-items:center;justify-content:center;
+      font-size:.8rem;color:transparent;flex-shrink:0;}
+    .end-item.done .end-box{background:var(--green);color:white;}
+    .end-label{font-size:.9rem;color:var(--text);}
+
+    p.body-text{font-size:.9rem;color:var(--text-muted);}
+
+    @media print {
+      @page{size:letter portrait;margin:0.55in;}
+      .progress-bar-wrap{display:none!important;}
+      *{box-shadow:none!important;}
+      body{background:white!important;}
+      .print-break{display:block!important;height:0;
+        break-after:page!important;page-break-after:always!important;}
+      .end-section{break-before:page!important;page-break-before:always!important;}
+      .code-wrap code,.anatomy code{background:#fff!important;color:#000!important;border:1px solid #ccc!important;}
+      .code-wrap code .kw,.code-wrap code .fn,.code-wrap code .num,
+      .code-wrap code .str,.code-wrap code .cmt,.code-wrap code .tp,
+      .code-wrap code .im,.code-wrap code .ann,
+      .anatomy code .kw,.anatomy code .fn,.anatomy code .num,
+      .anatomy code .str,.anatomy code .cmt,.anatomy code .tp,.anatomy code .ann
+        {color:#000!important;font-style:normal;}
+      .code-label,.anatomy-label{background:#CC0F11!important;
+        -webkit-print-color-adjust:exact;print-color-adjust:exact;}
+      ::placeholder{color:transparent!important;}
+      ::-webkit-input-placeholder{color:transparent!important;}
+      .vocab-grid{display:block;column-count:2;column-gap:16px;}
+      .vocab-row{display:block;}
+      .vocab-card{display:inline-block;width:100%;box-sizing:border-box;
+        margin-bottom:8px;-webkit-column-break-inside:avoid;
+        break-inside:avoid;page-break-inside:avoid;}
+      .check-item,.write-in,.plain-eng,.info-box,.scenario,
+      .anatomy,.code-wrap,.end-item,.op-table-wrap,.hw-callout
+        {break-inside:avoid;page-break-inside:avoid;}
+      p,li{orphans:3;widows:3;}
+      .check-item{background:#f8f8f8!important;border-color:#ddd!important;}
+      .check-item.done{background:#f0fff4!important;}
+      .focus-bar,.parking{break-inside:avoid;}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ Page Header ══ -->
+  <div class="page-header">
+    <h1>Lesson 5 — Intro to WPILib <span class="badge">🏎️🔥</span></h1>
+    <div class="subtitle">🏎️🔥 RamRodz Robotics · Team 6366 · Programming Worksheet</div>
+  </div>
+
+  <div class="name-row">
+    <label>Name <input type="text" placeholder="Your name"></label>
+    <label>Date <input type="text" placeholder="MM / DD / YYYY"></label>
+  </div>
+
+  <div class="banner">🏎️🔥 RAM RODZ ROBOTICS | TEAM #6366 | HILLCREST &amp; WOODMONT HIGH SCHOOLS · SIMPSONVILLE, SC</div>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-label" id="prog-label">⬤ Your Progress — 0 / 6 sections</div>
+    <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+  </div>
+
+  <div class="focus-bar">
+    <span class="fl">🎯 Focus Check-In:</span>
+    <div class="focus-pill" onclick="selectFocus(this)">😵 Struggling</div>
+    <div class="focus-pill" onclick="selectFocus(this)">😐 Okay</div>
+    <div class="focus-pill" onclick="selectFocus(this)">😤 Ready</div>
+  </div>
+
+  <div class="big-question">
+    <div class="bq-tag">🤔 Today's Big Question</div>
+    <p>The robot has motors and a controller — but how does your code actually connect the two so that pushing a stick moves a wheel?</p>
+  </div>
+
+  <div class="parking">
+    <div class="parking-label">🅿️ Parking Lot — Random Thoughts &amp; Questions</div>
+    <input class="park-line" type="text" placeholder="Drop a question here so you don't lose it...">
+    <input class="park-line" type="text" placeholder="">
+    <input class="park-line" type="text" placeholder="">
+    <input class="park-line" type="text" placeholder="">
+    <input class="park-line" type="text" placeholder="">
+    <input class="park-line" type="text" placeholder="">
+    <input class="park-line" type="text" placeholder="">
+  </div>
+
+  <div class="print-break"></div>
+
+  <!-- ══ Section 1: Key Words ══ -->
+  <div class="section" id="sec1">
+    <div class="section-header" onclick="toggleSection('sec1')">
+      <div class="step-num">1</div>
+      <h2>Key Words — Check Off When Explained</h2>
+      <span class="section-check" id="sec1-check">⬜</span>
+    </div>
+    <div class="section-body" id="sec1-body">
+      <div class="vocab-grid">
+        <div class="vocab-row">
+          <div class="vocab-card" onclick="toggleVocab(this,'sec1')">
+            <div class="vocab-term">WPILib</div>
+            <div class="vocab-def">The official Java library that FRC teams use to control robot hardware. It gives you ready-made classes for motors, controllers, and sensors.</div>
+          </div>
+          <div class="vocab-card" onclick="toggleVocab(this,'sec1')">
+            <div class="vocab-term">import</div>
+            <div class="vocab-def">A Java keyword that loads a class from a library into your file so you can use it. Without an import, Java doesn't know the class exists.</div>
+          </div>
+        </div>
+        <div class="vocab-row">
+          <div class="vocab-card" onclick="toggleVocab(this,'sec1')">
+            <div class="vocab-term">XboxController</div>
+            <div class="vocab-def">A WPILib class that represents the Xbox controller plugged into the driver station. You read buttons and joystick axes from it.</div>
+          </div>
+          <div class="vocab-card" onclick="toggleVocab(this,'sec1')">
+            <div class="vocab-term">Motor Controller</div>
+            <div class="vocab-def">The electronics board between the robot's battery and a motor. Your code tells the motor controller what speed to run, and it handles the power.</div>
+          </div>
+        </div>
+        <div class="vocab-row">
+          <div class="vocab-card" onclick="toggleVocab(this,'sec1')">
+            <div class="vocab-term">PWM</div>
+            <div class="vocab-def">Pulse Width Modulation — a simple signal type used by basic motor controllers. They plug into numbered PWM ports (0–9) on the roboRIO.</div>
+          </div>
+          <div class="vocab-card" onclick="toggleVocab(this,'sec1')">
+            <div class="vocab-term">CAN Bus</div>
+            <div class="vocab-def">Controller Area Network — a communication system that lets smart motor controllers like the TalonFX talk to the roboRIO over a shared wire loop.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Section 2: What is WPILib? ══ -->
+  <div class="section" id="sec2">
+    <div class="section-header" onclick="toggleSection('sec2')">
+      <div class="step-num">2</div>
+      <h2>What is WPILib?</h2>
+      <span class="section-check" id="sec2-check">⬜</span>
+    </div>
+    <div class="section-body" id="sec2-body">
+
+      <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec2')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen — Instructor explains what WPILib is and why FRC teams use it.</span>
+      </div>
+
+      <p class="body-text">WPILib is a giant toolbox of pre-built Java classes written specifically for FRC robots. Instead of writing code from scratch to talk to a motor or read a joystick, you use WPILib's classes — they handle the low-level electronics for you.</p>
+
+      <p class="body-text">To use a WPILib class in your file, you add an <strong>import</strong> statement at the very top — one line per class. This tells Java where to find the class definition.</p>
+
+      <div class="code-wrap">
+        <div class="code-label">Java — Import Statements</div>
+        <code><span class="cmt">// These lines go at the TOP of your file, before the class declaration</span>
+
+<span class="kw">import</span> <span class="im">edu.wpi.first.wpilibj.XboxController</span>;     <span class="cmt">// driver controller</span>
+<span class="kw">import</span> <span class="im">edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax</span>; <span class="cmt">// PWM motor controller</span>
+<span class="kw">import</span> <span class="im">com.ctre.phoenix6.hardware.TalonFX</span>;           <span class="cmt">// CAN motor controller</span></code>
+      </div>
+
+      <div class="plain-eng">💬 Plain English: <strong>import tells Java "I need that class — go find it in the library."</strong> Without the import, Java sees <code style="font-family:'DM Mono',monospace;font-size:.82rem;">XboxController</code> and has no idea what it is. Every WPILib class you use needs its own import line at the top.</div>
+
+      <div class="anatomy">
+        <div class="anatomy-label">Anatomy of an Import Statement</div>
+        <code><span class="kw">import</span>  <span class="im">edu.wpi.first.wpilibj</span>.<span class="fn">XboxController</span>;
+<span class="ann">  ↑          ↑                          ↑</span>
+<span class="ann">keyword    package path               class name</span></code>
+      </div>
+
+      <div class="write-in">
+        <div class="wi-label">✏️ Quick Check — What would you change to import PWMSparkMax instead?</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="import edu.wpi.first.wpilibj. ...">
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec2')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">I understand that import statements must go at the top of the file, one per class.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ Section 3: XboxController ══ -->
+  <div class="section" id="sec3">
+    <div class="section-header" onclick="toggleSection('sec3')">
+      <div class="step-num">3</div>
+      <h2>The XboxController</h2>
+      <span class="section-check" id="sec3-check">⬜</span>
+    </div>
+    <div class="section-body" id="sec3-body">
+
+      <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec3')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen — Instructor explains how to create an XboxController object and read from it.</span>
+      </div>
+
+      <p class="body-text">An <strong>XboxController</strong> is a WPILib class that represents the physical Xbox controller plugged into the driver station. You create one object — then call its methods to read button presses and joystick positions.</p>
+
+      <p class="body-text">The constructor takes one number: the <strong>port</strong> the controller is connected to on the driver station (0 for the first controller, 1 for the second).</p>
+
+      <div class="code-wrap">
+        <div class="code-label">Java — Creating and Reading an XboxController</div>
+        <code><span class="cmt">// Declare the controller as a field (inside the class, outside any method)</span>
+<span class="tp">XboxController</span> controller = <span class="kw">new</span> <span class="tp">XboxController</span>(<span class="num">0</span>); <span class="cmt">// port 0 = driver controller</span>
+
+<span class="cmt">// ── Inside a method (like teleopPeriodic) ──────────────────────────────</span>
+
+<span class="cmt">// Read the left joystick's Y axis (push forward = negative, pull back = positive)</span>
+<span class="tp">double</span> stickValue = controller.<span class="fn">getLeftY</span>(); <span class="cmt">// returns -1.0 to 1.0</span>
+
+<span class="cmt">// Read whether the A button is currently held down</span>
+<span class="tp">boolean</span> aPressed = controller.<span class="fn">getAButton</span>(); <span class="cmt">// true if pressed, false if not</span>
+
+<span class="cmt">// Read the right joystick's Y axis</span>
+<span class="tp">double</span> rightStick = controller.<span class="fn">getRightY</span>(); <span class="cmt">// returns -1.0 to 1.0</span></code>
+      </div>
+
+      <div class="plain-eng">💬 Plain English: <strong>Joystick axes return a decimal from -1.0 (full one direction) to 1.0 (full the other).</strong> At rest they return 0.0. Buttons return true when held and false when released. You can feed those values straight into a motor.</div>
+
+      <div class="op-table-wrap">
+        <table>
+          <tr><th>Method</th><th>Returns</th><th>What It Reads</th></tr>
+          <tr><td><code>getLeftY()</code></td><td><code>double</code></td><td>Left joystick, up/down axis</td></tr>
+          <tr><td><code>getLeftX()</code></td><td><code>double</code></td><td>Left joystick, left/right axis</td></tr>
+          <tr><td><code>getRightY()</code></td><td><code>double</code></td><td>Right joystick, up/down axis</td></tr>
+          <tr><td><code>getRightX()</code></td><td><code>double</code></td><td>Right joystick, left/right axis</td></tr>
+          <tr><td><code>getAButton()</code></td><td><code>boolean</code></td><td>A button</td></tr>
+          <tr><td><code>getBButton()</code></td><td><code>boolean</code></td><td>B button</td></tr>
+          <tr><td><code>getLeftBumper()</code></td><td><code>boolean</code></td><td>Left bumper (LB)</td></tr>
+          <tr><td><code>getRightBumper()</code></td><td><code>boolean</code></td><td>Right bumper (RB)</td></tr>
+        </table>
+      </div>
+
+      <div class="write-in">
+        <div class="wi-label">✏️ Try It — Write the lines to read these two inputs from a controller named 'driver'</div>
+        <div class="wi-lines">
+          <div style="font-size:.84rem;color:var(--text-muted);padding:3px 0;">Store the right joystick Y axis in a double named <code style="font-family:'DM Mono',monospace;font-size:.82rem;">turnSpeed</code>:</div>
+          <input type="text" class="wi-line" placeholder="double turnSpeed = driver. ...">
+          <div style="font-size:.84rem;color:var(--text-muted);padding:3px 0;margin-top:6px;">Store whether the B button is pressed in a boolean named <code style="font-family:'DM Mono',monospace;font-size:.82rem;">fireButton</code>:</div>
+          <input type="text" class="wi-line" placeholder="boolean fireButton = driver. ...">
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec3')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">I filled in both write-in lines and understand what each controller method returns.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ Section 4: PWMSparkMax ══ -->
+  <div class="section" id="sec4">
+    <div class="section-header" onclick="toggleSection('sec4')">
+      <div class="step-num">4</div>
+      <h2>Driving a Motor — PWMSparkMax</h2>
+      <span class="section-check" id="sec4-check">⬜</span>
+    </div>
+    <div class="section-body" id="sec4-body">
+
+      <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec4')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen — Instructor explains PWM motor controllers and shows how .set() works.</span>
+      </div>
+
+      <div class="hw-callout">
+        <div class="hw-icon">⚡</div>
+        <div class="hw-text">
+          <strong>PWMSparkMax</strong><br>
+          The SPARK MAX (by REV Robotics) is one of the most common motor controllers in FRC. When wired to a PWM port on the roboRIO, you control it with WPILib's <code style="font-family:'DM Mono',monospace;font-size:.82rem;">PWMSparkMax</code> class. The constructor takes the PWM port number (printed on the roboRIO, 0–9).
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">Java — Creating and Using a PWMSparkMax</div>
+        <code><span class="cmt">// Declare as a field — inside the class, outside any method</span>
+<span class="tp">PWMSparkMax</span> driveMotor = <span class="kw">new</span> <span class="tp">PWMSparkMax</span>(<span class="num">0</span>); <span class="cmt">// connected to PWM port 0</span>
+
+<span class="cmt">// ── Inside teleopPeriodic ──────────────────────────────────────────────</span>
+
+<span class="cmt">// Set the motor to 50% forward power</span>
+driveMotor.<span class="fn">set</span>(<span class="num">0.5</span>);
+
+<span class="cmt">// Set the motor to full reverse</span>
+driveMotor.<span class="fn">set</span>(-<span class="num">1.0</span>);
+
+<span class="cmt">// Stop the motor</span>
+driveMotor.<span class="fn">set</span>(<span class="num">0.0</span>);</code>
+      </div>
+
+      <div class="plain-eng">💬 Plain English: <strong>.set() takes a number from -1.0 to 1.0.</strong> Positive = forward, negative = reverse, zero = stop. Pass it directly the value you read from a joystick axis and the motor follows the stick.</div>
+
+      <p class="body-text" style="font-weight:600;">Connecting the controller to the motor — this is the key pattern:</p>
+
+      <div class="code-wrap">
+        <div class="code-label">Java — Controller → Motor (the full data flow)</div>
+        <code><span class="tp">XboxController</span> driver = <span class="kw">new</span> <span class="tp">XboxController</span>(<span class="num">0</span>);   <span class="cmt">// controller on port 0</span>
+<span class="tp">PWMSparkMax</span> leftDrive = <span class="kw">new</span> <span class="tp">PWMSparkMax</span>(<span class="num">0</span>);   <span class="cmt">// motor on PWM port 0</span>
+
+<span class="cmt">// ── Called repeatedly during teleop ───────────────────────────────────</span>
+<span class="tp">double</span> speed = driver.<span class="fn">getLeftY</span>();  <span class="cmt">// 1. read the stick (-1.0 to 1.0)</span>
+leftDrive.<span class="fn">set</span>(speed);             <span class="cmt">// 2. send that value straight to the motor</span></code>
+      </div>
+
+      <div class="plain-eng">💬 Plain English: <strong>Two lines — read, then send.</strong> The joystick axis already returns -1.0 to 1.0, which is exactly what .set() expects. No math needed. Push the stick forward, the motor spins forward. Pull back, it reverses.</div>
+
+      <div class="write-in">
+        <div class="wi-label">✏️ Try It — Write the two lines to connect a right-stick axis to a motor named 'rightDrive'</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="double speed = driver. ...">
+          <input type="text" class="wi-line" placeholder="rightDrive. ...">
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec4')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">I wrote the two lines above and understand the read → send pattern.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ Section 5: TalonFX ══ -->
+  <div class="section" id="sec5">
+    <div class="section-header" onclick="toggleSection('sec5')">
+      <div class="step-num">5</div>
+      <h2>The TalonFX — CAN Bus Motors</h2>
+      <span class="section-check" id="sec5-check">⬜</span>
+    </div>
+    <div class="section-body" id="sec5-body">
+
+      <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec5')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">Listen — Instructor explains what CAN bus is and how TalonFX differs from PWMSparkMax.</span>
+      </div>
+
+      <div class="hw-callout">
+        <div class="hw-icon">🔧</div>
+        <div class="hw-text">
+          <strong>TalonFX (CTRE)</strong><br>
+          The TalonFX motor controller is built into the <strong>Falcon 500</strong> and <strong>Kraken X60</strong> motors — two of the most powerful motors used in FRC. Unlike PWM controllers, the TalonFX communicates over the <strong>CAN bus</strong> and is programmed using CTRE's <strong>Phoenix 6</strong> vendor library, which you add to your project separately from WPILib.
+        </div>
+      </div>
+
+      <p class="body-text"><strong>PWM vs CAN — what's the difference?</strong></p>
+
+      <div class="op-table-wrap">
+        <table>
+          <tr><th></th><th>PWM (PWMSparkMax)</th><th>CAN Bus (TalonFX)</th></tr>
+          <tr><td><strong>Connection</strong></td><td>PWM port on roboRIO (wire per motor)</td><td>CAN bus loop shared by all CAN devices</td></tr>
+          <tr><td><strong>Identifier</strong></td><td>Port number (0–9)</td><td>Device ID (set in Phoenix Tuner)</td></tr>
+          <tr><td><strong>Library</strong></td><td>WPILib (built-in)</td><td>Phoenix 6 (vendor library, added separately)</td></tr>
+          <tr><td><strong>Features</strong></td><td>Basic speed control</td><td>Advanced control, position, velocity, current limits</td></tr>
+        </table>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">Java — Importing and Creating a TalonFX</div>
+        <code><span class="cmt">// Phoenix 6 import — requires the Phoenix 6 vendor library in your project</span>
+<span class="kw">import</span> <span class="im">com.ctre.phoenix6.hardware.TalonFX</span>;
+
+<span class="cmt">// ── Inside your robot class ────────────────────────────────────────────</span>
+
+<span class="cmt">// The TalonFX constructor takes a device ID — NOT a PWM port number</span>
+<span class="cmt">// Device IDs are configured in Phoenix Tuner X software</span>
+<span class="tp">TalonFX</span> shooterMotor = <span class="kw">new</span> <span class="tp">TalonFX</span>(<span class="num">1</span>); <span class="cmt">// device ID 1 on the CAN bus</span></code>
+      </div>
+
+      <div class="plain-eng">💬 Plain English: <strong>Creating a TalonFX looks just like creating a PWMSparkMax — new ClassName(id) — but the number is a CAN device ID, not a port.</strong> Device IDs are set using a tool called Phoenix Tuner X, which talks to the motor controller over USB or the network. The full Phoenix 6 API for controlling the motor is a future lesson — for now, focus on creating the object correctly.</div>
+
+      <div class="info-box">
+        <strong>💡 Why does the device ID matter?</strong> Every device on the CAN bus shares the same two wires. The device ID is how the roboRIO tells one TalonFX from another. If two devices share the same ID, your robot won't behave predictably. Always verify device IDs in Phoenix Tuner X before running code.
+      </div>
+
+      <div class="write-in">
+        <div class="wi-label">✏️ Try It — Fill in the blanks</div>
+        <div class="wi-lines">
+          <div style="font-size:.84rem;color:var(--text-muted);padding:3px 0;">Create a TalonFX object named <code style="font-family:'DM Mono',monospace;font-size:.82rem;">climbMotor</code> with device ID 3:</div>
+          <input type="text" class="wi-line" placeholder="TalonFX climbMotor = ...">
+          <div style="font-size:.84rem;color:var(--text-muted);padding:3px 0;margin-top:8px;">Write the import statement you would need for the TalonFX class:</div>
+          <input type="text" class="wi-line" placeholder="import com.ctre ...">
+          <div style="font-size:.84rem;color:var(--text-muted);padding:3px 0;margin-top:8px;">In one sentence: what is the difference between a PWM port number and a CAN device ID?</div>
+          <input type="text" class="wi-line" placeholder="A PWM port number is... but a device ID is...">
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec5')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">I filled in all three write-in answers and understand the PWM vs CAN difference.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ Robot Scenario ══ -->
+  <div class="scenario-section" id="scenario">
+    <div class="scenario-header">
+      🤖 Robot Scenario — Your Turn
+      <span class="section-check" id="scenario-check">⬜</span>
+    </div>
+    <div class="scenario-body">
+
+      <div class="scenario">
+        <div class="sc-title">🎯 Scenario</div>
+        <p>Your team is wiring up the robot for the first time this season. The drivetrain uses two <strong>PWMSparkMax</strong> controllers (port 0 = left, port 1 = right). The shooter uses a <strong>TalonFX</strong> (device ID 2). The drive team will use a single <strong>XboxController</strong> on port 0.</p>
+        <ul>
+          <li>Left drive follows the <strong>left stick Y axis</strong></li>
+          <li>Right drive follows the <strong>right stick Y axis</strong></li>
+          <li>The <strong>A button</strong> fires the shooter (TalonFX) — for now, just create the object; the full Phoenix 6 control call comes in a later lesson</li>
+        </ul>
+        <p style="margin-top:8px;">Write the field declarations and the controller-to-motor wiring lines below.</p>
+      </div>
+
+      <div class="write-in">
+        <div class="wi-label">✏️ Write the three import statements you need</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="import edu.wpi.first.wpilibj. ...">
+          <input type="text" class="wi-line" placeholder="import edu.wpi.first.wpilibj.motorcontrol. ...">
+          <input type="text" class="wi-line" placeholder="import com.ctre.phoenix6.hardware. ...">
+        </div>
+      </div>
+
+      <div class="write-in">
+        <div class="wi-label">✏️ Declare the four hardware objects as fields</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="XboxController driver = ...">
+          <input type="text" class="wi-line" placeholder="PWMSparkMax leftDrive = ...">
+          <input type="text" class="wi-line" placeholder="PWMSparkMax rightDrive = ...">
+          <input type="text" class="wi-line" placeholder="TalonFX shooter = ...">
+        </div>
+      </div>
+
+      <div class="write-in">
+        <div class="wi-label">✏️ Write the teleop wiring — read controller inputs and send to the drive motors</div>
+        <div class="wi-lines">
+          <input type="text" class="wi-line" placeholder="double leftSpeed = driver. ...">
+          <input type="text" class="wi-line" placeholder="double rightSpeed = driver. ...">
+          <input type="text" class="wi-line" placeholder="leftDrive. ...">
+          <input type="text" class="wi-line" placeholder="rightDrive. ...">
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this);markSectionDone('scenario')">
+        <div class="cb-box">✓</div>
+        <span class="check-label">I completed all three sections of the scenario — imports, field declarations, and teleop wiring.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ End of Lesson ══ -->
+  <div class="end-section">
+    <div class="end-title">✅ End of Lesson — I Can… (click each one when you're confident)</div>
+    <div class="end-item" onclick="toggleEnd(this)">
+      <div class="end-box">✓</div>
+      <span class="end-label">Write an <code style="font-family:'DM Mono',monospace;font-size:.85rem;">import</code> statement for any WPILib or Phoenix 6 class and explain what it does.</span>
+    </div>
+    <div class="end-item" onclick="toggleEnd(this)">
+      <div class="end-box">✓</div>
+      <span class="end-label">Create an <code style="font-family:'DM Mono',monospace;font-size:.85rem;">XboxController</code> object and use it to read a joystick axis and a button.</span>
+    </div>
+    <div class="end-item" onclick="toggleEnd(this)">
+      <div class="end-box">✓</div>
+      <span class="end-label">Create a <code style="font-family:'DM Mono',monospace;font-size:.85rem;">PWMSparkMax</code> object, pass it a port number, and use <code style="font-family:'DM Mono',monospace;font-size:.85rem;">.set()</code> to control its speed.</span>
+    </div>
+    <div class="end-item" onclick="toggleEnd(this)">
+      <div class="end-box">✓</div>
+      <span class="end-label">Create a <code style="font-family:'DM Mono',monospace;font-size:.85rem;">TalonFX</code> object with a CAN device ID and explain how CAN differs from PWM.</span>
+    </div>
+    <div class="end-item" onclick="toggleEnd(this)">
+      <div class="end-box">✓</div>
+      <span class="end-label">Wire a joystick axis to a motor in two lines — read the stick, send the value to <code style="font-family:'DM Mono',monospace;font-size:.85rem;">.set()</code>.</span>
+    </div>
+  </div>
+
+  <script>
+    function selectFocus(el){
+      document.querySelectorAll('.focus-pill').forEach(p=>p.classList.remove('active'));
+      el.classList.add('active');
+    }
+    function toggleSection(id){
+      const b=document.getElementById(id+'-body');
+      if(b)b.classList.toggle('collapsed');
+    }
+    function toggleCheck(el){el.classList.toggle('done');}
+    function markSectionDone(id){
+      const sec=document.getElementById(id);
+      if(!sec)return;
+      const items=sec.querySelectorAll('.check-item');
+      const allDone=[...items].every(i=>i.classList.contains('done'));
+      const chk=document.getElementById(id+'-check');
+      if(chk)chk.textContent=allDone?'✅':'⬜';
+      updateProgress();
+    }
+    function toggleVocab(el,secId){
+      el.classList.toggle('checked');
+      checkVocabDone(secId);
+    }
+    function checkVocabDone(secId){
+      const sec=document.getElementById(secId);
+      if(!sec)return;
+      const cards=sec.querySelectorAll('.vocab-card');
+      const allDone=cards.length>0&&[...cards].every(c=>c.classList.contains('checked'));
+      const chk=document.getElementById(secId+'-check');
+      if(chk)chk.textContent=allDone?'✅':'⬜';
+      updateProgress();
+    }
+    function updateProgress(){
+      const all=document.querySelectorAll('[id$="-check"]');
+      const done=[...all].filter(el=>el.textContent==='✅').length;
+      const total=all.length;
+      const pct=total?(done/total)*100:0;
+      const fill=document.getElementById('prog-fill');
+      const label=document.getElementById('prog-label');
+      if(fill)fill.style.width=pct+'%';
+      if(label)label.textContent=`⬤ Your Progress — ${done} / ${total} sections`;
+    }
+    function toggleEnd(el){el.classList.toggle('done');}
+  </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+What is WPILIB?
+by: FRC 5066 Programming
+https://youtu.be/eGiI6fdj_o0
+
+
+MARS Summer Java Training #1: Java WPILib Basics & Moving a Motor
+by: Grady King WVU
+https://youtu.be/FuBPe1_EJSs
