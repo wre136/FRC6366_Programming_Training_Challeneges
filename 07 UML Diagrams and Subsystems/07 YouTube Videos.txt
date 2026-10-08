@@ -1,0 +1,13 @@
+UML class diagrams
+by: Lucid Software
+https://www.youtube.com/watch?v=6XrL5jXmTwM
+
+
+FRC Java Programming Tutorial - 8 - Subsystem Design Part 1
+by: FRC Team 2485
+https://www.youtube.com/watch?v=I35w8v_rcmY
+
+
+FRC Java Programming Tutorial - 9 - Subsystem Design Part 2
+by: FRC Team 2485
+https://www.youtube.com/watch?v=-DKrGRLJ2dQ

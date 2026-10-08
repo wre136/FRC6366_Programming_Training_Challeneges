@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intro to UML &amp; Subsystems</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff;--bg-alt:#FDF2F2;--text:#1C1314;--text-muted:#6B4A4B;
+  --blue:#CC0F11;--blue-light:#FEE2E2;--amber:#D97706;--amber-light:#FEF3C7;
+  --green:#059669;--green-light:#D1FAE5;--red:#9B0C0E;
+  --border:#F0CECE;--code-bg:#1C1314;--code-text:#F1E8E8;
+  --shadow-sm:0 1px 4px rgba(0,0,0,.08);
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#160A0A;--bg-alt:#241010;--text:#F9ECEC;--text-muted:#C49A9B;
+  --blue:#F25254;--blue-light:#3D1010;--amber:#FCD34D;--amber-light:#3D2E0A;
+  --green:#34D399;--green-light:#064E3B;--red:#F87171;
+  --border:#3D1818;--code-bg:#0D0606;--code-text:#F1E8E8;
+}}
+:root[data-theme="dark"]{
+  --bg:#160A0A;--bg-alt:#241010;--text:#F9ECEC;--text-muted:#C49A9B;
+  --blue:#F25254;--blue-light:#3D1010;--amber:#FCD34D;--amber-light:#3D2E0A;
+  --green:#34D399;--green-light:#064E3B;--red:#F87171;
+  --border:#3D1818;--code-bg:#0D0606;--code-text:#F1E8E8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);
+  max-width:780px;margin:0 auto;padding:28px 24px;line-height:1.6}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px}
+h1{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.9rem;color:var(--blue);line-height:1.15}
+.subtitle{font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--text-muted);margin-top:4px}
+.badge{font-size:2.4rem;line-height:1}
+.name-row{display:flex;gap:24px;margin:14px 0 12px}
+.name-field{display:flex;flex-direction:column;gap:4px;flex:1}
+.name-field label{font-size:.75rem;font-family:'Outfit',sans-serif;font-weight:600;
+  color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em}
+.name-field input{border:none;border-bottom:2px solid var(--border);background:transparent;
+  color:var(--text);font-family:'DM Sans',sans-serif;font-size:1rem;padding:4px 2px;outline:none;width:100%}
+.name-field input:focus{border-color:var(--blue)}
+.banner{background:#CC0F11;color:#fff;font-family:'Outfit',sans-serif;font-weight:600;
+  font-size:.78rem;text-align:center;padding:10px 16px;border-radius:8px;
+  margin-bottom:14px;letter-spacing:.04em;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.progress-bar-wrap{margin-bottom:14px}
+.progress-label{font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;
+  color:var(--text-muted);margin-bottom:5px}
+.progress-track{height:10px;background:var(--border);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;width:0%;border-radius:99px;
+  background:linear-gradient(90deg,#CC0F11,#059669);transition:width .4s ease}
+.progress-pct{font-family:'Outfit',sans-serif;font-size:.75rem;color:var(--text-muted);
+  text-align:right;margin-top:3px}
+.focus-bar{background:var(--amber-light);border:1.5px solid var(--amber);
+  border-radius:10px;padding:12px 16px;margin-bottom:14px;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.focus-label{font-family:'Outfit',sans-serif;font-weight:700;font-size:.82rem;
+  color:var(--amber);white-space:nowrap}
+.focus-pills{display:flex;gap:8px;flex-wrap:wrap}
+.focus-pill{cursor:pointer;padding:5px 14px;border-radius:99px;
+  border:1.5px solid var(--amber);font-size:.82rem;font-family:'Outfit',sans-serif;
+  font-weight:600;color:var(--amber);background:transparent;transition:all .2s;user-select:none}
+.focus-pill.active{background:var(--amber);color:#fff}
+.big-q{border-left:4px solid var(--blue);background:var(--blue-light);
+  border-radius:0 10px 10px 0;padding:16px 20px;margin-bottom:14px}
+.big-q-tag{font-family:'Outfit',sans-serif;font-weight:700;font-size:.75rem;
+  color:var(--blue);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.big-q p{font-size:1.05rem;font-weight:500;color:var(--text)}
+.parking{border:2px dashed var(--border);border-radius:10px;padding:16px 20px;margin-bottom:18px}
+.parking-title{font-family:'Outfit',sans-serif;font-weight:700;font-size:.85rem;
+  color:var(--text-muted);margin-bottom:10px}
+.park-line{display:block;width:100%;border:none;border-bottom:1.5px solid var(--border);
+  background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;
+  font-size:.9rem;padding:5px 2px;outline:none;margin-bottom:6px}
+.park-line:focus{border-color:var(--blue)}
+.section{border:1.5px solid var(--border);border-radius:10px;margin-bottom:16px;
+  overflow:hidden;box-shadow:var(--shadow-sm)}
+.section-header{display:flex;align-items:center;gap:14px;padding:14px 18px;
+  cursor:pointer;background:var(--bg-alt);user-select:none}
+.section-header:hover{background:var(--blue-light)}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--blue);
+  color:#fff;font-family:'Outfit',sans-serif;font-weight:800;font-size:1rem;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.section-header h2{font-family:'Outfit',sans-serif;font-weight:700;font-size:1.05rem;
+  color:var(--text);flex:1}
+.section-check{font-size:1.3rem}
+.section-body{padding:18px 20px;display:flex;flex-direction:column;gap:14px}
+.vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.vocab-card{border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;
+  cursor:pointer;transition:all .2s;background:var(--bg)}
+.vocab-card:hover{border-color:var(--blue);background:var(--blue-light)}
+.vocab-card.checked{background:var(--green-light);border-color:var(--green)}
+.vocab-term{font-family:'Outfit',sans-serif;font-weight:700;font-size:.9rem;
+  color:var(--blue);margin-bottom:4px}
+.vocab-card.checked .vocab-term{color:var(--green)}
+.vocab-def{font-size:.82rem;color:var(--text-muted);line-height:1.4}
+.check-item{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;
+  border:1.5px solid var(--border);border-radius:8px;cursor:pointer;
+  background:var(--bg);transition:all .2s}
+.check-item:hover{border-color:var(--blue);background:var(--blue-light)}
+.check-item.done{background:var(--green-light);border-color:var(--green)}
+.cb-box{width:22px;height:22px;border:2px solid var(--border);border-radius:4px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  color:transparent;font-size:.85rem;transition:all .2s}
+.check-item.done .cb-box{background:var(--green);border-color:var(--green);color:#fff}
+.check-label{font-size:.9rem;line-height:1.4;flex:1}
+.code-wrap{border-radius:8px;overflow:hidden;border:1.5px solid var(--border)}
+.code-label{background:var(--blue);color:#fff;font-family:'Outfit',sans-serif;
+  font-weight:600;font-size:.75rem;padding:6px 14px;letter-spacing:.04em;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+.code-wrap code{display:block;background:var(--code-bg);color:var(--code-text);
+  font-family:'DM Mono',monospace;font-size:.82rem;line-height:1.7;
+  padding:14px 18px;overflow-x:auto;white-space:pre}
+.kw{color:#C792EA}.fn{color:#82AAFF}.num{color:#F78C6C}
+.str{color:#C3E88D}.cmt{color:#546E7A;font-style:italic}.tp{color:#FFCB6B}
+.plain-eng{background:var(--amber-light);border-left:4px solid var(--amber);
+  border-radius:0 8px 8px 0;padding:12px 16px;font-size:.88rem;
+  color:var(--text);line-height:1.5}
+.write-in{border:1.5px solid var(--border);border-radius:8px;overflow:hidden}
+.wi-label{background:var(--bg-alt);font-family:'Outfit',sans-serif;font-weight:600;
+  font-size:.8rem;color:var(--blue);padding:8px 14px;border-bottom:1.5px solid var(--border)}
+.wi-lines{padding:10px 14px;display:flex;flex-direction:column;gap:7px}
+.wi-line{border:none;border-bottom:1.5px solid var(--border);background:transparent;
+  color:var(--text);font-family:'DM Mono',monospace;font-size:.85rem;
+  padding:5px 2px;outline:none;width:100%}
+.wi-line:focus{border-color:var(--blue)}
+.op-table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th{background:var(--blue);color:#fff;font-family:'Outfit',sans-serif;font-weight:600;
+  padding:8px 12px;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+td{padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text)}
+tr:last-child td{border-bottom:none}
+tr:nth-child(even) td{background:var(--bg-alt)}
+code.inline{font-family:'DM Mono',monospace;font-size:.82rem;
+  background:var(--bg-alt);padding:1px 5px;border-radius:3px;border:1px solid var(--border)}
+/* UML class diagrams */
+.uml-class{font-family:'DM Mono',monospace;border:2px solid var(--border);
+  border-radius:8px;overflow:hidden;max-width:400px;margin:0 auto;box-shadow:var(--shadow-sm)}
+.uml-name{background:var(--blue);color:#fff;font-family:'Outfit',sans-serif;
+  font-weight:700;font-size:1rem;text-align:center;padding:10px 18px;
+  letter-spacing:.03em;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.uml-section{padding:8px 16px;border-top:1.5px solid var(--border);background:var(--bg)}
+.uml-row{font-size:.82rem;color:var(--text);padding:3px 0;display:flex;gap:8px;align-items:baseline}
+.uml-plus{color:var(--green);font-weight:700;min-width:12px}
+.uml-minus{color:var(--red);font-weight:700;min-width:12px}
+/* anatomy two-up layout */
+.uml-anatomy-wrap{display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap}
+.uml-anatomy-wrap .uml-class{flex:0 0 auto;min-width:230px}
+.uml-legend{flex:1;min-width:180px;list-style:none;
+  display:flex;flex-direction:column;gap:14px;padding-top:4px}
+.uml-legend li{display:flex;align-items:flex-start;gap:10px}
+.legend-num{width:26px;height:26px;border-radius:50%;background:var(--blue);
+  color:#fff;font-family:'Outfit',sans-serif;font-weight:700;font-size:.82rem;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.legend-text{font-size:.87rem;line-height:1.4;color:var(--text)}
+.legend-text strong{color:var(--blue);font-family:'Outfit',sans-serif}
+/* step callouts */
+.step-callout{border-left:4px solid var(--blue);background:var(--bg-alt);
+  border-radius:0 8px 8px 0;padding:12px 16px}
+.step-callout-title{font-family:'Outfit',sans-serif;font-weight:700;font-size:.88rem;
+  color:var(--blue);margin-bottom:4px}
+.step-callout p{font-size:.87rem;color:var(--text-muted);line-height:1.45}
+.info-box{border:1.5px solid var(--border);border-radius:8px;padding:12px 16px;
+  background:var(--bg-alt);font-size:.87rem;line-height:1.5}
+.info-box strong{color:var(--blue)}
+/* robot scenario */
+.rs-section{border:2px solid var(--blue);border-radius:10px;overflow:hidden;
+  margin-bottom:16px;box-shadow:var(--shadow-sm)}
+.rs-header{background:var(--blue);color:#fff;padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+.rs-header h2{font-family:'Outfit',sans-serif;font-weight:700;font-size:1.05rem}
+.rs-body{padding:18px 20px;display:flex;flex-direction:column;gap:14px}
+.scenario{background:var(--blue-light);border:1.5px solid var(--blue);
+  border-radius:8px;padding:16px 20px}
+.sc-title{font-family:'Outfit',sans-serif;font-weight:700;font-size:.85rem;
+  color:var(--blue);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.scenario p{font-size:.9rem;color:var(--text);margin-bottom:8px;line-height:1.5}
+.scenario ul{padding-left:20px;font-size:.87rem;color:var(--text-muted)}
+.scenario li{margin-bottom:4px}
+/* end section */
+.end-section{border:2px solid var(--green);border-radius:10px;overflow:hidden;margin-bottom:16px}
+.end-header{background:var(--green);color:#fff;padding:14px 20px;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+.end-header h2{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem}
+.end-body{padding:14px 20px;display:flex;flex-direction:column;gap:8px;background:var(--green-light)}
+.end-item{display:flex;align-items:center;gap:12px;padding:8px 12px;
+  border:1.5px solid var(--green);border-radius:8px;cursor:pointer;
+  background:var(--bg);transition:all .2s;font-size:.9rem}
+.end-item:hover{background:var(--green-light)}
+.end-item.done{text-decoration:line-through;color:var(--text-muted);background:var(--green-light)}
+.end-cb{width:20px;height:20px;border:2px solid var(--green);border-radius:4px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  color:transparent;font-size:.75rem;transition:all .2s}
+.end-item.done .end-cb{background:var(--green);color:#fff}
+.print-break{display:none}
+
+/* ── PRINT ─────────────────────────────────────────────────── */
+@media print{
+  .progress-bar-wrap{display:none!important}
+  *{box-shadow:none!important}
+  body{background:white!important}
+  .code-wrap code{background:#ffffff!important;color:#000000!important;border:1px solid #ccc!important}
+  .code-wrap code .kw,.code-wrap code .fn,.code-wrap code .num,
+  .code-wrap code .str,.code-wrap code .cmt,.code-wrap code .tp
+    {color:#000000!important;font-style:normal}
+  .code-label{background:#CC0F11!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  ::placeholder{color:transparent!important}
+  ::-webkit-input-placeholder{color:transparent!important}
+  .vocab-grid{display:block;column-count:2;column-gap:16px}
+  .vocab-card{display:inline-block;width:100%;box-sizing:border-box;
+    margin-bottom:8px;-webkit-column-break-inside:avoid;
+    break-inside:avoid;page-break-inside:avoid}
+  .check-item,.write-in,.plain-eng,.info-box,.scenario,.code-wrap,
+  .end-item,.step-callout,.uml-class{break-inside:avoid;page-break-inside:avoid}
+  p,li{orphans:3;widows:3}
+  .check-item{background:#f8f8f8!important;border-color:#ddd!important}
+  .check-item.done{background:#f0fff4!important}
+  .section{break-inside:avoid}
+  .focus-bar,.end-section,.parking,.rs-section{break-inside:avoid}
+  .print-break{display:block;break-after:page;height:0;overflow:hidden}
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div>
+    <h1>Lesson 6 — Intro to UML &amp; Subsystems</h1>
+    <div class="subtitle">🏎️🔥 RamRodz Robotics · Team 6366 · Programming Worksheet</div>
+  </div>
+  <div class="badge">🏎️🔥</div>
+</div>
+
+<div class="name-row">
+  <div class="name-field">
+    <label>Name</label>
+    <input type="text" placeholder="Your name">
+  </div>
+  <div class="name-field" style="max-width:200px">
+    <label>Date</label>
+    <input type="text" placeholder="Today's date">
+  </div>
+</div>
+
+<div class="banner">🏎️🔥 RAM RODZ ROBOTICS | TEAM #6366 | HILLCREST &amp; WOODMONT HIGH SCHOOLS · SIMPSONVILLE, SC</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-label">⬤ Your Progress</div>
+  <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  <div class="progress-pct" id="progress-pct">0 of 5 complete</div>
+</div>
+
+<div class="focus-bar">
+  <span class="focus-label">🎯 Focus Check-In:</span>
+  <div class="focus-pills">
+    <div class="focus-pill" onclick="selectFocus(this)">😵 Struggling</div>
+    <div class="focus-pill" onclick="selectFocus(this)">😐 Okay</div>
+    <div class="focus-pill" onclick="selectFocus(this)">😤 Ready</div>
+  </div>
+</div>
+
+<div class="big-q">
+  <div class="big-q-tag">🤔 Today's Big Question</div>
+  <p>Your robot has six motors and two controllers — how do engineers keep all that code organized without losing their minds?</p>
+</div>
+
+<div class="parking">
+  <div class="parking-title">🅿️ Parking Lot — Random Thoughts</div>
+  <input class="park-line" type="text" placeholder="Write a question or thought here...">
+  <input class="park-line" type="text" placeholder="">
+  <input class="park-line" type="text" placeholder="">
+  <input class="park-line" type="text" placeholder="">
+  <input class="park-line" type="text" placeholder="">
+  <input class="park-line" type="text" placeholder="">
+  <input class="park-line" type="text" placeholder="">
+</div>
+
+<div class="print-break"></div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  SECTION 1 — KEY WORDS                            -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="section" id="sec1">
+  <div class="section-header" onclick="toggleSection('sec1')">
+    <div class="step-num">1</div>
+    <h2>Key Words — Check Off When Explained</h2>
+    <span class="section-check" id="sec1-check">⬜</span>
+  </div>
+  <div class="section-body">
+    <div class="vocab-grid">
+      <div class="vocab-card" onclick="toggleVocab(this,'sec1')">
+        <div class="vocab-term">UML</div>
+        <div class="vocab-def">Unified Modeling Language — a standard diagram system for showing how code is structured, like a blueprint before you build</div>
+      </div>
+      <div class="vocab-card" onclick="toggleVocab(this,'sec1')">
+        <div class="vocab-term">Class Diagram</div>
+        <div class="vocab-def">A UML diagram with three sections: the class name on top, its fields in the middle, and its methods on the bottom</div>
+      </div>
+      <div class="vocab-card" onclick="toggleVocab(this,'sec1')">
+        <div class="vocab-term">Access Modifier</div>
+        <div class="vocab-def">A keyword that controls who can use a field or method — either <code class="inline">public</code> or <code class="inline">private</code> in Java</div>
+      </div>
+      <div class="vocab-card" onclick="toggleVocab(this,'sec1')">
+        <div class="vocab-term">Private  ( − )</div>
+        <div class="vocab-def">Only the class itself can read or change this — shown as a minus sign in UML. Used for fields to protect the data</div>
+      </div>
+      <div class="vocab-card" onclick="toggleVocab(this,'sec1')">
+        <div class="vocab-term">Public  ( + )</div>
+        <div class="vocab-def">Any code outside the class can use this — shown as a plus sign in UML. Methods are usually public so others can call them</div>
+      </div>
+      <div class="vocab-card" onclick="toggleVocab(this,'sec1')">
+        <div class="vocab-term">Subsystem</div>
+        <div class="vocab-def">A class that controls one part of the robot — such as the intake, shooter, climber, or drivetrain</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  SECTION 2 — READING A UML CLASS DIAGRAM          -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="section" id="sec2">
+  <div class="section-header" onclick="toggleSection('sec2')">
+    <div class="step-num">2</div>
+    <h2>Reading a UML Class Diagram</h2>
+    <span class="section-check" id="sec2-check">⬜</span>
+  </div>
+  <div class="section-body">
+
+    <div class="uml-anatomy-wrap">
+      <div class="uml-class">
+        <div class="uml-name">ClassName</div>
+        <div class="uml-section">
+          <div class="uml-row"><span class="uml-minus">−</span>&nbsp;fieldName : dataType</div>
+          <div class="uml-row"><span class="uml-minus">−</span>&nbsp;otherField : boolean</div>
+        </div>
+        <div class="uml-section">
+          <div class="uml-row"><span class="uml-plus">+</span>&nbsp;ClassName()</div>
+          <div class="uml-row"><span class="uml-plus">+</span>&nbsp;doSomething() : void</div>
+          <div class="uml-row"><span class="uml-plus">+</span>&nbsp;getValue() : double</div>
+        </div>
+      </div>
+      <ol class="uml-legend">
+        <li>
+          <div class="legend-num">1</div>
+          <div class="legend-text"><strong>Class Name</strong> — the top box. Matches exactly what you type after the <code class="inline">class</code> keyword in Java.</div>
+        </li>
+        <li>
+          <div class="legend-num">2</div>
+          <div class="legend-text"><strong>Fields</strong> — the middle box. Each <span style="color:var(--red);font-weight:700">−</span> row is a <code class="inline">private</code> variable. Format: <code class="inline">− name : type</code></div>
+        </li>
+        <li>
+          <div class="legend-num">3</div>
+          <div class="legend-text"><strong>Methods</strong> — the bottom box. Each <span style="color:var(--green);font-weight:700">+</span> row is a <code class="inline">public</code> method. The part after the colon is the return type.</div>
+        </li>
+      </ol>
+    </div>
+
+    <div class="plain-eng">💬 Plain English: A UML diagram is a <strong>cheat sheet for a class</strong> — one glance shows you its name, what data it holds, and what it can do. Engineers draw the diagram <em>before</em> they write the code.</div>
+
+    <div class="op-table-wrap">
+      <table>
+        <thead><tr><th>Symbol</th><th>Meaning</th><th>Java keyword</th><th>Who can access it?</th></tr></thead>
+        <tbody>
+          <tr><td><strong style="color:var(--red)">−</strong></td><td>Private</td><td><code class="inline">private</code></td><td>Only the class itself</td></tr>
+          <tr><td><strong style="color:var(--green)">+</strong></td><td>Public</td><td><code class="inline">public</code></td><td>Anyone — other classes, main(), etc.</td></tr>
+          <tr><td colspan="4" style="font-size:.8rem;color:var(--text-muted);font-style:italic;">
+            Field format:&nbsp; <code class="inline">− fieldName : dataType</code>
+            &nbsp;|&nbsp; Method format:&nbsp; <code class="inline">+ methodName(param : type) : returnType</code>
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec2')">
+      <div class="cb-box">✓</div>
+      <span class="check-label">I can name the three parts of a UML class diagram and explain what <strong>+</strong> and <strong>−</strong> mean.</span>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Quick Check — fill in the blanks</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder='The "−" symbol means the field is __________ (Java keyword)'>
+        <input type="text" class="wi-line" placeholder='The "+" symbol means the method is __________ (Java keyword)'>
+        <input type="text" class="wi-line" placeholder="Name the three sections of a UML class diagram: __________, __________, __________">
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  SECTION 3 — STEP BY STEP: INTAKESUBSYSTEM        -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="section" id="sec3">
+  <div class="section-header" onclick="toggleSection('sec3')">
+    <div class="step-num">3</div>
+    <h2>Step by Step — Build IntakeSubsystem</h2>
+    <span class="section-check" id="sec3-check">⬜</span>
+  </div>
+  <div class="section-body">
+
+    <p style="font-size:.9rem;color:var(--text-muted)">Here's the UML for our first subsystem. We'll build it one piece at a time — refer back to this diagram at every step.</p>
+
+    <div class="uml-class">
+      <div class="uml-name">IntakeSubsystem</div>
+      <div class="uml-section">
+        <div class="uml-row"><span class="uml-minus">−</span>&nbsp;motor&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: PWMSparkMax</div>
+        <div class="uml-row"><span class="uml-minus">−</span>&nbsp;rollerSpeed : double</div>
+        <div class="uml-row"><span class="uml-minus">−</span>&nbsp;isRunning&nbsp;&nbsp;&nbsp;: boolean</div>
+      </div>
+      <div class="uml-section">
+        <div class="uml-row"><span class="uml-plus">+</span>&nbsp;IntakeSubsystem()</div>
+        <div class="uml-row"><span class="uml-plus">+</span>&nbsp;run()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: void</div>
+        <div class="uml-row"><span class="uml-plus">+</span>&nbsp;stop()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: void</div>
+        <div class="uml-row"><span class="uml-plus">+</span>&nbsp;getSpeed()&nbsp;&nbsp;: double</div>
+        <div class="uml-row"><span class="uml-plus">+</span>&nbsp;isActive()&nbsp;&nbsp;: boolean</div>
+      </div>
+    </div>
+
+    <!-- Step A -->
+    <div class="step-callout">
+      <div class="step-callout-title">🔵 Step A — Class Declaration</div>
+      <p>The class name comes straight from the top box of the UML.</p>
+    </div>
+    <div class="code-wrap">
+      <div class="code-label">Java — Step A</div>
+      <code><span class="kw">class</span> <span class="tp">IntakeSubsystem</span> {   <span class="cmt">// name matches the top UML box</span>
+
+  <span class="cmt">// fields, constructor, and methods go inside here</span>
+
+}</code>
+    </div>
+    <div class="plain-eng">💬 Plain English: This line opens the blueprint. Everything inside <code class="inline">{ }</code> belongs to IntakeSubsystem.</div>
+
+    <!-- Step B -->
+    <div class="step-callout">
+      <div class="step-callout-title">🔵 Step B — Private Fields</div>
+      <p>Each row in the middle UML box becomes one field declaration. The <code class="inline">−</code> symbol maps directly to the <code class="inline">private</code> keyword.</p>
+    </div>
+    <div class="code-wrap">
+      <div class="code-label">Java — Step B</div>
+      <code>  <span class="kw">private</span> <span class="tp">PWMSparkMax</span> motor;        <span class="cmt">// −  motor : PWMSparkMax</span>
+  <span class="kw">private</span> <span class="kw">double</span>     rollerSpeed;   <span class="cmt">// −  rollerSpeed : double</span>
+  <span class="kw">private</span> <span class="kw">boolean</span>    isRunning;     <span class="cmt">// −  isRunning : boolean</span></code>
+    </div>
+    <div class="plain-eng">💬 Plain English: <strong>private</strong> means only IntakeSubsystem's own code can touch these variables. Other classes are locked out — this protects the data from accidental changes.</div>
+    <div class="write-in">
+      <div class="wi-label">✏️ Think About It</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="Why would we NOT want other classes directly changing rollerSpeed? (your own words)">
+      </div>
+    </div>
+
+    <!-- Step C -->
+    <div class="step-callout">
+      <div class="step-callout-title">🔵 Step C — Constructor</div>
+      <p>The constructor is the first method in the bottom box — same name as the class, no return type. It sets every field to a safe starting value.</p>
+    </div>
+    <div class="code-wrap">
+      <div class="code-label">Java — Step C</div>
+      <code>  <span class="kw">public</span> <span class="fn">IntakeSubsystem</span>() {             <span class="cmt">// + IntakeSubsystem()</span>
+      motor       = <span class="kw">new</span> <span class="tp">PWMSparkMax</span>(<span class="num">4</span>); <span class="cmt">// motor on PWM port 4</span>
+      rollerSpeed = <span class="num">0.0</span>;                 <span class="cmt">// start stopped</span>
+      isRunning   = <span class="kw">false</span>;              <span class="cmt">// not running yet</span>
+  }</code>
+    </div>
+    <div class="plain-eng">💬 Plain English: The constructor runs <strong>once</strong>, the moment you write <code class="inline">new IntakeSubsystem()</code>. It makes sure every field starts safe before the match begins.</div>
+
+    <!-- Step D -->
+    <div class="step-callout">
+      <div class="step-callout-title">🔵 Step D — Public Methods</div>
+      <p>Each remaining UML row becomes a method. The <code class="inline">+</code> maps to <code class="inline">public</code>. The part after the colon is the return type — <code class="inline">void</code> means it returns nothing.</p>
+    </div>
+    <div class="code-wrap">
+      <div class="code-label">Java — Step D</div>
+      <code>  <span class="kw">public</span> <span class="kw">void</span> <span class="fn">run</span>() {                    <span class="cmt">// + run() : void</span>
+      rollerSpeed = <span class="num">0.65</span>;              <span class="cmt">// 65% power</span>
+      isRunning   = <span class="kw">true</span>;              <span class="cmt">// mark active</span>
+      motor.<span class="fn">set</span>(rollerSpeed);           <span class="cmt">// send speed to motor</span>
+  }
+
+  <span class="kw">public</span> <span class="kw">void</span> <span class="fn">stop</span>() {                   <span class="cmt">// + stop() : void</span>
+      rollerSpeed = <span class="num">0.0</span>;               <span class="cmt">// zero the speed</span>
+      isRunning   = <span class="kw">false</span>;             <span class="cmt">// mark inactive</span>
+      motor.<span class="fn">set</span>(<span class="num">0.0</span>);                  <span class="cmt">// cut power</span>
+  }
+
+  <span class="kw">public</span> <span class="kw">double</span> <span class="fn">getSpeed</span>() {            <span class="cmt">// + getSpeed() : double</span>
+      <span class="kw">return</span> rollerSpeed;              <span class="cmt">// give back current speed</span>
+  }
+
+  <span class="kw">public</span> <span class="kw">boolean</span> <span class="fn">isActive</span>() {           <span class="cmt">// + isActive() : boolean</span>
+      <span class="kw">return</span> isRunning;               <span class="cmt">// give back true / false</span>
+  }</code>
+    </div>
+    <div class="plain-eng">💬 Plain English: Methods with <code class="inline">void</code> <strong>do something</strong> (run, stop). Methods with a return type like <code class="inline">double</code> or <code class="inline">boolean</code> <strong>give something back</strong> to whoever called them.</div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Predict It</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="After calling run(), what does getSpeed() return?">
+        <input type="text" class="wi-line" placeholder="After calling stop(), what does isActive() return?">
+        <input type="text" class="wi-line" placeholder="Why are getSpeed() and isActive() public instead of private?">
+      </div>
+    </div>
+
+    <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec3')">
+      <div class="cb-box">✓</div>
+      <span class="check-label">I walked through all four steps and can connect each UML row to its Java code.</span>
+    </div>
+
+  </div>
+</div>
+
+<div class="print-break"></div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  SECTION 4 — YOUR TURN: SHOOTERSUBSYSTEM          -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="section" id="sec4">
+  <div class="section-header" onclick="toggleSection('sec4')">
+    <div class="step-num">4</div>
+    <h2>Your Turn — Build ShooterSubsystem</h2>
+    <span class="section-check" id="sec4-check">⬜</span>
+  </div>
+  <div class="section-body">
+
+    <p style="font-size:.9rem;color:var(--text-muted)">Use this UML as your blueprint. Write the Java for each part below — follow the same four steps from Section 3.</p>
+
+    <div class="uml-class">
+      <div class="uml-name">ShooterSubsystem</div>
+      <div class="uml-section">
+        <div class="uml-row"><span class="uml-minus">−</span>&nbsp;flywheel&nbsp;&nbsp;&nbsp;&nbsp;: TalonFX</div>
+        <div class="uml-row"><span class="uml-minus">−</span>&nbsp;targetSpeed : double</div>
+        <div class="uml-row"><span class="uml-minus">−</span>&nbsp;isSpunUp&nbsp;&nbsp;&nbsp;&nbsp;: boolean</div>
+      </div>
+      <div class="uml-section">
+        <div class="uml-row"><span class="uml-plus">+</span>&nbsp;ShooterSubsystem()</div>
+        <div class="uml-row"><span class="uml-plus">+</span>&nbsp;spinUp()&nbsp;&nbsp;&nbsp;&nbsp;: void</div>
+        <div class="uml-row"><span class="uml-plus">+</span>&nbsp;spinDown()&nbsp;&nbsp;: void</div>
+        <div class="uml-row"><span class="uml-plus">+</span>&nbsp;shoot()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: void</div>
+        <div class="uml-row"><span class="uml-plus">+</span>&nbsp;isReady()&nbsp;&nbsp;&nbsp;: boolean</div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      💡 <strong>Hints:</strong> <code class="inline">flywheel</code> is a <code class="inline">TalonFX</code> — create it with <code class="inline">new TalonFX(5)</code> (CAN device ID 5). Start <code class="inline">targetSpeed</code> at <code class="inline">0.0</code> and <code class="inline">isSpunUp</code> at <code class="inline">false</code>. For <code class="inline">spinUp()</code>, set <code class="inline">targetSpeed</code> to <code class="inline">0.9</code>, <code class="inline">isSpunUp</code> to <code class="inline">true</code>, then call <code class="inline">flywheel.set(targetSpeed)</code>. For <code class="inline">shoot()</code>, only call <code class="inline">flywheel.set(targetSpeed)</code> if <code class="inline">isSpunUp</code> is true.
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Part A — Class Declaration</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="class ___________________ {">
+      </div>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Part B — Three Private Fields</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="private __________ flywheel;">
+        <input type="text" class="wi-line" placeholder="private __________ targetSpeed;">
+        <input type="text" class="wi-line" placeholder="private __________ isSpunUp;">
+      </div>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Part C — Constructor</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="public ShooterSubsystem() {">
+        <input type="text" class="wi-line" placeholder="    flywheel    = new TalonFX( ___ );">
+        <input type="text" class="wi-line" placeholder="    targetSpeed = ____;">
+        <input type="text" class="wi-line" placeholder="    isSpunUp    = ____;">
+        <input type="text" class="wi-line" placeholder="}">
+      </div>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Part D — spinUp() Method</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="public void spinUp() {">
+        <input type="text" class="wi-line" placeholder="    targetSpeed = ____;     // full speed">
+        <input type="text" class="wi-line" placeholder="    isSpunUp    = ____;">
+        <input type="text" class="wi-line" placeholder="    flywheel.set( ____ );">
+        <input type="text" class="wi-line" placeholder="}">
+      </div>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Part E — isReady() Method (returns a boolean)</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="public boolean isReady() {">
+        <input type="text" class="wi-line" placeholder="    return ____;   // which field holds the answer?">
+        <input type="text" class="wi-line" placeholder="}">
+      </div>
+    </div>
+
+    <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec4')">
+      <div class="cb-box">✓</div>
+      <span class="check-label">I built all five parts of ShooterSubsystem from its UML diagram.</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  ROBOT SCENARIO — ClimberSubsystem                -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="rs-section" id="secScenario">
+  <div class="rs-header">
+    <h2>🎯 Robot Scenario — Build ClimberSubsystem on Your Own</h2>
+    <span class="section-check" id="secScenario-check" style="font-size:1.3rem">⬜</span>
+  </div>
+  <div class="rs-body">
+
+    <div class="scenario">
+      <div class="sc-title">End-Game Situation</div>
+      <p>With 20 seconds left your driver presses a button to deploy the climber. The arm must extend to a target position, then retract safely when done. Your coach needs a way to check from outside the class whether the climber is still deployed.</p>
+      <ul>
+        <li>The arm is driven by a <strong>PWMSparkMax</strong> on PWM port 6</li>
+        <li>Track the arm's position (<code class="inline">double</code>) and whether it's out (<code class="inline">boolean</code>)</li>
+        <li><code class="inline">deploy(position)</code> takes a <code class="inline">double</code> parameter — extend to that position</li>
+        <li><code class="inline">retract()</code> brings the arm back to 0.0 and marks it not deployed</li>
+        <li><code class="inline">isDeployed()</code> returns the current deployed state</li>
+      </ul>
+    </div>
+
+    <div class="uml-class">
+      <div class="uml-name">ClimberSubsystem</div>
+      <div class="uml-section">
+        <div class="uml-row"><span class="uml-minus">−</span>&nbsp;armMotor&nbsp;&nbsp;&nbsp;&nbsp;: PWMSparkMax</div>
+        <div class="uml-row"><span class="uml-minus">−</span>&nbsp;armPosition : double</div>
+        <div class="uml-row"><span class="uml-minus">−</span>&nbsp;deployed&nbsp;&nbsp;&nbsp;&nbsp;: boolean</div>
+      </div>
+      <div class="uml-section">
+        <div class="uml-row"><span class="uml-plus">+</span>&nbsp;ClimberSubsystem()</div>
+        <div class="uml-row"><span class="uml-plus">+</span>&nbsp;deploy(position : double) : void</div>
+        <div class="uml-row"><span class="uml-plus">+</span>&nbsp;retract()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: void</div>
+        <div class="uml-row"><span class="uml-plus">+</span>&nbsp;isDeployed()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: boolean</div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      💡 <strong>New this time:</strong> <code class="inline">deploy(position : double)</code> has a <strong>parameter</strong>. In Java that becomes <code class="inline">public void deploy(double position)</code>. Use the parameter like any variable inside the method body — store it in <code class="inline">armPosition</code> and pass it to <code class="inline">armMotor.set()</code>.
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Fields — write all three private field declarations</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="private _______________ armMotor;">
+        <input type="text" class="wi-line" placeholder="private _______________ armPosition;">
+        <input type="text" class="wi-line" placeholder="private _______________ deployed;">
+      </div>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Constructor — initialize all three fields (motor on PWM port 6)</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="public ClimberSubsystem() {">
+        <input type="text" class="wi-line" placeholder="    armMotor    = new PWMSparkMax( ___ );">
+        <input type="text" class="wi-line" placeholder="    armPosition = ____;">
+        <input type="text" class="wi-line" placeholder="    deployed    = ____;">
+        <input type="text" class="wi-line" placeholder="}">
+      </div>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ deploy() Method — takes a double parameter named position</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="public void deploy( _______________ ) {">
+        <input type="text" class="wi-line" placeholder="    armPosition = ____;      // store the target">
+        <input type="text" class="wi-line" placeholder="    deployed    = ____;      // mark deployed">
+        <input type="text" class="wi-line" placeholder="    armMotor.set( ____ );    // drive the arm">
+        <input type="text" class="wi-line" placeholder="}">
+      </div>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ retract() Method — bring the arm home</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="public void retract() {">
+        <input type="text" class="wi-line" placeholder="    armPosition = ____;      // back to zero">
+        <input type="text" class="wi-line" placeholder="    deployed    = ____;      // no longer deployed">
+        <input type="text" class="wi-line" placeholder="    armMotor.set( ____ );">
+        <input type="text" class="wi-line" placeholder="}">
+      </div>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ isDeployed() Method — returns a boolean</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="public boolean isDeployed() {">
+        <input type="text" class="wi-line" placeholder="    return ____;">
+        <input type="text" class="wi-line" placeholder="}">
+      </div>
+    </div>
+
+    <div class="check-item" onclick="toggleCheck(this);markSectionDone('secScenario')">
+      <div class="cb-box">✓</div>
+      <span class="check-label">I built ClimberSubsystem from its UML — including a method with a parameter.</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  END OF LESSON                                     -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="end-section">
+  <div class="end-header"><h2>✅ End of Lesson — Self Check</h2></div>
+  <div class="end-body">
+    <div class="end-item" onclick="toggleEnd(this)">
+      <div class="end-cb">✓</div>
+      <span>I can read a UML class diagram and identify the name, fields, and methods.</span>
+    </div>
+    <div class="end-item" onclick="toggleEnd(this)">
+      <div class="end-cb">✓</div>
+      <span>I know that <code class="inline">−</code> in UML means <code class="inline">private</code> and <code class="inline">+</code> means <code class="inline">public</code> in Java.</span>
+    </div>
+    <div class="end-item" onclick="toggleEnd(this)">
+      <div class="end-cb">✓</div>
+      <span>I can translate a UML diagram into a Java class with fields, a constructor, and methods.</span>
+    </div>
+    <div class="end-item" onclick="toggleEnd(this)">
+      <div class="end-cb">✓</div>
+      <span>I understand why fields are usually <code class="inline">private</code> and methods are usually <code class="inline">public</code>.</span>
+    </div>
+    <div class="end-item" onclick="toggleEnd(this)">
+      <div class="end-cb">✓</div>
+      <span>I built ClimberSubsystem on my own from a UML diagram — including a method with a parameter.</span>
+    </div>
+  </div>
+</div>
+
+<script>
+function selectFocus(el){
+  document.querySelectorAll('.focus-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+}
+function toggleCheck(el){ el.classList.toggle('done'); }
+function toggleVocab(el,secId){
+  el.classList.toggle('checked');
+  const sec=document.getElementById(secId);
+  const cards=sec.querySelectorAll('.vocab-card');
+  const done=[...cards].every(c=>c.classList.contains('checked'));
+  document.getElementById(secId+'-check').textContent=done?'✅':'⬜';
+  updateProgress();
+}
+function markSectionDone(secId){
+  const sec=document.getElementById(secId);
+  const checks=sec.querySelectorAll('.check-item');
+  const done=[...checks].length>0&&[...checks].every(c=>c.classList.contains('done'));
+  document.getElementById(secId+'-check').textContent=done?'✅':'⬜';
+  updateProgress();
+}
+function updateProgress(){
+  const all=document.querySelectorAll('[id$="-check"]');
+  const done=[...all].filter(e=>e.textContent==='✅').length;
+  const pct=Math.round((done/all.length)*100);
+  document.getElementById('progress-fill').style.width=pct+'%';
+  document.getElementById('progress-pct').textContent=done+' of '+all.length+' complete';
+}
+function toggleEnd(el){ el.classList.toggle('done'); }
+// Start with all sections collapsed except sec1
+document.querySelectorAll('.section').forEach(sec=>{
+  if(sec.id!=='sec1') sec.querySelector('.section-body').style.display='none';
+});
+function toggleSection(id){
+  const body=document.querySelector('#'+id+' .section-body');
+  body.style.display=body.style.display==='none'?'flex':'none';
+}
+</script>
+</body>
+</html>
