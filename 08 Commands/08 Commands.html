@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Command-Based Robots</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#ffffff; --bg-alt:#FDF2F2; --text:#1C1314; --text-muted:#6B4A4B;
+  --blue:#CC0F11; --blue-light:#FEE2E2; --amber:#D97706; --amber-light:#FEF3C7;
+  --green:#059669; --green-light:#D1FAE5; --red:#9B0C0E;
+  --border:#F0CECE; --code-bg:#1C1314; --code-text:#F1E8E8;
+  --shadow-sm:0 1px 4px rgba(0,0,0,.07);
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#160A0A; --bg-alt:#241010; --text:#F9ECEC; --text-muted:#C49A9B;
+  --blue:#F25254; --blue-light:#3D1010; --amber:#FCD34D; --amber-light:#3D2E0A;
+  --green:#34D399; --green-light:#064E3B; --red:#F87171;
+  --border:#3D1818; --code-bg:#0D0606; --code-text:#F1E8E8;
+}}
+:root[data-theme="dark"]{
+  --bg:#160A0A; --bg-alt:#241010; --text:#F9ECEC; --text-muted:#C49A9B;
+  --blue:#F25254; --blue-light:#3D1010; --amber:#FCD34D; --amber-light:#3D2E0A;
+  --green:#34D399; --green-light:#064E3B; --red:#F87171;
+  --border:#3D1818; --code-bg:#0D0606; --code-text:#F1E8E8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);
+  max-width:780px;margin:0 auto;padding:28px 24px;line-height:1.6}
+
+/* ── Header ── */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px}
+.page-header h1{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.85rem;
+  color:var(--blue);line-height:1.2}
+.badge{font-size:2.4rem;line-height:1}
+.subtitle{font-family:'DM Sans',sans-serif;color:var(--text-muted);font-size:.9rem;margin-bottom:14px}
+.name-row{display:flex;gap:24px;margin-bottom:18px}
+.name-field{flex:1;border:0;border-bottom:2px solid var(--border);
+  background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;
+  font-size:.95rem;padding:4px 2px;outline:none}
+.name-field::placeholder{color:var(--text-muted)}
+
+/* ── Banner ── */
+.banner{background:#CC0F11;color:#fff;font-family:'Outfit',sans-serif;font-weight:600;
+  font-size:.82rem;text-align:center;padding:9px 16px;border-radius:8px;
+  margin-bottom:16px;letter-spacing:.03em;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+/* ── Progress ── */
+.progress-bar-wrap{margin-bottom:14px}
+.progress-label{font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;
+  color:var(--text-muted);margin-bottom:5px}
+.progress-track{height:12px;background:var(--border);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;width:0%;
+  background:linear-gradient(90deg,#CC0F11,#F59E0B,#059669);
+  border-radius:99px;transition:width .5s ease}
+.progress-pct{font-size:.78rem;color:var(--text-muted);margin-top:3px;text-align:right}
+
+/* ── Focus bar ── */
+.focus-bar{background:var(--amber-light);border:1.5px solid var(--amber);
+  border-radius:10px;padding:12px 16px;margin-bottom:16px;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.focus-label{font-family:'Outfit',sans-serif;font-weight:700;font-size:.85rem;color:var(--amber)}
+.focus-pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{cursor:pointer;font-size:.82rem;font-family:'Outfit',sans-serif;font-weight:600;
+  padding:5px 14px;border-radius:99px;border:1.5px solid var(--amber);
+  background:transparent;color:var(--amber);transition:all .2s;user-select:none}
+.pill.active{background:var(--amber);color:#fff}
+
+/* ── Big Question ── */
+.big-q{border-left:4px solid var(--blue);background:var(--blue-light);
+  border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:16px}
+.big-q-tag{font-family:'Outfit',sans-serif;font-weight:700;font-size:.75rem;
+  color:var(--blue);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.big-q p{font-size:1.05rem;font-weight:500;color:var(--text)}
+
+/* ── Parking Lot ── */
+.parking{border:2px dashed var(--border);border-radius:10px;padding:14px 18px;
+  margin-bottom:20px}
+.parking-title{font-family:'Outfit',sans-serif;font-weight:700;font-size:.9rem;
+  color:var(--text-muted);margin-bottom:10px}
+.park-line{width:100%;border:0;border-bottom:1.5px solid var(--border);
+  background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;
+  font-size:.9rem;padding:6px 2px;outline:none;margin-bottom:6px;display:block}
+.park-line::placeholder{color:var(--border)}
+
+/* ── Sections ── */
+.section{border:1.5px solid var(--border);border-radius:10px;
+  box-shadow:var(--shadow-sm);margin-bottom:18px;overflow:hidden}
+.section-header{display:flex;align-items:center;gap:12px;padding:13px 18px;
+  cursor:pointer;user-select:none;background:var(--bg-alt)}
+.section-header:hover{filter:brightness(.97)}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--blue);
+  color:#fff;font-family:'Outfit',sans-serif;font-weight:800;font-size:1rem;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.section-header h2{flex:1;font-family:'Outfit',sans-serif;font-weight:700;
+  font-size:1rem;color:var(--text)}
+.section-check{font-size:1.15rem}
+.section-body{padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.section-body.hidden{display:none}
+
+/* ── Vocab ── */
+.vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.vocab-card{border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;
+  cursor:pointer;transition:all .2s;background:var(--bg)}
+.vocab-card:hover{border-color:var(--blue)}
+.vocab-card.checked{background:var(--green-light);border-color:var(--green)}
+.vocab-card .term{font-family:'Outfit',sans-serif;font-weight:700;font-size:.88rem;
+  color:var(--blue);margin-bottom:3px}
+.vocab-card.checked .term{color:var(--green)}
+.vocab-card .def{font-size:.8rem;color:var(--text-muted);line-height:1.45}
+
+/* ── Check items ── */
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;
+  border-radius:8px;border:1.5px solid var(--border);background:var(--bg);
+  cursor:pointer;transition:all .2s}
+.check-item:hover{border-color:var(--blue)}
+.check-item.done{background:var(--green-light);border-color:var(--green)}
+.cb-box{width:20px;height:20px;border-radius:5px;border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-size:.8rem;color:transparent;transition:all .2s;margin-top:1px}
+.check-item.done .cb-box{background:var(--green);border-color:var(--green);color:#fff}
+.check-label{font-size:.9rem;color:var(--text)}
+
+/* ── Code ── */
+.code-wrap{border-radius:8px;overflow:hidden;margin:4px 0}
+.code-label{background:var(--blue);color:#fff;font-family:'Outfit',sans-serif;
+  font-weight:600;font-size:.75rem;padding:5px 14px;letter-spacing:.04em}
+.code-wrap code{display:block;background:var(--code-bg);color:var(--code-text);
+  font-family:'DM Mono',monospace;font-size:.8rem;padding:14px 16px;
+  white-space:pre;overflow-x:auto;line-height:1.7}
+.kw{color:#C792EA}.fn{color:#82AAFF}.num{color:#F78C6C}
+.str{color:#C3E88D}.cmt{color:#546E7A;font-style:italic}
+.tp{color:#FFCB6B}.val{color:#F78C6C}
+
+/* ── Plain English ── */
+.plain-eng{background:var(--amber-light);border-left:4px solid var(--amber);
+  border-radius:0 8px 8px 0;padding:10px 14px;font-size:.88rem;color:var(--text)}
+
+/* ── Write-in ── */
+.write-in{border:1.5px dashed var(--border);border-radius:8px;padding:12px 14px;background:var(--bg-alt)}
+.wi-label{font-family:'Outfit',sans-serif;font-weight:700;font-size:.8rem;
+  color:var(--blue);margin-bottom:8px}
+.wi-lines{display:flex;flex-direction:column;gap:6px}
+.wi-line{border:0;border-bottom:1.5px solid var(--border);background:transparent;
+  color:var(--text);font-family:'DM Sans',sans-serif;font-size:.9rem;
+  padding:5px 2px;outline:none;width:100%}
+.wi-line::placeholder{color:var(--border)}
+
+/* ── Info box ── */
+.info-box{background:var(--blue-light);border:1.5px solid var(--border);
+  border-left:4px solid var(--blue);border-radius:0 8px 8px 0;padding:11px 14px;font-size:.88rem}
+.info-box strong{color:var(--blue)}
+
+/* ── Comparison table ── */
+.op-table-wrap{overflow-x:auto}
+.op-table-wrap table{width:100%;border-collapse:collapse;font-size:.85rem}
+.op-table-wrap th{background:var(--blue);color:#fff;font-family:'Outfit',sans-serif;
+  font-weight:600;padding:8px 12px;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.op-table-wrap td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+.op-table-wrap tr:last-child td{border-bottom:0}
+.op-table-wrap tr:nth-child(even) td{background:var(--bg-alt)}
+
+/* ── Step callout ── */
+.step-callout{border-left:4px solid var(--blue);background:var(--bg-alt);
+  border-radius:0 8px 8px 0;padding:12px 16px}
+.step-callout .step-tag{font-family:'Outfit',sans-serif;font-weight:800;font-size:.8rem;
+  color:var(--blue);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+
+/* ── Lambda callout ── */
+.lambda-box{background:var(--bg-alt);border:1.5px solid var(--border);border-radius:8px;
+  padding:12px 16px;display:flex;gap:14px;align-items:flex-start}
+.lambda-icon{font-size:1.6rem;line-height:1;flex-shrink:0}
+.lambda-body .lambda-title{font-family:'Outfit',sans-serif;font-weight:700;font-size:.88rem;
+  color:var(--blue);margin-bottom:4px}
+.lambda-body p{font-size:.87rem;color:var(--text-muted)}
+.lambda-body code{font-family:'DM Mono',monospace;background:var(--code-bg);
+  color:#82AAFF;padding:1px 5px;border-radius:4px;font-size:.82rem}
+
+/* ── UML ── */
+.uml-class{border:2px solid var(--border);border-radius:8px;overflow:hidden;
+  max-width:380px;margin:0 auto;font-family:'DM Mono',monospace}
+.uml-name{background:var(--blue);color:#fff;text-align:center;
+  padding:10px 18px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.uml-name .class-name{font-family:'Outfit',sans-serif;font-weight:800;font-size:1rem}
+.uml-name .extends-line{font-family:'DM Mono',monospace;font-size:.72rem;
+  opacity:.85;margin-top:2px}
+.uml-section{padding:8px 16px;border-top:1.5px solid var(--border);background:var(--bg)}
+.uml-row{font-size:.78rem;display:flex;gap:6px;padding:2px 0;line-height:1.5}
+.uml-plus{color:var(--green);font-weight:700}
+.uml-minus{color:var(--red);font-weight:700}
+.uml-cmd{color:#82AAFF}
+
+/* ── Robot Scenario ── */
+.rs-section{border:2px solid var(--blue);border-radius:10px;overflow:hidden;margin-bottom:18px}
+.rs-header{background:var(--blue);color:#fff;padding:12px 18px;
+  display:flex;align-items:center;gap:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.rs-header h2{font-family:'Outfit',sans-serif;font-weight:800;font-size:1rem;flex:1;color:#fff}
+.rs-body{padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.scenario{background:var(--blue-light);border:1.5px solid var(--border);
+  border-radius:8px;padding:12px 16px;font-size:.88rem}
+.sc-title{font-family:'Outfit',sans-serif;font-weight:700;font-size:.85rem;
+  color:var(--blue);margin-bottom:6px}
+.scenario ul{margin-left:18px;margin-top:6px;display:flex;flex-direction:column;gap:4px}
+
+/* ── End checklist ── */
+.end-section{background:var(--green-light);border:1.5px solid var(--green);
+  border-radius:10px;padding:16px 18px;margin-bottom:18px}
+.end-title{font-family:'Outfit',sans-serif;font-weight:800;font-size:.95rem;
+  color:var(--green);margin-bottom:10px}
+.end-item{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;
+  border-radius:7px;cursor:pointer;transition:background .2s}
+.end-item:hover{background:rgba(5,150,105,.1)}
+.end-item.done{text-decoration:line-through;color:var(--green)}
+.end-cb{width:20px;height:20px;border-radius:5px;border:2px solid var(--green);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-size:.8rem;color:transparent;transition:all .2s;margin-top:1px}
+.end-item.done .end-cb{background:var(--green);color:#fff}
+.end-label{font-size:.9rem}
+
+/* ── Print ── */
+@media print{
+  .progress-bar-wrap{display:none!important}
+  *{box-shadow:none!important}
+  body{background:white!important}
+  .code-wrap code,.anatomy code{background:#ffffff!important;color:#000000!important;border:1px solid #ccc!important}
+  .code-wrap code .kw,.code-wrap code .fn,.code-wrap code .num,
+  .code-wrap code .str,.code-wrap code .cmt,.code-wrap code .tp,.code-wrap code .val{color:#000000!important;font-style:normal}
+  .code-label{background:#CC0F11!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  ::placeholder{color:transparent!important}
+  ::-webkit-input-placeholder{color:transparent!important}
+  .vocab-grid{display:block;column-count:2;column-gap:16px}
+  .vocab-card,.vocab-item{display:inline-block;width:100%;box-sizing:border-box;
+    margin-bottom:8px;-webkit-column-break-inside:avoid;break-inside:avoid;page-break-inside:avoid}
+  .check-item,.write-in,.plain-eng,.info-box,.scenario,.code-wrap,.end-item{break-inside:avoid;page-break-inside:avoid}
+  p,li{orphans:3;widows:3}
+  .check-item{background:#f8f8f8!important;border-color:#ddd!important}
+  .check-item.done{background:#f0fff4!important}
+  .section{break-inside:avoid}
+  .focus-bar,.end-section,.parking{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<div class="page-header">
+  <div>
+    <h1>Command-Based Robots</h1>
+    <div class="subtitle">🏎️🔥 RamRodz Robotics · Team 6366 · Programming Worksheet — Lesson 7</div>
+  </div>
+  <div class="badge">🏎️🔥</div>
+</div>
+
+<div class="name-row">
+  <input class="name-field" type="text" placeholder="Name: _______________________________">
+  <input class="name-field" type="text" placeholder="Date: ___________________">
+</div>
+
+<div class="banner">🏎️🔥 RAM RODZ ROBOTICS | TEAM #6366 | HILLCREST &amp; WOODMONT HIGH SCHOOLS · SIMPSONVILLE, SC</div>
+
+<!-- ── Progress ── -->
+<div class="progress-bar-wrap">
+  <div class="progress-label">⬤ Your Progress</div>
+  <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+  <div class="progress-pct" id="prog-pct">0 of 6 sections complete</div>
+</div>
+
+<!-- ── Focus ── -->
+<div class="focus-bar">
+  <div class="focus-label">🧠 Focus Check-In</div>
+  <div class="focus-pills">
+    <div class="pill" onclick="selectFocus(this)">😵 Struggling</div>
+    <div class="pill" onclick="selectFocus(this)">😐 Okay</div>
+    <div class="pill" onclick="selectFocus(this)">😤 Ready</div>
+  </div>
+</div>
+
+<!-- ── Big Question ── -->
+<div class="big-q">
+  <div class="big-q-tag">🔥 Today's Big Question</div>
+  <p>What if pressing a button on the controller could automatically grab a ball, lift it, and drop it — all without you holding the button the whole time?</p>
+</div>
+
+<!-- ── Parking Lot ── -->
+<div class="parking">
+  <div class="parking-title">🅿️ Parking Lot — Random Thoughts</div>
+  <input class="park-line" type="text" placeholder="Question or thought...">
+  <input class="park-line" type="text" placeholder="Question or thought...">
+  <input class="park-line" type="text" placeholder="Question or thought...">
+  <input class="park-line" type="text" placeholder="Question or thought...">
+  <input class="park-line" type="text" placeholder="Question or thought...">
+  <input class="park-line" type="text" placeholder="Question or thought...">
+  <input class="park-line" type="text" placeholder="Question or thought...">
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SECTION 1 — Vocabulary
+════════════════════════════════════════════════ -->
+<div class="section" id="sec1">
+  <div class="section-header" onclick="toggleSection('sec1')">
+    <div class="step-num">1</div>
+    <h2>Key Words — Check Off When Explained</h2>
+    <span class="section-check" id="sec1-check">⬜</span>
+  </div>
+  <div class="section-body" id="sec1-body">
+    <div class="vocab-grid" id="vocab1">
+      <div class="vocab-card" onclick="toggleVocab(this,'vocab1')">
+        <div class="term">Command-Based</div>
+        <div class="def">A WPILib programming style where robot actions are packaged as Command objects and managed by a Scheduler.</div>
+      </div>
+      <div class="vocab-card" onclick="toggleVocab(this,'vocab1')">
+        <div class="term">Command</div>
+        <div class="def">An object that represents one robot action. It can start, run, and finish on its own timetable.</div>
+      </div>
+      <div class="vocab-card" onclick="toggleVocab(this,'vocab1')">
+        <div class="term">SubsystemBase</div>
+        <div class="def">The WPILib class your subsystem <em>extends</em>. It connects your class to the Command Scheduler automatically.</div>
+      </div>
+      <div class="vocab-card" onclick="toggleVocab(this,'vocab1')">
+        <div class="term">Scheduler</div>
+        <div class="def">WPILib's built-in manager that runs Commands at the right time and makes sure two commands don't fight over the same hardware.</div>
+      </div>
+      <div class="vocab-card" onclick="toggleVocab(this,'vocab1')">
+        <div class="term">runOnce()</div>
+        <div class="def">A SubsystemBase helper that wraps one block of code into a Command that fires once, then finishes automatically.</div>
+      </div>
+      <div class="vocab-card" onclick="toggleVocab(this,'vocab1')">
+        <div class="term">Requirement</div>
+        <div class="def">Tells the Scheduler which subsystem a command "owns." Only one command can own a subsystem at a time.</div>
+      </div>
+      <div class="vocab-card" onclick="toggleVocab(this,'vocab1')">
+        <div class="term">RobotContainer</div>
+        <div class="def">The class in a Command-Based project where you create subsystems and wire controller buttons to commands.</div>
+      </div>
+      <div class="vocab-card" onclick="toggleVocab(this,'vocab1')">
+        <div class="term">Lambda  ( ) -&gt;</div>
+        <div class="def">A compact way to write a small chunk of code that will be run later — used inside runOnce() and run().</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SECTION 2 — Old Way vs. Command Way
+════════════════════════════════════════════════ -->
+<div class="section" id="sec2">
+  <div class="section-header" onclick="toggleSection('sec2')">
+    <div class="step-num">2</div>
+    <h2>The Old Way vs. The Command Way</h2>
+    <span class="section-check" id="sec2-check">⬜</span>
+  </div>
+  <div class="section-body" id="sec2-body">
+    <p style="font-size:.9rem;color:var(--text-muted)">Before Command-Based, you called subsystem methods directly inside a loop every robot tick. That works for simple robots — but bigger robots have many subsystems competing for the driver's attention. Command-Based solves this.</p>
+
+    <div class="op-table-wrap">
+      <table>
+        <tr>
+          <th>Old Style (Lesson 5 &amp; 6)</th>
+          <th>Command-Based (Lesson 7+)</th>
+        </tr>
+        <tr>
+          <td>Methods <em>do the action directly</em> when called</td>
+          <td>Methods <em>return a Command</em> — the Scheduler decides when to run it</td>
+        </tr>
+        <tr>
+          <td>You manage timing with <code>if</code> checks every loop</td>
+          <td>Commands manage their own timing — they finish on their own</td>
+        </tr>
+        <tr>
+          <td>If two actions conflict, bad things happen</td>
+          <td>Scheduler prevents two commands from fighting over the same motor</td>
+        </tr>
+        <tr>
+          <td><code>intake.run();</code> — runs immediately</td>
+          <td><code>controller.a().onTrue(intake.grab());</code> — runs when A is pressed</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec2')">
+      <div class="cb-box">✓</div>
+      <span class="check-label">I understand that Command-Based means methods <em>return</em> Commands instead of doing actions directly.</span>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Quick Question — In the old style, when does the intake run? In Command-Based, when does it run?</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="Old style: the intake runs when...">
+        <input type="text" class="wi-line" placeholder="Command-Based: the intake runs when...">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SECTION 3 — SubsystemBase
+════════════════════════════════════════════════ -->
+<div class="section" id="sec3">
+  <div class="section-header" onclick="toggleSection('sec3')">
+    <div class="step-num">3</div>
+    <h2>SubsystemBase — The New Foundation</h2>
+    <span class="section-check" id="sec3-check">⬜</span>
+  </div>
+  <div class="section-body" id="sec3-body">
+    <p style="font-size:.9rem;color:var(--text-muted)">In Lesson 6 your subsystem was a plain Java class. In Command-Based projects, your subsystem <strong>extends SubsystemBase</strong> — that one word unlocks the Scheduler, requirements, and the helper methods you'll use all season.</p>
+
+    <div class="code-wrap">
+      <div class="code-label">Java — SubsystemBase skeleton</div>
+      <code><span class="cmt">// Import WPILib's SubsystemBase</span>
+<span class="kw">import</span> edu.wpi.first.wpilibj2.command.SubsystemBase;
+<span class="kw">import</span> edu.wpi.first.wpilibj2.command.Command;
+
+<span class="kw">public class</span> <span class="tp">ExampleSubsystem</span> <span class="kw">extends</span> <span class="tp">SubsystemBase</span> {
+
+    <span class="cmt">// fields go here — same as before</span>
+
+    <span class="kw">public</span> <span class="fn">ExampleSubsystem</span>() {
+        <span class="cmt">// constructor — same as before</span>
+    }
+
+    <span class="cmt">// periodic() runs every robot tick (20 ms) — optional</span>
+    <span class="kw">@Override</span>
+    <span class="kw">public void</span> <span class="fn">periodic</span>() {
+        <span class="cmt">// update dashboard readouts, check sensors, etc.</span>
+    }
+
+    <span class="cmt">// methods now RETURN Command objects instead of doing actions directly</span>
+    <span class="kw">public</span> <span class="tp">Command</span> <span class="fn">doSomething</span>() {
+        <span class="kw">return</span> <span class="fn">runOnce</span>(() -&gt; { <span class="cmt">/* action here */</span> });
+    }
+}</code>
+    </div>
+    <div class="plain-eng">💬 Plain English: <strong>extends SubsystemBase</strong> means "my class inherits everything WPILib's SubsystemBase already knows how to do." You get <code>runOnce()</code>, <code>run()</code>, and automatic Scheduler registration for free.</div>
+
+    <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec3')">
+      <div class="cb-box">✓</div>
+      <span class="check-label">I see that the class declaration now says <code>extends SubsystemBase</code> and methods return <code>Command</code> instead of <code>void</code>.</span>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Fill In — What return type do command-returning methods use? What keyword connects the subsystem to SubsystemBase?</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="Return type: ________">
+        <input type="text" class="wi-line" placeholder="Keyword: ________">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SECTION 4 — runOnce() and the Lambda
+════════════════════════════════════════════════ -->
+<div class="section" id="sec4">
+  <div class="section-header" onclick="toggleSection('sec4')">
+    <div class="step-num">4</div>
+    <h2>runOnce() and the Lambda Arrow</h2>
+    <span class="section-check" id="sec4-check">⬜</span>
+  </div>
+  <div class="section-body" id="sec4-body">
+
+    <div class="lambda-box">
+      <div class="lambda-icon">λ</div>
+      <div class="lambda-body">
+        <div class="lambda-title">New Syntax: The Lambda  <code>() -&gt;</code></div>
+        <p>A lambda is a mini code-block written inline. <code>() -&gt; { … }</code> means <em>"here is a chunk of code — run it when you're ready."</em><br>
+        You've been writing full methods with names. A lambda is the same idea but nameless, passed directly to <code>runOnce()</code>.</p>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label">Java — runOnce() anatomy</div>
+      <code><span class="kw">public</span> <span class="tp">Command</span> <span class="fn">grab</span>() {
+    <span class="kw">return</span> <span class="fn">runOnce</span>( () -&gt; {        <span class="cmt">// ① return a Command  ② lambda starts here</span>
+        grabMotor.<span class="fn">set</span>(<span class="num">0.7</span>);           <span class="cmt">// ③ code that runs once when commanded</span>
+        isGripping = <span class="kw">true</span>;           <span class="cmt">// ④ update state</span>
+    });                               <span class="cmt">// ⑤ lambda ends — 'this' subsystem auto-required</span>
+}</code>
+    </div>
+    <div class="plain-eng">💬 Plain English: <strong>runOnce( () -&gt; { … } )</strong> packages the code inside the braces into a one-shot Command. When the Scheduler fires it, the code runs exactly once, then the command finishes automatically. Because it's called on <em>this</em> subsystem, the Scheduler knows only this subsystem's commands can run at the same time.</div>
+
+    <div class="info-box">
+      <strong>runOnce() vs run()</strong><br>
+      <code>runOnce()</code> — fires the lambda once, then done. Use for instant actions: open a claw, set a motor speed, flip a solenoid.<br>
+      <code>run()</code> — keeps firing the lambda every tick until interrupted. Use for continuous actions: hold a wheel spinning, track a target.
+    </div>
+
+    <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec4')">
+      <div class="cb-box">✓</div>
+      <span class="check-label">I can read a <code>runOnce( () -&gt; { … } )</code> block and explain what the lambda does.</span>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Predict It — If you wrote <code>run(() -&gt; { liftMotor.set(0.8); })</code>, would the motor run once or keep running? Why?</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="It would...">
+        <input type="text" class="wi-line" placeholder="Because...">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SECTION 5 — Building LifterSubsystem
+════════════════════════════════════════════════ -->
+<div class="section" id="sec5">
+  <div class="section-header" onclick="toggleSection('sec5')">
+    <div class="step-num">5</div>
+    <h2>Building LifterSubsystem — Step by Step</h2>
+    <span class="section-check" id="sec5-check">⬜</span>
+  </div>
+  <div class="section-body" id="sec5-body">
+
+    <p style="font-size:.9rem;color:var(--text-muted)">We're building a subsystem for a robot that can grab a ball, lift it, and release it. Study the UML first, then follow along with each step.</p>
+
+    <!-- UML -->
+    <div class="uml-class">
+      <div class="uml-name">
+        <div class="class-name">LifterSubsystem</div>
+        <div class="extends-line">extends SubsystemBase</div>
+      </div>
+      <div class="uml-section">
+        <div class="uml-row"><span class="uml-minus">−</span><span>grabMotor &nbsp;: PWMSparkMax</span></div>
+        <div class="uml-row"><span class="uml-minus">−</span><span>liftMotor &nbsp;: PWMSparkMax</span></div>
+        <div class="uml-row"><span class="uml-minus">−</span><span>isGripping : boolean</span></div>
+        <div class="uml-row"><span class="uml-minus">−</span><span>isLifted &nbsp;&nbsp;: boolean</span></div>
+      </div>
+      <div class="uml-section">
+        <div class="uml-row"><span class="uml-plus">+</span><span>LifterSubsystem()</span></div>
+        <div class="uml-row"><span class="uml-plus">+</span><span>grab() &nbsp;&nbsp;&nbsp;&nbsp;: <span class="uml-cmd">Command</span></span></div>
+        <div class="uml-row"><span class="uml-plus">+</span><span>release() &nbsp;: <span class="uml-cmd">Command</span></span></div>
+        <div class="uml-row"><span class="uml-plus">+</span><span>lift() &nbsp;&nbsp;&nbsp;&nbsp;: <span class="uml-cmd">Command</span></span></div>
+        <div class="uml-row"><span class="uml-plus">+</span><span>lower() &nbsp;&nbsp;&nbsp;: <span class="uml-cmd">Command</span></span></div>
+        <div class="uml-row"><span class="uml-plus">+</span><span>scoreBall(): <span class="uml-cmd">Command</span></span></div>
+        <div class="uml-row"><span class="uml-plus">+</span><span>isGripping(): boolean</span></div>
+        <div class="uml-row"><span class="uml-plus">+</span><span>isLifted() &nbsp;: boolean</span></div>
+      </div>
+    </div>
+
+    <div class="info-box" style="margin-top:4px">
+      <strong>Notice:</strong> Every method that controls the robot now returns <span style="font-family:'DM Mono',monospace;color:#82AAFF">Command</span> (shown in blue in the UML). Only the two <em>state getters</em> at the bottom still return <code>boolean</code> — they just read a value, they don't control anything.
+    </div>
+
+    <!-- Step A: Fields + Constructor -->
+    <div class="step-callout">
+      <div class="step-tag">Step A — Fields &amp; Constructor</div>
+      <p style="font-size:.87rem;margin-top:4px">Same as Lesson 6 — declare private fields, create motors in the constructor.</p>
+    </div>
+    <div class="code-wrap">
+      <div class="code-label">Java — Fields &amp; Constructor</div>
+      <code><span class="kw">public class</span> <span class="tp">LifterSubsystem</span> <span class="kw">extends</span> <span class="tp">SubsystemBase</span> {
+
+    <span class="kw">private final</span> <span class="tp">PWMSparkMax</span> grabMotor;   <span class="cmt">// motor that grips the ball</span>
+    <span class="kw">private final</span> <span class="tp">PWMSparkMax</span> liftMotor;   <span class="cmt">// motor that raises the arm</span>
+    <span class="kw">private boolean</span> isGripping;             <span class="cmt">// are we gripping right now?</span>
+    <span class="kw">private boolean</span> isLifted;               <span class="cmt">// is the arm raised?</span>
+
+    <span class="kw">public</span> <span class="fn">LifterSubsystem</span>() {
+        grabMotor  = <span class="kw">new</span> <span class="tp">PWMSparkMax</span>(<span class="num">0</span>);  <span class="cmt">// grip motor on PWM port 0</span>
+        liftMotor  = <span class="kw">new</span> <span class="tp">PWMSparkMax</span>(<span class="num">1</span>);  <span class="cmt">// lift motor on PWM port 1</span>
+        isGripping = <span class="kw">false</span>;
+        isLifted   = <span class="kw">false</span>;
+    }</code>
+    </div>
+    <div class="plain-eng">💬 Plain English: <strong>final</strong> on the motor fields means "once created in the constructor, this variable never points to a different motor." Good practice — motors don't get swapped mid-match.</div>
+
+    <!-- Step B: grab() and release() -->
+    <div class="step-callout">
+      <div class="step-tag">Step B — grab() and release()</div>
+      <p style="font-size:.87rem;margin-top:4px">Both use <code>runOnce()</code> — the motor fires once and the command finishes.</p>
+    </div>
+    <div class="code-wrap">
+      <div class="code-label">Java — grab() and release()</div>
+      <code>    <span class="kw">public</span> <span class="tp">Command</span> <span class="fn">grab</span>() {
+        <span class="kw">return</span> <span class="fn">runOnce</span>(() -&gt; {
+            grabMotor.<span class="fn">set</span>(<span class="num">0.7</span>);   <span class="cmt">// spin inward at 70% to grip ball</span>
+            isGripping = <span class="kw">true</span>;  <span class="cmt">// remember we're gripping</span>
+        });
+    }
+
+    <span class="kw">public</span> <span class="tp">Command</span> <span class="fn">release</span>() {
+        <span class="kw">return</span> <span class="fn">runOnce</span>(() -&gt; {
+            grabMotor.<span class="fn">set</span>(-<span class="num">0.4</span>); <span class="cmt">// spin outward at 40% to drop ball</span>
+            isGripping = <span class="kw">false</span>; <span class="cmt">// no longer gripping</span>
+        });
+    }</code>
+    </div>
+    <div class="plain-eng">💬 Plain English: <strong>grab()</strong> and <strong>release()</strong> look almost identical — they both package a motor call into a runOnce Command. The only difference is the direction and speed. Notice the return type is <code>Command</code>, not <code>void</code>.</div>
+
+    <!-- Step C: lift() and lower() -->
+    <div class="step-callout">
+      <div class="step-tag">Step C — lift() and lower()</div>
+      <p style="font-size:.87rem;margin-top:4px">Same pattern for the lift arm.</p>
+    </div>
+    <div class="code-wrap">
+      <div class="code-label">Java — lift() and lower()</div>
+      <code>    <span class="kw">public</span> <span class="tp">Command</span> <span class="fn">lift</span>() {
+        <span class="kw">return</span> <span class="fn">runOnce</span>(() -&gt; {
+            liftMotor.<span class="fn">set</span>(<span class="num">0.8</span>);   <span class="cmt">// drive arm upward at 80%</span>
+            isLifted = <span class="kw">true</span>;     <span class="cmt">// remember arm is raised</span>
+        });
+    }
+
+    <span class="kw">public</span> <span class="tp">Command</span> <span class="fn">lower</span>() {
+        <span class="kw">return</span> <span class="fn">runOnce</span>(() -&gt; {
+            liftMotor.<span class="fn">set</span>(-<span class="num">0.6</span>);  <span class="cmt">// drive arm downward at 60%</span>
+            isLifted = <span class="kw">false</span>;     <span class="cmt">// arm is back down</span>
+        });
+    }</code>
+    </div>
+
+    <!-- Step D: scoreBall() sequence -->
+    <div class="step-callout">
+      <div class="step-tag">Step D — scoreBall() Sequence Command</div>
+      <p style="font-size:.87rem;margin-top:4px">This is where Command-Based really shines — chain multiple commands together automatically.</p>
+    </div>
+    <div class="code-wrap">
+      <div class="code-label">Java — scoreBall() with Commands.sequence()</div>
+      <code>    <span class="kw">public</span> <span class="tp">Command</span> <span class="fn">scoreBall</span>() {
+        <span class="kw">return</span> Commands.<span class="fn">sequence</span>(
+            <span class="fn">grab</span>(),                        <span class="cmt">// step 1: grip the ball</span>
+            Commands.<span class="fn">waitSeconds</span>(<span class="num">0.5</span>),   <span class="cmt">// pause 0.5 s for grip to close</span>
+            <span class="fn">lift</span>(),                        <span class="cmt">// step 2: raise the arm</span>
+            Commands.<span class="fn">waitSeconds</span>(<span class="num">1.0</span>),   <span class="cmt">// pause 1 s to reach height</span>
+            <span class="fn">release</span>()                     <span class="cmt">// step 3: drop the ball</span>
+        );
+    }</code>
+    </div>
+    <div class="plain-eng">💬 Plain English: <strong>Commands.sequence()</strong> is like a to-do list — it runs each command in order, waiting for one to finish before starting the next. Press one button, the robot handles the whole grab-lift-release routine by itself.</div>
+
+    <!-- Step E: state getters -->
+    <div class="code-wrap">
+      <div class="code-label">Java — State Getters (no Command needed)</div>
+      <code>    <span class="kw">public boolean</span> <span class="fn">isGripping</span>() { <span class="kw">return</span> isGripping; }
+    <span class="kw">public boolean</span> <span class="fn">isLifted</span>()   { <span class="kw">return</span> isLifted;   }
+}</code>
+    </div>
+    <div class="plain-eng">💬 Plain English: These two getters just <em>read</em> a boolean — they don't tell the robot to do anything. A method that only reads doesn't need to return a Command.</div>
+
+    <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec5')">
+      <div class="cb-box">✓</div>
+      <span class="check-label">I followed all five steps and I can explain why <code>grab()</code> returns a <code>Command</code> but <code>isGripping()</code> returns a <code>boolean</code>.</span>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ In Your Own Words — What does <code>Commands.sequence()</code> do that a single <code>runOnce()</code> can't?</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="sequence() lets you...">
+        <input type="text" class="wi-line" placeholder="A single runOnce() can only...">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     ROBOT SCENARIO
+════════════════════════════════════════════════ -->
+<div class="rs-section" id="secScenario">
+  <div class="rs-header">
+    <div class="step-num" style="background:#fff;color:var(--blue)">🎯</div>
+    <h2>Robot Scenario — Wire the Lifter to a Controller</h2>
+    <span class="section-check" id="secScenario-check">⬜</span>
+  </div>
+  <div class="rs-body">
+    <div class="scenario">
+      <div class="sc-title">🏆 Your Robot at Competition</div>
+      <p>Your robot has a working <code>LifterSubsystem</code>. Now you need to wire it up in <code>RobotContainer</code> so the driver can use it. Here's the button map the drive team wants:</p>
+      <ul>
+        <li><strong>A button</strong> → grab the ball</li>
+        <li><strong>B button</strong> → release the ball</li>
+        <li><strong>Right Bumper</strong> → lift the arm</li>
+        <li><strong>Left Bumper</strong> → lower the arm</li>
+        <li><strong>X button</strong> → run the full <code>scoreBall()</code> sequence</li>
+      </ul>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label">Java — RobotContainer wiring pattern</div>
+      <code><span class="kw">public class</span> <span class="tp">RobotContainer</span> {
+
+    <span class="cmt">// Create the subsystem and controller — both are fields</span>
+    <span class="kw">private final</span> <span class="tp">XboxController</span> controller = <span class="kw">new</span> <span class="tp">XboxController</span>(<span class="num">0</span>);
+    <span class="kw">private final</span> <span class="tp">LifterSubsystem</span> lifter    = <span class="kw">new</span> <span class="tp">LifterSubsystem</span>();
+
+    <span class="kw">public</span> <span class="fn">RobotContainer</span>() {
+        <span class="fn">configureBindings</span>();     <span class="cmt">// call the wiring method</span>
+    }
+
+    <span class="kw">private void</span> <span class="fn">configureBindings</span>() {
+        controller.<span class="fn">a</span>().<span class="fn">onTrue</span>( lifter.<span class="fn">grab</span>() );          <span class="cmt">// A → grab</span>
+        controller.<span class="fn">b</span>().<span class="fn">onTrue</span>( lifter.<span class="fn">release</span>() );       <span class="cmt">// B → release</span>
+        controller.<span class="fn">rightBumper</span>().<span class="fn">onTrue</span>( lifter.<span class="fn">lift</span>() );  <span class="cmt">// RB → lift arm</span>
+        controller.<span class="fn">leftBumper</span>().<span class="fn">onTrue</span>( lifter.<span class="fn">lower</span>() ); <span class="cmt">// LB → lower arm</span>
+        controller.<span class="fn">x</span>().<span class="fn">onTrue</span>( lifter.<span class="fn">scoreBall</span>() );     <span class="cmt">// X → full sequence</span>
+    }
+}</code>
+    </div>
+    <div class="plain-eng">💬 Plain English: <strong>controller.a().onTrue( … )</strong> means "when the A button is first pressed, schedule this command." The <code>onTrue()</code> binding runs the command once on press — you don't have to hold A while the robot does the whole sequence.</div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Design It — The coach wants to add a HOLD trigger: while the driver holds the Y button, keep the grab motor running. Would you use <code>runOnce()</code> or <code>run()</code>? What binding — <code>onTrue()</code> or something else?</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="I would use... because...">
+        <input type="text" class="wi-line" placeholder="The binding would be...">
+      </div>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Extend It — Add a fifth binding: when the driver presses the Start button, lower the arm AND release the ball at the same time (hint: Commands.sequence, or think about what two commands run).</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="controller.start().onTrue( ... )">
+        <input type="text" class="wi-line" placeholder="The commands inside would be...">
+      </div>
+    </div>
+
+    <div class="check-item" onclick="toggleCheck(this);markSectionDone('secScenario')">
+      <div class="cb-box">✓</div>
+      <span class="check-label">I can read the RobotContainer wiring and explain which method call triggers each command.</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     END OF LESSON
+════════════════════════════════════════════════ -->
+<div class="end-section">
+  <div class="end-title">✅ End of Lesson — I Can...</div>
+  <div class="end-item" onclick="toggleEnd(this)">
+    <div class="end-cb">✓</div>
+    <span class="end-label">Explain why Command-Based is different from calling subsystem methods directly.</span>
+  </div>
+  <div class="end-item" onclick="toggleEnd(this)">
+    <div class="end-cb">✓</div>
+    <span class="end-label">Write a subsystem class that <code>extends SubsystemBase</code> with methods that return <code>Command</code>.</span>
+  </div>
+  <div class="end-item" onclick="toggleEnd(this)">
+    <div class="end-cb">✓</div>
+    <span class="end-label">Use <code>runOnce(() -&gt; { … })</code> to package an action into a one-shot Command.</span>
+  </div>
+  <div class="end-item" onclick="toggleEnd(this)">
+    <div class="end-cb">✓</div>
+    <span class="end-label">Use <code>Commands.sequence()</code> to chain multiple commands into one automated routine.</span>
+  </div>
+  <div class="end-item" onclick="toggleEnd(this)">
+    <div class="end-cb">✓</div>
+    <span class="end-label">Wire subsystem commands to controller buttons in <code>RobotContainer</code> using <code>.onTrue()</code>.</span>
+  </div>
+</div>
+
+
+<script>
+const TOTAL_SECTIONS = 6;
+
+function selectFocus(el){
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function toggleCheck(el){
+  el.classList.toggle('done');
+}
+
+function toggleVocab(el,gridId){
+  el.classList.toggle('checked');
+  checkVocabDone(gridId);
+}
+
+function checkVocabDone(gridId){
+  const grid=document.getElementById(gridId);
+  if(!grid)return;
+  const all=grid.querySelectorAll('.vocab-card');
+  const done=grid.querySelectorAll('.vocab-card.checked');
+  if(all.length>0 && done.length===all.length){
+    const sec=grid.closest('.section');
+    if(sec){
+      const id=sec.id;
+      const chk=document.getElementById(id+'-check');
+      if(chk&&chk.textContent!=='✅'){chk.textContent='✅';updateProgress();}
+    }
+  }
+}
+
+function markSectionDone(secId){
+  const sec=document.getElementById(secId);
+  if(!sec)return;
+  const items=sec.querySelectorAll('.check-item');
+  const done=sec.querySelectorAll('.check-item.done');
+  if(items.length>0 && done.length===items.length){
+    const chk=document.getElementById(secId+'-check');
+    if(chk&&chk.textContent!=='✅'){chk.textContent='✅';updateProgress();}
+  } else {
+    const chk=document.getElementById(secId+'-check');
+    if(chk&&chk.textContent==='✅'){chk.textContent='⬜';updateProgress();}
+  }
+}
+
+function updateProgress(){
+  const checks=document.querySelectorAll('[id$="-check"]');
+  let done=0;
+  checks.forEach(c=>{if(c.textContent==='✅')done++;});
+  const pct=Math.round((done/TOTAL_SECTIONS)*100);
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-pct').textContent=done+' of '+TOTAL_SECTIONS+' sections complete';
+}
+
+function toggleEnd(el){
+  el.classList.toggle('done');
+}
+
+function toggleSection(id){
+  const body=document.getElementById(id+'-body');
+  if(body)body.classList.toggle('hidden');
+}
+</script>
+</body>
+</html>
