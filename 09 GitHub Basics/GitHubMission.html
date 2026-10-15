@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Mission Card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff;--bg-alt:#FDF2F2;--text:#1C1314;--text-muted:#6B4A4B;
+  --blue:#CC0F11;--blue-light:#FEE2E2;--amber:#D97706;--amber-light:#FEF3C7;
+  --green:#059669;--green-light:#D1FAE5;--red:#9B0C0E;
+  --border:#F0CECE;--code-bg:#1C1314;--code-text:#F1E8E8;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#160A0A;--bg-alt:#241010;--text:#F9ECEC;--text-muted:#C49A9B;
+  --blue:#F25254;--blue-light:#3D1010;--amber:#FCD34D;--amber-light:#3D2E0A;
+  --green:#34D399;--green-light:#064E3B;--red:#F87171;
+  --border:#3D1818;--code-bg:#0D0606;--code-text:#F1E8E8;
+}}
+:root[data-theme="dark"]{
+  --bg:#160A0A;--bg-alt:#241010;--text:#F9ECEC;--text-muted:#C49A9B;
+  --blue:#F25254;--blue-light:#3D1010;--amber:#FCD34D;--amber-light:#3D2E0A;
+  --green:#34D399;--green-light:#064E3B;--red:#F87171;
+  --border:#3D1818;--code-bg:#0D0606;--code-text:#F1E8E8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);
+  max-width:720px;margin:0 auto;padding:28px 24px;line-height:1.6}
+
+/* ── Header ── */
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px}
+.header h1{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.7rem;color:var(--blue);line-height:1.2}
+.badge{font-size:2.2rem}
+.subtitle{color:var(--text-muted);font-size:.88rem;margin-bottom:14px}
+.banner{background:#CC0F11;color:#fff;font-family:'Outfit',sans-serif;font-weight:600;
+  font-size:.8rem;text-align:center;padding:8px 16px;border-radius:8px;
+  margin-bottom:18px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.name-row{display:flex;gap:24px;margin-bottom:18px}
+.name-field{flex:1;border:0;border-bottom:2px solid var(--border);background:transparent;
+  color:var(--text);font-family:'DM Sans',sans-serif;font-size:.95rem;padding:4px 2px;outline:none}
+.name-field::placeholder{color:var(--text-muted)}
+
+/* ── Progress summary ── */
+.score-bar{background:var(--amber-light);border:1.5px solid var(--amber);border-radius:10px;
+  padding:10px 16px;margin-bottom:18px;display:flex;align-items:center;gap:12px}
+.score-label{font-family:'Outfit',sans-serif;font-weight:700;font-size:.88rem;color:var(--amber)}
+.score-val{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.1rem;color:var(--blue)}
+
+/* ── Mission blocks ── */
+.mission{border:1.5px solid var(--border);border-radius:12px;margin-bottom:18px;overflow:hidden;
+  box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.mission-header{padding:12px 16px;background:var(--bg-alt);display:flex;align-items:center;gap:10px}
+.mission-num{width:30px;height:30px;border-radius:50%;background:var(--blue);color:#fff;
+  font-family:'Outfit',sans-serif;font-weight:800;font-size:.9rem;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mission-num.done-num{background:var(--green)}
+.mission-title{font-family:'Outfit',sans-serif;font-weight:700;font-size:.95rem;flex:1}
+.mission-score{font-family:'Outfit',sans-serif;font-weight:700;font-size:.82rem;color:var(--text-muted)}
+.mission-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+
+/* ── Step items ── */
+.step{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:8px;
+  border:1.5px solid var(--border);background:var(--bg);cursor:pointer;transition:all .2s}
+.step:hover{border-color:var(--blue)}
+.step.done{background:var(--green-light);border-color:var(--green)}
+.step-cb{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-size:.85rem;color:transparent;transition:all .2s;margin-top:1px}
+.step.done .step-cb{background:var(--green);border-color:var(--green);color:#fff}
+.step-content{flex:1}
+.step-label{font-size:.9rem;font-weight:500;color:var(--text)}
+.step-cmd{display:block;font-family:'DM Mono',monospace;font-size:.78rem;
+  background:var(--code-bg);color:#89DDFF;padding:4px 8px;border-radius:5px;
+  margin-top:5px;width:fit-content}
+.step.done .step-cmd{opacity:.7}
+.step-note{font-size:.78rem;color:var(--text-muted);margin-top:4px;font-style:italic}
+
+/* ── Reflect box ── */
+.reflect{border:1.5px dashed var(--border);border-radius:8px;padding:10px 14px;background:var(--bg-alt)}
+.reflect-label{font-family:'Outfit',sans-serif;font-weight:700;font-size:.8rem;color:var(--blue);margin-bottom:6px}
+.reflect input{width:100%;border:0;border-bottom:1.5px solid var(--border);background:transparent;
+  color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88rem;padding:5px 2px;outline:none;
+  margin-bottom:4px;display:block}
+.reflect input::placeholder{color:var(--border)}
+
+/* ── Step callout (VS Code UI instructions) ── */
+.step-callout{border-left:3px solid var(--blue);background:var(--blue-light);
+  border-radius:0 8px 8px 0;padding:10px 14px;font-size:.87rem;margin:4px 0}
+.step-tag{font-family:'Outfit',sans-serif;font-weight:700;font-size:.78rem;
+  color:var(--blue);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+
+/* ── Terminal hint ── */
+.hint{background:var(--code-bg);border-radius:8px;padding:10px 14px;font-family:'DM Mono',monospace;
+  font-size:.78rem;color:#e8e8e8;line-height:1.8}
+.t-prompt{color:#546E7A}.t-cmd{color:#89DDFF}.t-arg{color:#C3E88D}.t-out{color:#777;font-style:italic}
+
+/* ── Mission complete banner ── */
+.complete-banner{background:var(--green);color:#fff;border-radius:10px;padding:14px 18px;
+  text-align:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:1rem;
+  margin-bottom:18px;display:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.complete-banner.show{display:block}
+
+/* ── Keyboard badge ── */
+.kbd{display:inline-block;background:var(--bg-alt);border:1.5px solid var(--border);
+  border-radius:4px;font-family:'DM Mono',monospace;font-size:.75rem;
+  padding:2px 7px;color:var(--text)}
+
+/* ── Print ── */
+@media print{
+  *{box-shadow:none!important}
+  body{background:white!important}
+  .hint{background:#ffffff!important;color:#000000!important;border:1px solid #ccc!important}
+  .hint .t-prompt,.hint .t-cmd,.hint .t-arg,.hint .t-out{color:#000000!important;font-style:normal}
+  .step-cmd{background:#f0f0f0!important;color:#000000!important}
+  .banner{background:#CC0F11!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  ::placeholder{color:transparent!important}
+  ::-webkit-input-placeholder{color:transparent!important}
+  .step,.reflect,.mission,.complete-banner{break-inside:avoid;page-break-inside:avoid}
+  p,li{orphans:3;widows:3}
+}
+</style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<div class="header">
+  <div>
+    <h1>GitHub Mission Card</h1>
+    <div class="subtitle">🏎️🔥 RamRodz Robotics · Team 6366 · Lesson 8 Challenge</div>
+  </div>
+  <div class="badge">🏎️🔥</div>
+</div>
+<div class="name-row">
+  <input class="name-field" type="text" placeholder="Name: ______________________________">
+  <input class="name-field" type="text" placeholder="Date: __________________">
+</div>
+<div class="banner">🏎️🔥 RAM RODZ ROBOTICS | TEAM #6366 | HILLCREST &amp; WOODMONT HIGH SCHOOLS · SIMPSONVILLE, SC</div>
+
+<div class="score-bar">
+  <div class="score-label">🎯 Mission Progress</div>
+  <div class="score-val" id="score-val">0 / 20 steps</div>
+  <div style="flex:1;background:var(--border);border-radius:99px;height:8px;overflow:hidden">
+    <div id="score-fill" style="height:100%;width:0%;background:linear-gradient(90deg,#CC0F11,#059669);border-radius:99px;transition:width .4s"></div>
+  </div>
+</div>
+
+<div class="complete-banner" id="complete-banner">
+  🏎️🔥 Mission Complete! You're a GitHub engineer. Push your code to the team repo!
+</div>
+
+
+<!-- ══════ MISSION 1 ══════ -->
+<div class="mission" id="m1">
+  <div class="mission-header">
+    <div class="mission-num" id="m1-num">1</div>
+    <div class="mission-title">Create Your GitHub Repository</div>
+    <div class="mission-score" id="m1-score">0 / 4</div>
+  </div>
+  <div class="mission-body">
+    <div class="step" onclick="tick(this,'m1')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">Sign in to <strong>github.com</strong> in your browser</div>
+        <div class="step-note">Use your team GitHub account or personal account</div>
+      </div>
+    </div>
+    <div class="step" onclick="tick(this,'m1')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">Click <strong>+ New repository</strong> (top-right <strong>+</strong> button)</div>
+      </div>
+    </div>
+    <div class="step" onclick="tick(this,'m1')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">Name it <strong>RamRodz2025Robot</strong>, set to <strong>Private</strong>, check <strong>Add README</strong></div>
+        <div class="step-note">In the .gitignore dropdown, search for "WPILib" if available — otherwise skip it</div>
+      </div>
+    </div>
+    <div class="step" onclick="tick(this,'m1')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">Click <strong>Create repository</strong> — you should see the repo page with a README file</div>
+      </div>
+    </div>
+    <div class="reflect">
+      <div class="reflect-label">✏️ What is the URL of your new repo?</div>
+      <input type="text" placeholder="https://github.com/...">
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════ MISSION 2 ══════ -->
+<div class="mission" id="m2">
+  <div class="mission-header">
+    <div class="mission-num" id="m2-num">2</div>
+    <div class="mission-title">Clone the Repo into VS Code</div>
+    <div class="mission-score" id="m2-score">0 / 4</div>
+  </div>
+  <div class="mission-body">
+    <div class="step" onclick="tick(this,'m2')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">On the GitHub repo page, click the green <strong>Code</strong> button → copy the <strong>HTTPS</strong> URL</div>
+      </div>
+    </div>
+    <div class="step" onclick="tick(this,'m2')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">In VS Code open the Command Palette and run <strong>Git: Clone</strong></div>
+        <span class="step-cmd">Ctrl+Shift+P → type "Git: Clone" → Enter</span>
+        <div class="step-note">Paste the URL, choose a folder on your computer, click Open when asked</div>
+      </div>
+    </div>
+    <div class="step" onclick="tick(this,'m2')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">Open the Source Control panel — confirm it shows your repo with a clean state</div>
+        <span class="step-cmd">Ctrl+Shift+G</span>
+      </div>
+    </div>
+    <div class="step" onclick="tick(this,'m2')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">In Source Control, confirm the Changes list is empty — that means your repo is clean with no pending edits</div>
+        <div class="step-note">The Source Control icon in the sidebar shows a numbered badge when there are changes — it should show nothing right now</div>
+      </div>
+    </div>
+    <div class="reflect">
+      <div class="reflect-label">✏️ What branch name does the bottom-left VS Code status bar show?</div>
+      <input type="text" placeholder="Branch name: ...">
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════ MISSION 3 ══════ -->
+<div class="mission" id="m3">
+  <div class="mission-header">
+    <div class="mission-num" id="m3-num">3</div>
+    <div class="mission-title">Make a Change and Commit It</div>
+    <div class="mission-score" id="m3-score">0 / 5</div>
+  </div>
+  <div class="mission-body">
+    <div class="step" onclick="tick(this,'m3')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">Open <strong>README.md</strong> in VS Code and add one line of text at the bottom</div>
+        <div class="step-note">For example: <em>Team 6366 RamRodz — Simpsonville, SC</em></div>
+      </div>
+    </div>
+    <div class="step" onclick="tick(this,'m3')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">Open Source Control (<strong>Ctrl+Shift+G</strong>) — confirm README.md appears under <em>Changes</em></div>
+        <div class="step-note">The Source Control icon should show a badge with the number 1</div>
+      </div>
+    </div>
+    <div class="step" onclick="tick(this,'m3')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">Stage the change — hover over README.md in the Changes list and click the <strong>+</strong> icon</div>
+        <div class="step-note">The file moves up to the Staged Changes section</div>
+      </div>
+    </div>
+    <div class="step" onclick="tick(this,'m3')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">Type a commit message in the box at the top and press <strong>Ctrl+Enter</strong></div>
+        <span class="step-cmd">Message: "Update README with team info"</span>
+        <div class="step-note">Use an active-voice message that describes WHAT you did, not just "update"</div>
+      </div>
+    </div>
+    <div class="step" onclick="tick(this,'m3')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">Click <strong>Sync Changes ⟳</strong> to push to GitHub</div>
+        <div class="step-note">Reload the GitHub page in your browser — you should see your new README text!</div>
+      </div>
+    </div>
+    <div class="reflect">
+      <div class="reflect-label">✏️ What commit message did you use? Why did you choose those words?</div>
+      <input type="text" placeholder="Message: ...">
+      <input type="text" placeholder="Because...">
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════ MISSION 4 ══════ -->
+<div class="mission" id="m4">
+  <div class="mission-header">
+    <div class="mission-num" id="m4-num">4</div>
+    <div class="mission-title">Create a Branch and Work on It</div>
+    <div class="mission-score" id="m4-score">0 / 4</div>
+  </div>
+  <div class="mission-body">
+    <div class="step" onclick="tick(this,'m4')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">Click the branch name in the bottom-left status bar → choose <em>Create New Branch…</em> → type <strong>feature-lifter</strong> → press Enter</div>
+        <div class="step-note">The status bar updates immediately to show "feature-lifter" — you're now on the new branch</div>
+      </div>
+    </div>
+    <div class="step" onclick="tick(this,'m4')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">Create a new file called <strong>LifterNotes.md</strong> in the VS Code Explorer and write a one-line description of the LifterSubsystem inside it</div>
+        <div class="step-note">Right-click the Explorer panel → New File → name it LifterNotes.md</div>
+      </div>
+    </div>
+    <div class="step" onclick="tick(this,'m4')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">In Source Control: click <strong>+</strong> to stage the file, type a message, press <strong>Ctrl+Enter</strong> to commit</div>
+        <span class="step-cmd">Message: "Add LifterSubsystem notes"</span>
+      </div>
+    </div>
+    <div class="step" onclick="tick(this,'m4')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">Click <strong>Sync ⟳</strong> to push the branch to GitHub</div>
+        <div class="step-note">Go to GitHub and confirm you can see <strong>feature-lifter</strong> in the branch dropdown</div>
+      </div>
+    </div>
+    <div class="reflect">
+      <div class="reflect-label">✏️ Click the status bar → switch to main. Is LifterNotes.md in the Explorer? Why or why not?</div>
+      <input type="text" placeholder="LifterNotes.md is / is not there because...">
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════ MISSION 5 ══════ -->
+<div class="mission" id="m5">
+  <div class="mission-header">
+    <div class="mission-num" id="m5-num">5</div>
+    <div class="mission-title">Merge the Branch into Main</div>
+    <div class="mission-score" id="m5-score">0 / 3</div>
+  </div>
+  <div class="mission-body">
+
+    <div class="step-callout"><div class="step-tag">💡 How to merge in VS Code</div>
+      Click the branch name in the status bar → switch to <strong>main</strong> → then press <kbd class="kbd">Ctrl+Shift+P</kbd> and choose <strong>Git: Merge Branch…</strong> → select <strong>feature-lifter</strong> → then click <strong>Sync Changes ⟳</strong></div>
+
+    <div class="step" onclick="tick(this,'m5')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">Click the status bar branch name → switch back to <strong>main</strong>, then use <kbd class="kbd">Ctrl+Shift+P</kbd> → <strong>Git: Merge Branch…</strong> → choose <strong>feature-lifter</strong></div>
+        <span class="step-cmd">Status bar → main → Ctrl+Shift+P → Git: Merge Branch…</span>
+      </div>
+    </div>
+    <div class="step" onclick="tick(this,'m5')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">Click <strong>Sync Changes ⟳</strong> to push the updated main branch to GitHub</div>
+        <span class="step-cmd">Source Control → Sync Changes ⟳</span>
+        <div class="step-note">On GitHub, confirm LifterNotes.md is now visible on the main branch</div>
+      </div>
+    </div>
+    <div class="step" onclick="tick(this,'m5')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">Open the <strong>Source Control</strong> panel (<kbd class="kbd">Ctrl+Shift+G</kbd>) and look at the timeline — find your three commits</div>
+        <span class="step-cmd">Ctrl+Shift+G → Source Control panel</span>
+        <div class="step-note">You should see the README commit, the LifterNotes commit, and a merge commit in the Git history</div>
+      </div>
+    </div>
+    <div class="reflect">
+      <div class="reflect-label">✏️ Describe the first two commits you can see in the Source Control history:</div>
+      <input type="text" placeholder="1. ">
+      <input type="text" placeholder="2. ">
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════ BONUS ══════ -->
+<div class="mission" id="m6" style="border-color:var(--amber)">
+  <div class="mission-header" style="background:var(--amber-light)">
+    <div class="mission-num" id="m6-num" style="background:var(--amber)">🔥</div>
+    <div class="mission-title">Bonus — Simulate a Competition Day</div>
+    <div class="mission-score" id="m6-score" style="color:var(--amber)">Optional</div>
+  </div>
+  <div class="mission-body">
+    <p style="font-size:.88rem;color:var(--text-muted)">Do this after completing Missions 1–5. No guidance — figure out each VS Code step on your own using the quick reference from the lesson.</p>
+
+    <div class="step" onclick="tick(this,'m6')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">Create a branch called <strong>auto-routine</strong> from main</div>
+      </div>
+    </div>
+    <div class="step" onclick="tick(this,'m6')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">Add a file called <strong>AutoNotes.md</strong> with at least two lines of text describing your auto idea</div>
+      </div>
+    </div>
+    <div class="step" onclick="tick(this,'m6')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">Commit and push the branch — without copying the commands from above</div>
+      </div>
+    </div>
+    <div class="step" onclick="tick(this,'m6')">
+      <div class="step-cb">✓</div>
+      <div class="step-content">
+        <div class="step-label">Merge <strong>auto-routine</strong> into main and push to GitHub</div>
+      </div>
+    </div>
+    <div class="reflect">
+      <div class="reflect-label">✏️ Describe each VS Code step you used — from memory, no looking!</div>
+      <input type="text" placeholder="Create branch: click status bar → ...">
+      <input type="text" placeholder="Stage files: hover file → click ...">
+      <input type="text" placeholder="Commit: type message → press ...">
+      <input type="text" placeholder="Push branch: click ...">
+      <input type="text" placeholder="Switch to main: click ...">
+      <input type="text" placeholder="Merge: Ctrl+Shift+P → ...">
+    </div>
+  </div>
+</div>
+
+
+<script>
+const MISSION_TOTALS = {m1:4, m2:4, m3:5, m4:4, m5:3, m6:4};
+const TOTAL_STEPS = 20; // missions 1-5 only for main score
+
+function tick(el, missionId) {
+  el.classList.toggle('done');
+  updateMission(missionId);
+  updateTotal();
+}
+
+function updateMission(id) {
+  const mission = document.getElementById(id);
+  const total = MISSION_TOTALS[id];
+  const done = mission.querySelectorAll('.step.done').length;
+  const scoreEl = document.getElementById(id + '-score');
+  const numEl = document.getElementById(id + '-num');
+  if (scoreEl) {
+    if (id === 'm6') {
+      scoreEl.textContent = done > 0 ? done + ' / ' + total + ' ✅' : 'Optional';
+    } else {
+      scoreEl.textContent = done + ' / ' + total;
+    }
+  }
+  if (numEl && done === total && id !== 'm6') {
+    numEl.style.background = 'var(--green)';
+  } else if (numEl && id !== 'm6') {
+    numEl.style.background = 'var(--blue)';
+  }
+}
+
+function updateTotal() {
+  let done = 0;
+  ['m1','m2','m3','m4','m5'].forEach(id => {
+    const mission = document.getElementById(id);
+    done += mission.querySelectorAll('.step.done').length;
+  });
+  const pct = Math.round((done / TOTAL_STEPS) * 100);
+  document.getElementById('score-val').textContent = done + ' / ' + TOTAL_STEPS + ' steps';
+  document.getElementById('score-fill').style.width = pct + '%';
+  const banner = document.getElementById('complete-banner');
+  if (done === TOTAL_STEPS) {
+    banner.classList.add('show');
+  } else {
+    banner.classList.remove('show');
+  }
+}
+</script>
+</body>
+</html>

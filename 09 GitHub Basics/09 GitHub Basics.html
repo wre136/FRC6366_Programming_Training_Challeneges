@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub & Version Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#ffffff;--bg-alt:#FDF2F2;--text:#1C1314;--text-muted:#6B4A4B;
+  --blue:#CC0F11;--blue-light:#FEE2E2;--amber:#D97706;--amber-light:#FEF3C7;
+  --green:#059669;--green-light:#D1FAE5;--red:#9B0C0E;
+  --border:#F0CECE;--code-bg:#1C1314;--code-text:#F1E8E8;
+  --shadow-sm:0 1px 4px rgba(0,0,0,.07);
+  --gh:#24292f;--gh-light:#f6f8fa;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#160A0A;--bg-alt:#241010;--text:#F9ECEC;--text-muted:#C49A9B;
+  --blue:#F25254;--blue-light:#3D1010;--amber:#FCD34D;--amber-light:#3D2E0A;
+  --green:#34D399;--green-light:#064E3B;--red:#F87171;
+  --border:#3D1818;--code-bg:#0D0606;--code-text:#F1E8E8;
+  --gh:#161b22;--gh-light:#21262d;
+}}
+:root[data-theme="dark"]{
+  --bg:#160A0A;--bg-alt:#241010;--text:#F9ECEC;--text-muted:#C49A9B;
+  --blue:#F25254;--blue-light:#3D1010;--amber:#FCD34D;--amber-light:#3D2E0A;
+  --green:#34D399;--green-light:#064E3B;--red:#F87171;
+  --border:#3D1818;--code-bg:#0D0606;--code-text:#F1E8E8;
+  --gh:#161b22;--gh-light:#21262d;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);
+  max-width:780px;margin:0 auto;padding:28px 24px;line-height:1.6}
+
+/* ── Header ── */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px}
+.page-header h1{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.85rem;
+  color:var(--blue);line-height:1.2}
+.badge{font-size:2.4rem;line-height:1}
+.subtitle{font-family:'DM Sans',sans-serif;color:var(--text-muted);font-size:.9rem;margin-bottom:14px}
+.name-row{display:flex;gap:24px;margin-bottom:18px}
+.name-field{flex:1;border:0;border-bottom:2px solid var(--border);
+  background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;
+  font-size:.95rem;padding:4px 2px;outline:none}
+.name-field::placeholder{color:var(--text-muted)}
+
+/* ── Banner ── */
+.banner{background:#CC0F11;color:#fff;font-family:'Outfit',sans-serif;font-weight:600;
+  font-size:.82rem;text-align:center;padding:9px 16px;border-radius:8px;
+  margin-bottom:16px;letter-spacing:.03em;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+/* ── Progress ── */
+.progress-bar-wrap{margin-bottom:14px}
+.progress-label{font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;
+  color:var(--text-muted);margin-bottom:5px}
+.progress-track{height:12px;background:var(--border);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;width:0%;
+  background:linear-gradient(90deg,#CC0F11,#F59E0B,#059669);
+  border-radius:99px;transition:width .5s ease}
+.progress-pct{font-size:.78rem;color:var(--text-muted);margin-top:3px;text-align:right}
+
+/* ── Focus bar ── */
+.focus-bar{background:var(--amber-light);border:1.5px solid var(--amber);
+  border-radius:10px;padding:12px 16px;margin-bottom:16px;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.focus-label{font-family:'Outfit',sans-serif;font-weight:700;font-size:.85rem;color:var(--amber)}
+.focus-pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{cursor:pointer;font-size:.82rem;font-family:'Outfit',sans-serif;font-weight:600;
+  padding:5px 14px;border-radius:99px;border:1.5px solid var(--amber);
+  background:transparent;color:var(--amber);transition:all .2s;user-select:none}
+.pill.active{background:var(--amber);color:#fff}
+
+/* ── Big Question ── */
+.big-q{border-left:4px solid var(--blue);background:var(--blue-light);
+  border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:16px}
+.big-q-tag{font-family:'Outfit',sans-serif;font-weight:700;font-size:.75rem;
+  color:var(--blue);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.big-q p{font-size:1.05rem;font-weight:500;color:var(--text)}
+
+/* ── Parking Lot ── */
+.parking{border:2px dashed var(--border);border-radius:10px;padding:14px 18px;margin-bottom:20px}
+.parking-title{font-family:'Outfit',sans-serif;font-weight:700;font-size:.9rem;
+  color:var(--text-muted);margin-bottom:10px}
+.park-line{width:100%;border:0;border-bottom:1.5px solid var(--border);
+  background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;
+  font-size:.9rem;padding:6px 2px;outline:none;margin-bottom:6px;display:block}
+.park-line::placeholder{color:var(--border)}
+
+/* ── Sections ── */
+.section{border:1.5px solid var(--border);border-radius:10px;
+  box-shadow:var(--shadow-sm);margin-bottom:18px;overflow:hidden}
+.section-header{display:flex;align-items:center;gap:12px;padding:13px 18px;
+  cursor:pointer;user-select:none;background:var(--bg-alt)}
+.section-header:hover{filter:brightness(.97)}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--blue);
+  color:#fff;font-family:'Outfit',sans-serif;font-weight:800;font-size:1rem;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.section-header h2{flex:1;font-family:'Outfit',sans-serif;font-weight:700;
+  font-size:1rem;color:var(--text)}
+.section-check{font-size:1.15rem}
+.section-body{padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.section-body.hidden{display:none}
+
+/* ── Vocab ── */
+.vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.vocab-card{border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;
+  cursor:pointer;transition:all .2s;background:var(--bg)}
+.vocab-card:hover{border-color:var(--blue)}
+.vocab-card.checked{background:var(--green-light);border-color:var(--green)}
+.vocab-card .term{font-family:'Outfit',sans-serif;font-weight:700;font-size:.88rem;
+  color:var(--blue);margin-bottom:3px}
+.vocab-card.checked .term{color:var(--green)}
+.vocab-card .def{font-size:.8rem;color:var(--text-muted);line-height:1.45}
+
+/* ── Check items ── */
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;
+  border-radius:8px;border:1.5px solid var(--border);background:var(--bg);
+  cursor:pointer;transition:all .2s}
+.check-item:hover{border-color:var(--blue)}
+.check-item.done{background:var(--green-light);border-color:var(--green)}
+.cb-box{width:20px;height:20px;border-radius:5px;border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-size:.8rem;color:transparent;transition:all .2s;margin-top:1px}
+.check-item.done .cb-box{background:var(--green);border-color:var(--green);color:#fff}
+.check-label{font-size:.9rem;color:var(--text)}
+
+/* ── Code ── */
+.code-wrap{border-radius:8px;overflow:hidden;margin:4px 0}
+.code-label{background:var(--blue);color:#fff;font-family:'Outfit',sans-serif;
+  font-weight:600;font-size:.75rem;padding:5px 14px;letter-spacing:.04em}
+.code-wrap code{display:block;background:var(--code-bg);color:var(--code-text);
+  font-family:'DM Mono',monospace;font-size:.8rem;padding:14px 16px;
+  white-space:pre;overflow-x:auto;line-height:1.7}
+.kw{color:#C792EA}.fn{color:#82AAFF}.num{color:#F78C6C}
+.str{color:#C3E88D}.cmt{color:#546E7A;font-style:italic}
+.tp{color:#FFCB6B}.cmd{color:#89DDFF}.flag{color:#F78C6C}.url{color:#C3E88D}
+
+/* ── Terminal style (git commands) ── */
+.terminal{border-radius:8px;overflow:hidden;margin:4px 0}
+.terminal-bar{background:#2d2d2d;color:#aaa;font-family:'DM Mono',monospace;
+  font-size:.72rem;padding:5px 14px;display:flex;align-items:center;gap:8px}
+.t-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.terminal code{display:block;background:#1a1a1a;color:#e8e8e8;
+  font-family:'DM Mono',monospace;font-size:.8rem;padding:14px 16px;
+  white-space:pre;overflow-x:auto;line-height:1.75}
+.t-prompt{color:#546E7A}.t-cmd{color:#89DDFF}.t-arg{color:#C3E88D}
+.t-flag{color:#F78C6C}.t-out{color:#aaa;font-style:italic}
+
+/* ── Plain English ── */
+.plain-eng{background:var(--amber-light);border-left:4px solid var(--amber);
+  border-radius:0 8px 8px 0;padding:10px 14px;font-size:.88rem;color:var(--text)}
+
+/* ── Write-in ── */
+.write-in{border:1.5px dashed var(--border);border-radius:8px;padding:12px 14px;background:var(--bg-alt)}
+.wi-label{font-family:'Outfit',sans-serif;font-weight:700;font-size:.8rem;
+  color:var(--blue);margin-bottom:8px}
+.wi-lines{display:flex;flex-direction:column;gap:6px}
+.wi-line{border:0;border-bottom:1.5px solid var(--border);background:transparent;
+  color:var(--text);font-family:'DM Sans',sans-serif;font-size:.9rem;
+  padding:5px 2px;outline:none;width:100%}
+.wi-line::placeholder{color:var(--border)}
+
+/* ── Info box ── */
+.info-box{background:var(--blue-light);border:1.5px solid var(--border);
+  border-left:4px solid var(--blue);border-radius:0 8px 8px 0;padding:11px 14px;font-size:.88rem}
+.info-box strong{color:var(--blue)}
+
+/* ── Step callout ── */
+.step-callout{border-left:4px solid var(--blue);background:var(--bg-alt);
+  border-radius:0 8px 8px 0;padding:12px 16px}
+.step-callout .step-tag{font-family:'Outfit',sans-serif;font-weight:800;font-size:.8rem;
+  color:var(--blue);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+
+/* ── Comparison table ── */
+.op-table-wrap{overflow-x:auto}
+.op-table-wrap table{width:100%;border-collapse:collapse;font-size:.85rem}
+.op-table-wrap th{background:var(--blue);color:#fff;font-family:'Outfit',sans-serif;
+  font-weight:600;padding:8px 12px;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.op-table-wrap td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+.op-table-wrap tr:last-child td{border-bottom:0}
+.op-table-wrap tr:nth-child(even) td{background:var(--bg-alt)}
+
+/* ── Git workflow diagram ── */
+.git-flow{display:flex;align-items:center;gap:0;flex-wrap:wrap;justify-content:center;
+  margin:8px 0;font-family:'DM Mono',monospace}
+.gf-box{background:var(--bg-alt);border:1.5px solid var(--border);border-radius:8px;
+  padding:10px 14px;text-align:center;min-width:100px}
+.gf-box .gf-icon{font-size:1.4rem;margin-bottom:4px}
+.gf-box .gf-label{font-family:'Outfit',sans-serif;font-weight:700;font-size:.8rem;color:var(--blue)}
+.gf-box .gf-sub{font-size:.72rem;color:var(--text-muted);font-family:'DM Sans',sans-serif}
+.gf-arrow{font-size:1.4rem;color:var(--blue);padding:0 6px;display:flex;align-items:center}
+.gf-cmd{font-size:.7rem;color:var(--text-muted);font-family:'DM Mono',monospace;text-align:center;margin-top:2px}
+
+/* ── Branch diagram ── */
+.branch-diagram{background:var(--bg-alt);border:1.5px solid var(--border);border-radius:10px;
+  padding:16px;overflow-x:auto}
+.bd-row{display:flex;align-items:center;gap:0;margin-bottom:12px}
+.bd-row:last-child{margin-bottom:0}
+.bd-label{font-family:'Outfit',sans-serif;font-weight:700;font-size:.78rem;
+  width:80px;flex-shrink:0;text-align:right;padding-right:12px}
+.bd-label.main-label{color:var(--blue)}
+.bd-label.branch-label{color:var(--green)}
+.bd-commit{width:28px;height:28px;border-radius:50%;border:2.5px solid var(--blue);
+  background:var(--bg);display:flex;align-items:center;justify-content:center;
+  font-size:.65rem;font-family:'DM Mono',monospace;color:var(--blue);flex-shrink:0}
+.bd-commit.branch-c{border-color:var(--green);color:var(--green)}
+.bd-commit.merge-c{background:var(--blue);color:#fff;border-color:var(--blue)}
+.bd-line{height:2.5px;background:var(--blue);flex:1}
+.bd-line.branch-l{background:var(--green)}
+.bd-line.dotted{background:transparent;border-top:2px dashed var(--border);flex:1}
+.bd-space{width:28px;flex-shrink:0}
+.bd-note{font-family:'DM Sans',sans-serif;font-size:.72rem;color:var(--text-muted);
+  padding-left:10px;flex-shrink:0}
+
+/* ── GitHub mock UI ── */
+.gh-ui{background:var(--gh);border-radius:8px;overflow:hidden;margin:4px 0}
+.gh-topbar{background:#24292f;padding:8px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #30363d}
+.gh-logo{color:#fff;font-size:1rem}
+.gh-crumb{font-family:'DM Mono',monospace;font-size:.78rem;color:#8b949e}
+.gh-crumb span{color:#58a6ff}
+.gh-body{padding:14px;background:var(--gh-light)}
+.gh-btn{display:inline-block;background:var(--blue);color:#fff;
+  font-family:'Outfit',sans-serif;font-weight:600;font-size:.78rem;
+  padding:6px 14px;border-radius:6px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.gh-field{background:var(--bg);border:1.5px solid var(--border);border-radius:6px;
+  padding:6px 10px;font-family:'DM Mono',monospace;font-size:.8rem;
+  color:var(--text);margin:4px 0;display:block;width:100%}
+.gh-row{display:flex;gap:10px;align-items:center;margin:6px 0;font-size:.82rem;
+  font-family:'DM Sans',sans-serif;color:var(--text)}
+.gh-row input[type="radio"]{accent-color:var(--blue)}
+
+/* ── Keyboard shortcut badge ── */
+.kbd{display:inline-block;background:var(--bg-alt);border:1.5px solid var(--border);
+  border-radius:4px;font-family:'DM Mono',monospace;font-size:.75rem;
+  padding:2px 7px;color:var(--text);white-space:nowrap}
+
+/* ── Robot Scenario ── */
+.rs-section{border:2px solid var(--blue);border-radius:10px;overflow:hidden;margin-bottom:18px}
+.rs-header{background:var(--blue);color:#fff;padding:12px 18px;
+  display:flex;align-items:center;gap:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.rs-header h2{font-family:'Outfit',sans-serif;font-weight:800;font-size:1rem;flex:1;color:#fff}
+.rs-body{padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.scenario{background:var(--blue-light);border:1.5px solid var(--border);
+  border-radius:8px;padding:12px 16px;font-size:.88rem}
+.sc-title{font-family:'Outfit',sans-serif;font-weight:700;font-size:.85rem;
+  color:var(--blue);margin-bottom:6px}
+.scenario ul{margin-left:18px;margin-top:6px;display:flex;flex-direction:column;gap:4px}
+
+/* ── End checklist ── */
+.end-section{background:var(--green-light);border:1.5px solid var(--green);
+  border-radius:10px;padding:16px 18px;margin-bottom:18px}
+.end-title{font-family:'Outfit',sans-serif;font-weight:800;font-size:.95rem;
+  color:var(--green);margin-bottom:10px}
+.end-item{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;
+  border-radius:7px;cursor:pointer;transition:background .2s}
+.end-item:hover{background:rgba(5,150,105,.1)}
+.end-item.done{text-decoration:line-through;color:var(--green)}
+.end-cb{width:20px;height:20px;border-radius:5px;border:2px solid var(--green);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-size:.8rem;color:transparent;transition:all .2s;margin-top:1px}
+.end-item.done .end-cb{background:var(--green);color:#fff}
+.end-label{font-size:.9rem}
+
+/* ── Quick ref card ── */
+.ref-card{background:var(--bg-alt);border:1.5px solid var(--border);border-radius:8px;padding:12px 16px}
+.ref-card h4{font-family:'Outfit',sans-serif;font-weight:700;font-size:.85rem;
+  color:var(--blue);margin-bottom:8px}
+.ref-row{display:flex;gap:10px;align-items:baseline;padding:3px 0;
+  border-bottom:1px solid var(--border);font-size:.83rem}
+.ref-row:last-child{border-bottom:0}
+.ref-cmd{font-family:'DM Mono',monospace;color:#82AAFF;white-space:nowrap;flex-shrink:0;min-width:180px}
+.ref-desc{color:var(--text-muted)}
+
+/* ── Print ── */
+@media print{
+  .progress-bar-wrap{display:none!important}
+  *{box-shadow:none!important}
+  body{background:white!important}
+  .code-wrap code,.terminal code{background:#ffffff!important;color:#000000!important;border:1px solid #ccc!important}
+  .code-wrap code .kw,.code-wrap code .fn,.code-wrap code .cmd,
+  .code-wrap code .str,.code-wrap code .cmt,.code-wrap code .tp,
+  .terminal code .t-prompt,.terminal code .t-cmd,.terminal code .t-arg,
+  .terminal code .t-flag,.terminal code .t-out{color:#000000!important;font-style:normal}
+  .code-label,.terminal-bar{background:#CC0F11!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  ::placeholder{color:transparent!important}
+  ::-webkit-input-placeholder{color:transparent!important}
+  .vocab-grid{display:block;column-count:2;column-gap:16px}
+  .vocab-card{display:inline-block;width:100%;box-sizing:border-box;
+    margin-bottom:8px;-webkit-column-break-inside:avoid;break-inside:avoid;page-break-inside:avoid}
+  .check-item,.write-in,.plain-eng,.info-box,.scenario,.code-wrap,.terminal,
+  .git-flow,.branch-diagram,.ref-card,.end-item,.step-callout{break-inside:avoid;page-break-inside:avoid}
+  p,li{orphans:3;widows:3}
+  .check-item{background:#f8f8f8!important;border-color:#ddd!important}
+  .check-item.done{background:#f0fff4!important}
+  .section{break-inside:avoid}
+  .focus-bar,.end-section,.parking{break-inside:avoid}
+  .gh-ui{background:#f6f8fa!important;border:1px solid #ccc!important}
+  .gh-topbar{background:#24292f!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<div class="page-header">
+  <div>
+    <h1>GitHub &amp; Version Control</h1>
+    <div class="subtitle">🏎️🔥 RamRodz Robotics · Team 6366 · Programming Worksheet — Lesson 8</div>
+  </div>
+  <div class="badge">🏎️🔥</div>
+</div>
+
+<div class="name-row">
+  <input class="name-field" type="text" placeholder="Name: _______________________________">
+  <input class="name-field" type="text" placeholder="Date: ___________________">
+</div>
+
+<div class="banner">🏎️🔥 RAM RODZ ROBOTICS | TEAM #6366 | HILLCREST &amp; WOODMONT HIGH SCHOOLS · SIMPSONVILLE, SC</div>
+
+<!-- ── Progress ── -->
+<div class="progress-bar-wrap">
+  <div class="progress-label">⬤ Your Progress</div>
+  <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+  <div class="progress-pct" id="prog-pct">0 of 7 sections complete</div>
+</div>
+
+<!-- ── Focus ── -->
+<div class="focus-bar">
+  <div class="focus-label">🧠 Focus Check-In</div>
+  <div class="focus-pills">
+    <div class="pill" onclick="selectFocus(this)">😵 Struggling</div>
+    <div class="pill" onclick="selectFocus(this)">😐 Okay</div>
+    <div class="pill" onclick="selectFocus(this)">😤 Ready</div>
+  </div>
+</div>
+
+<!-- ── Big Question ── -->
+<div class="big-q">
+  <div class="big-q-tag">🔥 Today's Big Question</div>
+  <p>If two programmers both change the robot code at the same time, how do you stop them from overwriting each other's work — and how do you go back to a working version when something breaks?</p>
+</div>
+
+<!-- ── Parking Lot ── -->
+<div class="parking">
+  <div class="parking-title">🅿️ Parking Lot — Random Thoughts</div>
+  <input class="park-line" type="text" placeholder="Question or thought...">
+  <input class="park-line" type="text" placeholder="Question or thought...">
+  <input class="park-line" type="text" placeholder="Question or thought...">
+  <input class="park-line" type="text" placeholder="Question or thought...">
+  <input class="park-line" type="text" placeholder="Question or thought...">
+  <input class="park-line" type="text" placeholder="Question or thought...">
+  <input class="park-line" type="text" placeholder="Question or thought...">
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SECTION 1 — Vocabulary
+════════════════════════════════════════════════ -->
+<div class="section" id="sec1">
+  <div class="section-header" onclick="toggleSection('sec1')">
+    <div class="step-num">1</div>
+    <h2>Key Words — Check Off When Explained</h2>
+    <span class="section-check" id="sec1-check">⬜</span>
+  </div>
+  <div class="section-body" id="sec1-body">
+    <div class="vocab-grid" id="vocab1">
+      <div class="vocab-card" onclick="toggleVocab(this,'vocab1')">
+        <div class="term">Git</div>
+        <div class="def">A tool that tracks every change you make to code — like an undo history that never expires, even across a whole team.</div>
+      </div>
+      <div class="vocab-card" onclick="toggleVocab(this,'vocab1')">
+        <div class="term">GitHub</div>
+        <div class="def">A website that stores your Git repository online so the whole team can access it from any computer.</div>
+      </div>
+      <div class="vocab-card" onclick="toggleVocab(this,'vocab1')">
+        <div class="term">Repository (Repo)</div>
+        <div class="def">The folder that holds your project AND its complete history of every change ever saved.</div>
+      </div>
+      <div class="vocab-card" onclick="toggleVocab(this,'vocab1')">
+        <div class="term">Commit</div>
+        <div class="def">A saved snapshot of your changes with a message describing what you did. Think: save + label.</div>
+      </div>
+      <div class="vocab-card" onclick="toggleVocab(this,'vocab1')">
+        <div class="term">Push</div>
+        <div class="def">Upload your local commits to GitHub so teammates can see them.</div>
+      </div>
+      <div class="vocab-card" onclick="toggleVocab(this,'vocab1')">
+        <div class="term">Pull</div>
+        <div class="def">Download your teammates' commits from GitHub into your local copy.</div>
+      </div>
+      <div class="vocab-card" onclick="toggleVocab(this,'vocab1')">
+        <div class="term">Clone</div>
+        <div class="def">Make a full local copy of a GitHub repository on your computer for the first time.</div>
+      </div>
+      <div class="vocab-card" onclick="toggleVocab(this,'vocab1')">
+        <div class="term">Branch</div>
+        <div class="def">A separate copy of the code where you can experiment safely — without touching the working main version.</div>
+      </div>
+      <div class="vocab-card" onclick="toggleVocab(this,'vocab1')">
+        <div class="term">Main</div>
+        <div class="def">The default branch — the "official" working version of your robot code. You protect it by working on branches first.</div>
+      </div>
+      <div class="vocab-card" onclick="toggleVocab(this,'vocab1')">
+        <div class="term">Merge</div>
+        <div class="def">Combine the changes from one branch into another — usually bringing a feature branch back into main.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SECTION 2 — Why Version Control?
+════════════════════════════════════════════════ -->
+<div class="section" id="sec2">
+  <div class="section-header" onclick="toggleSection('sec2')">
+    <div class="step-num">2</div>
+    <h2>Why Does a Robot Team Need Version Control?</h2>
+    <span class="section-check" id="sec2-check">⬜</span>
+  </div>
+  <div class="section-body" id="sec2-body">
+    <p style="font-size:.9rem;color:var(--text-muted)">Without Git, robot teams share code by emailing files, copying USB drives, or just hoping nobody edits the same thing at the same time. At a competition, that breaks robots. Here's why Git exists:</p>
+
+    <div class="op-table-wrap">
+      <table>
+        <tr>
+          <th>Without Git</th>
+          <th>With Git &amp; GitHub</th>
+        </tr>
+        <tr>
+          <td>Overwrite a teammate's fix without knowing</td>
+          <td>Git detects conflicts and asks you to resolve them</td>
+        </tr>
+        <tr>
+          <td>Break auto routine 20 minutes before a match — no way back</td>
+          <td>Roll back to any previous commit instantly</td>
+        </tr>
+        <tr>
+          <td>Two programmers can't work at the same time</td>
+          <td>Each works on their own branch; merge when done</td>
+        </tr>
+        <tr>
+          <td>"Which version did we deploy?" — nobody knows</td>
+          <td>Every commit is labeled, dated, and traceable</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec2')">
+      <div class="cb-box">✓</div>
+      <span class="check-label">I can name two reasons why a robot team needs version control.</span>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Quick Question — What's the worst thing that could happen to robot code the day before competition if the team doesn't use Git?</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="The worst thing would be...">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SECTION 3 — Creating a GitHub Repository
+════════════════════════════════════════════════ -->
+<div class="section" id="sec3">
+  <div class="section-header" onclick="toggleSection('sec3')">
+    <div class="step-num">3</div>
+    <h2>Creating a GitHub Repository</h2>
+    <span class="section-check" id="sec3-check">⬜</span>
+  </div>
+  <div class="section-body" id="sec3-body">
+    <p style="font-size:.9rem;color:var(--text-muted)">A repository starts life on GitHub as an empty container. Once created, every team member clones it to their own computer. Here's what that creation screen looks like:</p>
+
+    <!-- GitHub UI mockup -->
+    <div class="gh-ui">
+      <div class="gh-topbar">
+        <span class="gh-logo">⬡</span>
+        <span class="gh-crumb">github.com / <span>New repository</span></span>
+      </div>
+      <div class="gh-body" style="display:flex;flex-direction:column;gap:10px;background:var(--bg);padding:16px;border-radius:0 0 8px 8px">
+        <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:.9rem">Create a new repository</div>
+        <div style="font-size:.8rem;color:var(--text-muted)">Repository name</div>
+        <input class="gh-field" type="text" value="RamRodz2025Robot" readonly>
+        <div style="font-size:.8rem;color:var(--text-muted)">Visibility</div>
+        <div class="gh-row"><input type="radio" checked readonly> <strong>Private</strong> — only team members can see it</div>
+        <div class="gh-row"><input type="radio" readonly> Public — anyone on the internet can view it</div>
+        <div style="font-size:.8rem;color:var(--text-muted);font-style:italic">☑ Add a README file &nbsp; ☑ Add .gitignore → WPILib Java template</div>
+        <div><span class="gh-btn">Create repository</span></div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <strong>WPILib .gitignore</strong> — When you create the repo, choose the <em>WPILib Java</em> .gitignore template. This tells Git to ignore build output folders (like <code>build/</code>) and IDE settings that don't belong in shared code.
+    </div>
+
+    <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec3')">
+      <div class="cb-box">✓</div>
+      <span class="check-label">I watched the repo get created and I know what the Repository Name, Visibility, and .gitignore fields do.</span>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Fill In — What two things should you check when creating an FRC robot repository?</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="1. ________">
+        <input type="text" class="wi-line" placeholder="2. ________">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SECTION 4 — Clone & Open in VS Code
+════════════════════════════════════════════════ -->
+<div class="section" id="sec4">
+  <div class="section-header" onclick="toggleSection('sec4')">
+    <div class="step-num">4</div>
+    <h2>Clone the Repo &amp; Open in VS Code</h2>
+    <span class="section-check" id="sec4-check">⬜</span>
+  </div>
+  <div class="section-body" id="sec4-body">
+    <p style="font-size:.9rem;color:var(--text-muted)">Cloning downloads the full repository — all files AND all history — to your computer for the first time. You only do this once per machine.</p>
+
+    <div class="step-callout">
+      <div class="step-tag">Step 1 — Copy the URL from GitHub</div>
+      <p style="font-size:.87rem;margin-top:4px">On the repo's main page click the green <strong>Code</strong> button → copy the HTTPS URL. It looks like:<br>
+      <code style="font-family:'DM Mono',monospace;font-size:.8rem;background:var(--code-bg);color:#C3E88D;padding:2px 6px;border-radius:4px">https://github.com/RamRodz6366/RamRodz2025Robot.git</code></p>
+    </div>
+
+    <div class="step-callout">
+      <div class="step-tag">Step 2 — Clone via VS Code (easiest way)</div>
+      <p style="font-size:.87rem;margin-top:4px">
+        Press <span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">P</span> to open the Command Palette →
+        type <code style="font-family:'DM Mono',monospace;font-size:.8rem">Git: Clone</code> → paste the URL → choose where to save it on your computer.
+      </p>
+    </div>
+
+    <div class="step-callout">
+      <div class="step-tag">Step 3 — Open the repo in VS Code</div>
+      <p style="font-size:.87rem;margin-top:4px">After the clone finishes, VS Code shows a pop-up: <em>"Would you like to open the cloned repository?"</em> — click <strong>Open</strong>. The repo is now your workspace and Git is already connected.</p>
+    </div>
+    <div class="plain-eng">💬 Plain English: Cloning is like downloading a ZIP of all the code, but smarter — it also brings the entire commit history and keeps the link to GitHub so every future push and pull works automatically.</div>
+
+    <div class="info-box">
+      <strong>VS Code Source Control Panel</strong> — After opening the cloned folder in VS Code, click the branch icon in the left sidebar (or press <span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">G</span>) to open the Source Control panel. This is where you stage, commit, push and pull without typing terminal commands.
+    </div>
+
+    <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec4')">
+      <div class="cb-box">✓</div>
+      <span class="check-label">I can clone a repo in VS Code and open the Source Control panel.</span>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Fill In — What VS Code keyboard shortcut opens the Source Control panel?</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="________">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SECTION 5 — Stage → Commit → Push / Pull
+════════════════════════════════════════════════ -->
+<div class="section" id="sec5">
+  <div class="section-header" onclick="toggleSection('sec5')">
+    <div class="step-num">5</div>
+    <h2>The Daily Workflow: Stage → Commit → Push</h2>
+    <span class="section-check" id="sec5-check">⬜</span>
+  </div>
+  <div class="section-body" id="sec5-body">
+    <p style="font-size:.9rem;color:var(--text-muted)">Every time you finish a chunk of work, you run through these four steps. You'll do this dozens of times every build season.</p>
+
+    <!-- Flow diagram -->
+    <div class="git-flow">
+      <div class="gf-box">
+        <div class="gf-icon">📝</div>
+        <div class="gf-label">Working Files</div>
+        <div class="gf-sub">changes on disk</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <div class="gf-arrow">→</div>
+        <div class="gf-cmd">Click + to Stage</div>
+      </div>
+      <div class="gf-box">
+        <div class="gf-icon">📦</div>
+        <div class="gf-label">Staged</div>
+        <div class="gf-sub">ready to save</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <div class="gf-arrow">→</div>
+        <div class="gf-cmd">Ctrl+Enter</div>
+      </div>
+      <div class="gf-box">
+        <div class="gf-icon">💾</div>
+        <div class="gf-label">Local Commit</div>
+        <div class="gf-sub">saved locally</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <div class="gf-arrow">→</div>
+        <div class="gf-cmd">Sync ⟳</div>
+      </div>
+      <div class="gf-box">
+        <div class="gf-icon">☁️</div>
+        <div class="gf-label">GitHub</div>
+        <div class="gf-sub">team can see it</div>
+      </div>
+    </div>
+
+    <div class="step-callout">
+      <div class="step-tag">Step A — Open Source Control to see changes</div>
+      <p style="font-size:.87rem;margin-top:4px">Press <span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">G</span> or click the branch icon in the left sidebar. Every modified file appears listed under <em>Changes</em> — you can click any file to see exactly what you edited.</p>
+    </div>
+    <div class="step-callout">
+      <div class="step-tag">Step B — Stage your files</div>
+      <p style="font-size:.87rem;margin-top:4px">Hover over a file and click the <strong>+</strong> icon to stage it, or click the <strong>+</strong> next to the <em>Changes</em> heading to stage everything at once. Staged files move up to the <em>Staged Changes</em> section.</p>
+    </div>
+    <div class="step-callout">
+      <div class="step-tag">Step C — Write a commit message and commit</div>
+      <p style="font-size:.87rem;margin-top:4px">Click the text box at the top of the Source Control panel that says <em>"Message (Ctrl+Enter to commit)"</em>. Type a short description — e.g. <code style="font-family:'DM Mono',monospace;font-size:.8rem">Add scoreBall() sequence command</code> — then press <span class="kbd">Ctrl</span>+<span class="kbd">Enter</span>.</p>
+    </div>
+    <div class="step-callout">
+      <div class="step-tag">Step D — Push to GitHub</div>
+      <p style="font-size:.87rem;margin-top:4px">Click the <strong>Sync Changes ⟳</strong> button in the Source Control panel — or click the branch indicator in the bottom-left status bar which shows the number of pending commits. One click uploads your commit to GitHub.</p>
+    </div>
+    <div class="plain-eng">💬 Plain English: Think of <strong>stage</strong> as putting files in a box, <strong>commit</strong> as sealing the box with a label, and <strong>Sync ⟳</strong> as shipping it to the team warehouse on GitHub. Before you start each session, <strong>Sync first</strong> to pull any boxes your teammates shipped.</div>
+
+    <div class="step-callout">
+      <div class="step-tag">⚡ Start of Every Session — Pull First!</div>
+      <p style="font-size:.87rem;margin-top:4px">Click <strong>Sync ⟳</strong> in the Source Control panel before you write a single line of code. This pulls your teammates' latest commits. VS Code shows a notification if anything was pulled. Make it a reflex: <em>open VS Code → click Sync → then start coding.</em></p>
+    </div>
+
+    <div class="info-box">
+      <strong>Good commit messages:</strong> Write what you changed and why, not just "fixed stuff". Good: <em>"Add scoreBall() sequence command"</em>. Bad: <em>"stuff"</em>. Your teammates and future-you will thank you when searching history at 10pm before regionals.
+    </div>
+
+    <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec5')">
+      <div class="cb-box">✓</div>
+      <span class="check-label">I can explain all four steps — pull, stage, commit, push — and say what order to do them in.</span>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Sequence It — Number these VS Code steps in the correct order (1–4):</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="____ Click Sync ⟳ to push">
+        <input type="text" class="wi-line" placeholder="____ Click Sync ⟳ to pull (start of session)">
+        <input type="text" class="wi-line" placeholder="____ Click + to stage files">
+        <input type="text" class="wi-line" placeholder="____ Type message + Ctrl+Enter to commit">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SECTION 6 — Branches & Merging
+════════════════════════════════════════════════ -->
+<div class="section" id="sec6">
+  <div class="section-header" onclick="toggleSection('sec6')">
+    <div class="step-num">6</div>
+    <h2>Branches &amp; Merging</h2>
+    <span class="section-check" id="sec6-check">⬜</span>
+  </div>
+  <div class="section-body" id="sec6-body">
+    <p style="font-size:.9rem;color:var(--text-muted)">A branch is a parallel copy of your code. You work on the branch without touching <strong>main</strong>. When it works, you merge it back. If it breaks, you delete the branch and main is still perfect.</p>
+
+    <!-- Branch diagram -->
+    <div class="branch-diagram">
+      <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:.82rem;color:var(--text-muted);margin-bottom:10px">Branch Lifecycle</div>
+
+      <!-- main line -->
+      <div class="bd-row">
+        <div class="bd-label main-label">main</div>
+        <div class="bd-commit">C1</div>
+        <div class="bd-line"></div>
+        <div class="bd-commit">C2</div>
+        <div class="bd-line"></div>
+        <div class="bd-space"></div><!-- gap where branch lives -->
+        <div class="bd-line" style="flex:0;width:20px"></div>
+        <div class="bd-space"></div>
+        <div class="bd-line"></div>
+        <div class="bd-commit merge-c">M</div>
+        <div class="bd-line"></div>
+        <div class="bd-commit">C5</div>
+        <div class="bd-note">← merge commit</div>
+      </div>
+
+      <!-- branch line -->
+      <div class="bd-row" style="margin-top:-6px">
+        <div class="bd-label branch-label" style="font-size:.7rem">auto-2025</div>
+        <div class="bd-space"></div>
+        <div class="bd-line dotted" style="flex:0;width:62px"></div>
+        <div class="bd-commit branch-c">B1</div>
+        <div class="bd-line branch-l"></div>
+        <div class="bd-commit branch-c">B2</div>
+        <div class="bd-line branch-l" style="flex:0;width:30px"></div>
+        <div class="bd-note">← branch commits</div>
+      </div>
+
+      <div style="font-size:.75rem;color:var(--text-muted);font-family:'DM Sans',sans-serif;margin-top:10px">
+        Branch created from C2 → two feature commits → merged back to main as M
+      </div>
+    </div>
+
+    <div class="step-callout">
+      <div class="step-tag">Step A — Create a new branch in VS Code</div>
+      <p style="font-size:.87rem;margin-top:4px">Click the <strong>branch name</strong> in the bottom-left status bar (it shows <code style="font-family:'DM Mono',monospace;font-size:.8rem">main</code>). A menu appears at the top — choose <em>"Create New Branch…"</em>, type a name like <code style="font-family:'DM Mono',monospace;font-size:.8rem">auto-2025</code>, and press <span class="kbd">Enter</span>. VS Code automatically switches to your new branch — the status bar updates to show its name.</p>
+    </div>
+    <div class="step-callout">
+      <div class="step-tag">Step B — Work on the branch and commit</div>
+      <p style="font-size:.87rem;margin-top:4px">Make your code changes, then use the same Source Control steps you already know: stage with <strong>+</strong>, write a message, press <span class="kbd">Ctrl</span>+<span class="kbd">Enter</span> to commit. Click <strong>Sync ⟳</strong> to push the branch to GitHub so your teammate can see it too.</p>
+    </div>
+    <div class="step-callout">
+      <div class="step-tag">Step C — Switch branches</div>
+      <p style="font-size:.87rem;margin-top:4px">Click the branch name in the status bar again. All your branches are listed — click one to switch to it instantly. VS Code updates all your open files to match that branch. You can hop between <code style="font-family:'DM Mono',monospace;font-size:.8rem">main</code> and <code style="font-family:'DM Mono',monospace;font-size:.8rem">auto-2025</code> as many times as you want.</p>
+    </div>
+    <div class="step-callout">
+      <div class="step-tag">Step D — Merge back to main when ready</div>
+      <p style="font-size:.87rem;margin-top:4px">First switch to <code style="font-family:'DM Mono',monospace;font-size:.8rem">main</code> via the status bar. Then press <span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">P</span> → type <em>"Git: Merge Branch…"</em> → choose <code style="font-family:'DM Mono',monospace;font-size:.8rem">auto-2025</code>. VS Code brings all your branch commits into main. Hit <strong>Sync ⟳</strong> to push the merged main to GitHub.</p>
+    </div>
+    <div class="plain-eng">💬 Plain English: <strong>Branches are free experiments.</strong> Create one, break things, try things. Main stays safe the whole time. When your branch works — merge it in. If it doesn't — delete the branch and walk away. Main never knew.</div>
+
+    <div class="info-box">
+      <strong>Branch name in the status bar:</strong> The bottom-left corner of VS Code always shows which branch you're on. It's your command center — click it to create a branch, switch branches, or see all branches at a glance. You never need to leave VS Code.
+    </div>
+
+    <div class="check-item" onclick="toggleCheck(this);markSectionDone('sec6')">
+      <div class="cb-box">✓</div>
+      <span class="check-label">I can explain why you'd make a branch instead of editing main directly, and what <code>merge</code> does.</span>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Explain It — In your own words, why is working on a branch safer than editing main directly?</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="A branch is safer because...">
+        <input type="text" class="wi-line" placeholder="If something breaks...">
+      </div>
+    </div>
+
+    <!-- Quick Reference Card -->
+    <div class="ref-card">
+      <h4>📋 VS Code Git Quick Reference</h4>
+      <div class="ref-row"><span class="ref-cmd">Ctrl+Shift+G</span><span class="ref-desc">Open Source Control panel — see all changed files</span></div>
+      <div class="ref-row"><span class="ref-cmd">Sync ⟳ (pull)</span><span class="ref-desc">Download teammates' latest commits — do this first every session</span></div>
+      <div class="ref-row"><span class="ref-cmd">+ next to a file</span><span class="ref-desc">Stage that file (moves it to Staged Changes)</span></div>
+      <div class="ref-row"><span class="ref-cmd">+ next to Changes</span><span class="ref-desc">Stage ALL changed files at once</span></div>
+      <div class="ref-row"><span class="ref-cmd">Message box → Ctrl+Enter</span><span class="ref-desc">Type your commit message and save the snapshot</span></div>
+      <div class="ref-row"><span class="ref-cmd">Sync ⟳ (push)</span><span class="ref-desc">Upload your commits to GitHub</span></div>
+      <div class="ref-row"><span class="ref-cmd">Ctrl+Shift+P → Git: Clone</span><span class="ref-desc">Clone a GitHub repo to your computer for the first time</span></div>
+      <div class="ref-row"><span class="ref-cmd">Status bar branch name</span><span class="ref-desc">Click to switch branches or create a new one</span></div>
+      <div class="ref-row"><span class="ref-cmd">Ctrl+Shift+P → Git: Merge Branch</span><span class="ref-desc">Merge a branch into your currently active branch</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     ROBOT SCENARIO
+════════════════════════════════════════════════ -->
+<div class="rs-section" id="secScenario">
+  <div class="rs-header">
+    <div class="step-num" style="background:#fff;color:var(--blue)">🎯</div>
+    <h2>Robot Scenario — Competition Day Branch Strategy</h2>
+    <span class="section-check" id="secScenario-check">⬜</span>
+  </div>
+  <div class="rs-body">
+    <div class="scenario">
+      <div class="sc-title">🏆 It's the Night Before Regionals</div>
+      <p>Your robot's teleop code is solid and merged into <strong>main</strong>. Your lead programmer just had an idea for a new 3-ball autonomous routine. You want to try it — but if it crashes the robot, you need to be able to get back to the working code instantly. The drive team is watching and very nervous.</p>
+      <ul>
+        <li>You have the teleop code committed and pushed to main</li>
+        <li>You want to add and test a new autonomous routine</li>
+        <li>If it doesn't work by 10pm, you ship the working teleop code</li>
+        <li>Two programmers want to work on it at the same time</li>
+      </ul>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Step 1 — How do you create the new branch in VS Code, and what does it create?</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="In VS Code I click the branch name in the status bar, then...">
+        <input type="text" class="wi-line" placeholder="It creates a separate copy of the code called a...">
+      </div>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Step 2 — You and a teammate both push commits to <code>auto-2025</code>. What do you each do in VS Code at the start of your session to get the other's work?</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="Click the ... button to pull the latest commits">
+      </div>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ Step 3 — It works! Describe the VS Code steps to bring the auto branch into main and push to GitHub.</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="1. Click status bar → switch to main">
+        <input type="text" class="wi-line" placeholder="2. Ctrl+Shift+P → Git: Merge Branch → auto-2025">
+        <input type="text" class="wi-line" placeholder="3. Click Sync ⟳ to push">
+      </div>
+    </div>
+
+    <div class="write-in">
+      <div class="wi-label">✏️ What If — It's 10pm and the auto routine still doesn't work. How do you make sure the drive team gets the working teleop code deployed? (No commands needed — just explain the strategy.)</div>
+      <div class="wi-lines">
+        <input type="text" class="wi-line" placeholder="We would...">
+        <input type="text" class="wi-line" placeholder="Because main still has...">
+      </div>
+    </div>
+
+    <div class="check-item" onclick="toggleCheck(this);markSectionDone('secScenario')">
+      <div class="cb-box">✓</div>
+      <span class="check-label">I can describe the branch-and-merge competition-day strategy and explain why main always stays safe.</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     END OF LESSON
+════════════════════════════════════════════════ -->
+<div class="end-section">
+  <div class="end-title">✅ End of Lesson — I Can...</div>
+  <div class="end-item" onclick="toggleEnd(this)">
+    <div class="end-cb">✓</div>
+    <span class="end-label">Create a new GitHub repository with a README and WPILib .gitignore.</span>
+  </div>
+  <div class="end-item" onclick="toggleEnd(this)">
+    <div class="end-cb">✓</div>
+    <span class="end-label">Clone a repository into VS Code and open the Source Control panel.</span>
+  </div>
+  <div class="end-item" onclick="toggleEnd(this)">
+    <div class="end-cb">✓</div>
+    <span class="end-label">Run the daily workflow: pull → stage → commit with a message → push.</span>
+  </div>
+  <div class="end-item" onclick="toggleEnd(this)">
+    <div class="end-cb">✓</div>
+    <span class="end-label">Create a branch, commit changes to it, then merge it back into main.</span>
+  </div>
+  <div class="end-item" onclick="toggleEnd(this)">
+    <div class="end-cb">✓</div>
+    <span class="end-label">Explain why branches protect the working robot code during development.</span>
+  </div>
+</div>
+
+
+<script>
+const TOTAL_SECTIONS = 7;
+
+function selectFocus(el){
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function toggleCheck(el){ el.classList.toggle('done'); }
+
+function toggleVocab(el,gridId){
+  el.classList.toggle('checked');
+  checkVocabDone(gridId);
+}
+
+function checkVocabDone(gridId){
+  const grid=document.getElementById(gridId);
+  if(!grid)return;
+  const all=grid.querySelectorAll('.vocab-card');
+  const done=grid.querySelectorAll('.vocab-card.checked');
+  if(all.length>0 && done.length===all.length){
+    const sec=grid.closest('.section');
+    if(sec){
+      const id=sec.id;
+      const chk=document.getElementById(id+'-check');
+      if(chk&&chk.textContent!=='✅'){chk.textContent='✅';updateProgress();}
+    }
+  }
+}
+
+function markSectionDone(secId){
+  const sec=document.getElementById(secId);
+  if(!sec)return;
+  const items=sec.querySelectorAll('.check-item');
+  const done=sec.querySelectorAll('.check-item.done');
+  if(items.length>0 && done.length===items.length){
+    const chk=document.getElementById(secId+'-check');
+    if(chk&&chk.textContent!=='✅'){chk.textContent='✅';updateProgress();}
+  } else {
+    const chk=document.getElementById(secId+'-check');
+    if(chk&&chk.textContent==='✅'){chk.textContent='⬜';updateProgress();}
+  }
+}
+
+function updateProgress(){
+  const checks=document.querySelectorAll('[id$="-check"]');
+  let done=0;
+  checks.forEach(c=>{if(c.textContent==='✅')done++;});
+  const pct=Math.round((done/TOTAL_SECTIONS)*100);
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-pct').textContent=done+' of '+TOTAL_SECTIONS+' sections complete';
+}
+
+function toggleEnd(el){ el.classList.toggle('done'); }
+
+function toggleSection(id){
+  const body=document.getElementById(id+'-body');
+  if(body)body.classList.toggle('hidden');
+}
+</script>
+</body>
+</html>

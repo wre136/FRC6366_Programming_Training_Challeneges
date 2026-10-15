@@ -1,0 +1,20 @@
+Using Git with Visual Studio Code (Official Beginner Tutorial)
+by: Visual Studio Code
+https://www.youtube.com/watch?v=i_23KUAEtUM
+
+
+// This is for understanding concepts rather than how we will actually do stuff
+Git & GitHub Tutorial for Beginners #8 - Branches
+by: Net Ninja
+https://youtu.be/QV0kVNvkMxc
+
+
+// This is for understanding concepts rather than how we will actually do stuff
+Git & GitHub Tutorial for Beginners #9 - Merging Branches (& conflicts)
+by: Net Ninja
+https://youtu.be/XX-Kct0PfFc
+
+
+The EXTREMELY helpful guide to merge conflicts
+by: Visual Studio Code
+https://youtu.be/HosPml1qkrg
